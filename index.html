@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Поздравления с 8 марта | Колледж</title>
     <style>
+        /* Все стили без изменений (можно оставить как в предыдущей версии) */
         * {
             margin: 0;
             padding: 0;
@@ -31,7 +32,6 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* ===== ФОТО-НАКЛЕЙКИ С GITHUB ===== */
         .floating-photo {
             position: absolute;
             width: 120px;
@@ -360,7 +360,6 @@
     </style>
 </head>
 <body>
-    <!-- Контейнер для фото -->
     <div class="container">
         <div class="sidebar">
             <button id="btnHome" class="active">🏠 Главная</button>
@@ -397,44 +396,45 @@
             const ADMIN_PASSWORD = '148867';
             const POST_COOLDOWN = 5 * 60 * 1000;
 
-            // ---------- ФУНКЦИЯ ДЛЯ ЗАГРУЗКИ ФОТО С GITHUB ----------
+            // ---------- ФУНКЦИЯ ДЛЯ ЗАГРУЗКИ ФОТО (НОВЫЕ ИМЕНА) ----------
             function createFloatingPhotos() {
-    // ✅ ИСПРАВЛЕННЫЕ ССЫЛКИ ЧЕРЕЗ CDN.JSDELIVR.NET
-    const photoUrls = [
-    "https://cdn.jsdelivr.net/gh/yurapon11972020/8/2ab8df84937a81e2da2e30342797a96b.jpg",
-    "https://cdn.jsdelivr.net/gh/yurapon11972020/8/2feec079bec124277cf2d6ccdeca021a.jpg",
-    "https://cdn.jsdelivr.net/gh/yurapon11972020/8/3734d0c422f8f086b40cffe14c301211.jpg",
-    "https://cdn.jsdelivr.net/gh/yurapon11972020/8/31755ffa1b1046adbaece792bcdd73ea.jpg",
-    "https://cdn.jsdelivr.net/gh/yurapon11972020/8/c39f73b5bff92644076aefcf8d5bf30a.jpg",
-    "https://cdn.jsdelivr.net/gh/yurapon11972020/8/cc94785b54550efb5d320e32c0f2c9f4.jpg",
-    "https://cdn.jsdelivr.net/gh/yurapon11972020/8/f1e9679ab5fc95e803f23b4c0ea6f6da.jpg"
-];
-    // Удаляем старые фото
-    document.querySelectorAll('.floating-photo').forEach(photo => photo.remove());
+                // ✅ НОВЫЕ ИМЕНА ФАЙЛОВ (12.jpg ... 18.jpg)
+                const photoUrls = [
+                    "12.jpg",
+                    "13.jpg",
+                    "14.jpg",
+                    "15.jpg",
+                    "16.jpg",
+                    "17.jpg",
+                    "18.jpg"
+                ];
 
-    // Создаём 40 копий
-    const totalPhotos = 40;
-    for (let i = 0; i < totalPhotos; i++) {
-        const randomUrl = photoUrls[Math.floor(Math.random() * photoUrls.length)];
-        const img = document.createElement('img');
-        img.src = randomUrl;
-        img.className = 'floating-photo';
+                // Удаляем старые фото
+                document.querySelectorAll('.floating-photo').forEach(photo => photo.remove());
 
-        // Случайный размер
-        const sizes = ['size-sm', 'size-md', 'size-lg', 'size-xl'];
-        img.classList.add(sizes[Math.floor(Math.random() * sizes.length)]);
+                // Создаём 40 копий
+                const totalPhotos = 40;
+                for (let i = 0; i < totalPhotos; i++) {
+                    const randomUrl = photoUrls[Math.floor(Math.random() * photoUrls.length)];
+                    const img = document.createElement('img');
+                    img.src = randomUrl;
+                    img.className = 'floating-photo';
 
-        // Случайная позиция
-        img.style.left = Math.random() * 100 + '%';
-        img.style.top = Math.random() * 100 + '%';
+                    // Случайный размер
+                    const sizes = ['size-sm', 'size-md', 'size-lg', 'size-xl'];
+                    img.classList.add(sizes[Math.floor(Math.random() * sizes.length)]);
 
-        // Случайные задержки и длительность анимации
-        img.style.animationDelay = Math.random() * 10 + 's';
-        img.style.animationDuration = 15 + Math.random() * 15 + 's';
+                    // Случайная позиция
+                    img.style.left = Math.random() * 100 + '%';
+                    img.style.top = Math.random() * 100 + '%';
 
-        document.body.appendChild(img);
-    }
-}
+                    // Случайные задержки и длительность анимации
+                    img.style.animationDelay = Math.random() * 10 + 's';
+                    img.style.animationDuration = 15 + Math.random() * 15 + 's';
+
+                    document.body.appendChild(img);
+                }
+            }
 
             // Запускаем создание фото
             createFloatingPhotos();
