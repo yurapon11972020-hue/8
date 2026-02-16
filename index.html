@@ -399,43 +399,43 @@
 
             // ---------- ФУНКЦИЯ ДЛЯ ЗАГРУЗКИ ФОТО С GITHUB ----------
             function createFloatingPhotos() {
-                // ✅ ВАШИ ПРЯМЫЕ ССЫЛКИ С GITHUB (исправлены)
-                const photoUrls = [
-                    "https://raw.githubusercontent.com/yurapon11972020/8/main/2ab8df84937a81e2da2e30342797a96b.jpg",
-                    "https://raw.githubusercontent.com/yurapon11972020/8/main/2feec079bec124277cf2d6ccdeca021a.jpg",
-                    "https://raw.githubusercontent.com/yurapon11972020/8/main/3734d0c422f8f086b40cffe14c301211.jpg",
-                    "https://raw.githubusercontent.com/yurapon11972020/8/main/31755ffa1b1046adbaece792bcdd73ea.jpg",
-                    "https://raw.githubusercontent.com/yurapon11972020/8/main/c39f73b5bff92644076aefcf8d5bf30a.jpg",
-                    "https://raw.githubusercontent.com/yurapon11972020/8/main/cc94785b54550efb5d320e32c0f2c9f4.jpg",
-                    "https://raw.githubusercontent.com/yurapon11972020/8/main/f1e9679ab5fc95e803f23b4c0ea6f6da.jpg"
-                ];
+    // ✅ ИСПРАВЛЕННЫЕ ССЫЛКИ ЧЕРЕЗ CDN.JSDELIVR.NET
+    const photoUrls = [
+        "https://cdn.jsdelivr.net/gh/yurapon11972020/8/2ab8df84937a81e2da2e30342797a96b.jpg",
+        "https://cdn.jsdelivr.net/gh/yurapon11972020/8/2feec079bec124277cf2d6ccdeca021a.jpg",
+        "https://cdn.jsdelivr.net/gh/yurapon11972020/8/3734d0c422f8f086b40cffe14c301211.jpg",
+        "https://cdn.jsdelivr.net/gh/yurapon11972020/8/31755ffa1b1046adbaece792bcdd73ea.jpg",
+        "https://cdn.jsdelivr.net/gh/yurapon11972020/8/c39f73b5bff92644076aefcf8d5bf30a.jpg",
+        "https://cdn.jsdelivr.net/gh/yurapon11972020/8/cc94785b54550efb5d320e32c0f2c9f4.jpg",
+        "https://cdn.jsdelivr.net/gh/yurapon11972020/8/f1e9679ab5fc95e803f23b4c0ea6f6da.jpg"
+    ];
 
-                // Удаляем старые фото (если есть)
-                document.querySelectorAll('.floating-photo').forEach(photo => photo.remove());
+    // Удаляем старые фото
+    document.querySelectorAll('.floating-photo').forEach(photo => photo.remove());
 
-                // Создаём 40 копий
-                const totalPhotos = 40;
-                for (let i = 0; i < totalPhotos; i++) {
-                    const randomUrl = photoUrls[Math.floor(Math.random() * photoUrls.length)];
-                    const img = document.createElement('img');
-                    img.src = randomUrl;
-                    img.className = 'floating-photo';
+    // Создаём 40 копий
+    const totalPhotos = 40;
+    for (let i = 0; i < totalPhotos; i++) {
+        const randomUrl = photoUrls[Math.floor(Math.random() * photoUrls.length)];
+        const img = document.createElement('img');
+        img.src = randomUrl;
+        img.className = 'floating-photo';
 
-                    // Случайный размер
-                    const sizes = ['size-sm', 'size-md', 'size-lg', 'size-xl'];
-                    img.classList.add(sizes[Math.floor(Math.random() * sizes.length)]);
+        // Случайный размер
+        const sizes = ['size-sm', 'size-md', 'size-lg', 'size-xl'];
+        img.classList.add(sizes[Math.floor(Math.random() * sizes.length)]);
 
-                    // Случайная позиция
-                    img.style.left = Math.random() * 100 + '%';
-                    img.style.top = Math.random() * 100 + '%';
+        // Случайная позиция
+        img.style.left = Math.random() * 100 + '%';
+        img.style.top = Math.random() * 100 + '%';
 
-                    // Случайные задержки и длительность анимации
-                    img.style.animationDelay = Math.random() * 10 + 's';
-                    img.style.animationDuration = 15 + Math.random() * 15 + 's';
+        // Случайные задержки и длительность анимации
+        img.style.animationDelay = Math.random() * 10 + 's';
+        img.style.animationDuration = 15 + Math.random() * 15 + 's';
 
-                    document.body.appendChild(img);
-                }
-            }
+        document.body.appendChild(img);
+    }
+}
 
             // Запускаем создание фото
             createFloatingPhotos();
