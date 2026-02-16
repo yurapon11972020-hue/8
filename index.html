@@ -32,25 +32,35 @@
             100% { background-position: 0% 50%; }
         }
 
-        /* Декоративные женские силуэты и цветы */
-        .deco {
+        /* ===== ФОНОВЫЕ ФОТО-НАКЛЕЙКИ ===== */
+        .floating-photo {
             position: absolute;
-            font-size: 120px;
-            color: rgba(255, 200, 220, 0.2);
-            user-select: none;
-            pointer-events: none;
+            width: 120px; /* размер фото */
+            height: auto;
+            opacity: 0.25; /* прозрачность, чтобы не мешали тексту */
+            pointer-events: none; /* фото не мешают кликам */
             z-index: 0;
-            animation: float 12s infinite alternate;
+            animation: floatPhoto 20s infinite alternate ease-in-out;
+            object-fit: contain;
         }
-        .deco-1 { top: 5%; left: 3%; transform: rotate(-10deg); content: '♀'; }
-        .deco-2 { bottom: 10%; right: 5%; font-size: 150px; animation-delay: -3s; content: '🌸'; }
-        .deco-3 { top: 30%; right: 10%; font-size: 100px; animation-delay: -6s; content: '🌷'; }
-        .deco-4 { bottom: 20%; left: 8%; font-size: 180px; opacity: 0.15; content: '♀'; }
 
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(-30px) rotate(5deg); }
+        /* Разные размеры для разнообразия */
+        .floating-photo.size-sm { width: 80px; }
+        .floating-photo.size-md { width: 120px; }
+        .floating-photo.size-lg { width: 160px; }
+        .floating-photo.size-xl { width: 200px; }
+
+        /* Анимация плавания */
+        @keyframes floatPhoto {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(30px, -30px) rotate(5deg); }
+            50% { transform: translate(-20px, 40px) rotate(-3deg); }
+            75% { transform: translate(40px, 20px) rotate(8deg); }
+            100% { transform: translate(-30px, -20px) rotate(-5deg); }
         }
+
+        /* Позиции для фото (будут заданы через JS или вручную, но здесь просто через CSS random не сделать, поэтому используем встроенный стиль) */
+        /* Мы создадим фото динамически через JS, чтобы они точно были в разных местах */
 
         /* Основной контейнер */
         .container {
@@ -66,9 +76,9 @@
             min-height: 650px;
             border: 1px solid rgba(255, 255, 255, 0.7);
             z-index: 10;
+            position: relative;
         }
 
-        /* Боковое меню */
         .sidebar {
             width: 220px;
             background: rgba(255, 182, 193, 0.5);
@@ -112,13 +122,14 @@
             box-shadow: 0 10px 25px rgba(200, 60, 90, 0.3);
         }
 
-        /* Контент */
         .content {
             flex: 1;
             padding: 40px;
             background: rgba(255, 249, 251, 0.5);
             backdrop-filter: blur(8px);
             overflow-y: auto;
+            position: relative;
+            z-index: 11;
         }
 
         h1, h2 {
@@ -356,11 +367,7 @@
     </style>
 </head>
 <body>
-    <!-- Декоративные элементы -->
-    <div class="deco deco-1">♀</div>
-    <div class="deco deco-2">🌸</div>
-    <div class="deco deco-3">🌷</div>
-    <div class="deco deco-4">♀</div>
+    <!-- Фоновые фото-наклейки будут добавлены сюда через JavaScript -->
 
     <div class="container">
         <div class="sidebar">
@@ -396,32 +403,85 @@
             const btnModeration = document.getElementById('btnModeration');
 
             const ADMIN_PASSWORD = '148867';
-            const POST_COOLDOWN = 5 * 60 * 1000; // 5 минут в миллисекундах
+            const POST_COOLDOWN = 5 * 60 * 1000; // 5 минут
 
-            // Проверка администратора
+            // ---------- ФУНКЦИИ ДЛЯ СОЗДАНИЯ ПЛАВАЮЩИХ ФОТО ----------
+            function createFloatingPhotos() {
+                // Список прямых ссылок на фото (которые вы прислали)
+                const photoUrls = [
+                    "https://i.ibb.co/zVFpZ9KS/2ab8df84937a81e2da2e30342797a96b.jpg",
+                    "https://i.ibb.co/9HrfGc4C/2feec079bec124277cf2d6ccdeca021a.jpg",
+                    "https://i.ibb.co/WvsV6yj6/3734d0c422f8f086b40cffe14c301211.jpg",
+                    "https://i.ibb.co/TDnQPZVs/31755ffa1b1046adbaece792bcdd73ea.jpg",
+                    "https://i.ibb.co/WNf1DbhP/c39f73b5bff92644076aefcf8d5bf30a.jpg",
+                    "https://i.ibb.co/tthfjWy/cc94785b54550efb5d320e32c0f2c9f4.jpg",
+                    "https://i.ibb.co/n53dZFQ/f1e9679ab5fc95e803f23b4c0ea6f6da.jpg"
+                ];
+
+                // Удаляем старые декоративные элементы, если они есть
+                const oldPhotos = document.querySelectorAll('.floating-photo');
+                oldPhotos.forEach(photo => photo.remove());
+
+                // Создаём 30-40 копий фото (чтобы заполнить фон)
+                const totalPhotos = 40;
+
+                for (let i = 0; i < totalPhotos; i++) {
+                    // Выбираем случайное фото из списка
+                    const randomUrl = photoUrls[Math.floor(Math.random() * photoUrls.length)];
+
+                    // Создаём элемент img
+                    const img = document.createElement('img');
+                    img.src = randomUrl;
+                    img.className = 'floating-photo';
+
+                    // Случайный размер
+                    const sizes = ['size-sm', 'size-md', 'size-lg', 'size-xl'];
+                    const randomSize = sizes[Math.floor(Math.random() * sizes.length)];
+                    img.classList.add(randomSize);
+
+                    // Случайная позиция (от 0% до 100% ширины и высоты окна)
+                    const posX = Math.random() * 100; // %
+                    const posY = Math.random() * 100; // %
+
+                    img.style.left = posX + '%';
+                    img.style.top = posY + '%';
+
+                    // Случайная задержка анимации, чтобы не все двигались синхронно
+                    const animDelay = Math.random() * 10; // от 0 до 10 секунд
+                    img.style.animationDelay = animDelay + 's';
+
+                    // Случайная продолжительность анимации (от 15 до 30 секунд)
+                    const animDuration = 15 + Math.random() * 15;
+                    img.style.animationDuration = animDuration + 's';
+
+                    // Добавляем на страницу
+                    document.body.appendChild(img);
+                }
+            }
+
+            // Вызываем функцию при загрузке страницы
+            createFloatingPhotos();
+
+            // ---------- ОСТАЛЬНОЙ КОД (БЕЗ ИЗМЕНЕНИЙ) ----------
             function isAdmin() {
                 return sessionStorage.getItem('adminLogged') === 'true';
             }
 
-            // Получение времени последней отправки из localStorage
             function getLastPostTime() {
                 const time = localStorage.getItem('lastPostTime');
                 return time ? parseInt(time, 10) : 0;
             }
 
-            // Установка времени последней отправки
             function setLastPostTime() {
                 localStorage.setItem('lastPostTime', Date.now().toString());
             }
 
-            // Проверка, может ли пользователь отправить (не админ и прошло 5 минут)
             function canPost() {
-                if (isAdmin()) return true; // модератор без ограничений
+                if (isAdmin()) return true;
                 const last = getLastPostTime();
                 return (Date.now() - last) >= POST_COOLDOWN;
             }
 
-            // Оставшееся время в секундах для таймера
             function getRemainingSeconds() {
                 if (isAdmin()) return 0;
                 const last = getLastPostTime();
@@ -429,7 +489,6 @@
                 return diff > 0 ? Math.ceil(diff / 1000) : 0;
             }
 
-            // ---------- Firestore helpers ----------
             async function addCongratulation(from, to, message) {
                 try {
                     await db.collection('congratulations').add({
@@ -488,7 +547,11 @@
                 await db.collection('congratulations').doc(id).delete();
             }
 
-            // ---------- Render functions ----------
+            function setActiveButton(activeId) {
+                [btnHome, btnSearch, btnModeration].forEach(btn => btn.classList.remove('active'));
+                document.getElementById(activeId).classList.add('active');
+            }
+
             function renderHome() {
                 setActiveButton('btnHome');
                 contentDiv.innerHTML = `
@@ -528,7 +591,6 @@
                 const msg = document.getElementById('formMessage');
                 const timerMsg = document.getElementById('timerMessage');
 
-                // Функция обновления состояния кнопки и таймера
                 function updateButtonState() {
                     if (canPost()) {
                         submitBtn.disabled = false;
@@ -540,7 +602,6 @@
                     }
                 }
 
-                // Запускаем интервал обновления таймера
                 const timerInterval = setInterval(updateButtonState, 1000);
                 updateButtonState();
 
@@ -565,8 +626,8 @@
                     const success = await addCongratulation(from, to, message);
                     if (success) {
                         form.reset();
-                        setLastPostTime(); // записываем время отправки
-                        updateButtonState(); // обновим кнопку сразу
+                        setLastPostTime();
+                        updateButtonState();
                         msg.className = 'message success';
                         msg.textContent = 'Поздравление отправлено на модерацию! 💖';
                         setTimeout(() => msg.style.display = 'none', 3000);
@@ -575,9 +636,6 @@
                         msg.textContent = 'Ошибка отправки. Попробуйте позже.';
                     }
                 });
-
-                // Очищаем интервал при уходе со страницы (но это не обязательно, можно оставить)
-                // При переключении вкладок интервал будет продолжать работать, но это не страшно.
             }
 
             function renderSearch() {
@@ -649,7 +707,6 @@
                     return;
                 }
 
-                // Шапка с вкладками и кнопкой выхода
                 let html = `
                     <div class="moderation-header">
                         <h2>🛡️ Панель модератора</h2>
@@ -663,7 +720,6 @@
                 `;
                 contentDiv.innerHTML = html;
 
-                // Кнопка выхода
                 document.getElementById('logoutBtn').addEventListener('click', () => {
                     sessionStorage.removeItem('adminLogged');
                     renderModeration();
@@ -785,11 +841,6 @@
                 tabAll.addEventListener('click', () => setActiveTab('all'));
 
                 setActiveTab('new');
-            }
-
-            function setActiveButton(activeId) {
-                [btnHome, btnSearch, btnModeration].forEach(btn => btn.classList.remove('active'));
-                document.getElementById(activeId).classList.add('active');
             }
 
             btnHome.addEventListener('click', renderHome);
