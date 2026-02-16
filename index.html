@@ -3,168 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌸 ALT‑поздравления | 8 марта</title>
+    <title>Поздравления с 8 марта | Колледж</title>
     <style>
-        /* ===== СТИЛЬ  ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Impact', 'Arial Black', sans-serif;
+            font-family: 'Segoe UI', 'Roboto', sans-serif;
         }
 
-        /* Тёмный фон с шумом и неоновыми линиями */
+        /* Мягкий градиентный фон */
         body {
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
-            background: #0d0d0d;
+            background: linear-gradient(145deg, #fdf0f5 0%, #f9d8e6 50%, #fcccd9 100%);
+            background-size: 300% 300%;
+            animation: gradientBG 15s ease infinite;
             position: relative;
             overflow-x: hidden;
         }
 
-        /* Анимированный неоновый фон */
-        body::before {
-            content: '';
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Декоративные женские силуэты и цветы */
+        .deco {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: repeating-linear-gradient(
-                45deg,
-                rgba(255, 0, 255, 0.05) 0px,
-                rgba(0, 255, 255, 0.05) 2px,
-                transparent 2px,
-                transparent 6px
-            );
+            font-size: 120px;
+            color: rgba(255, 200, 220, 0.2);
+            user-select: none;
             pointer-events: none;
             z-index: 0;
+            animation: float 12s infinite alternate;
+        }
+        .deco-1 { top: 5%; left: 3%; transform: rotate(-10deg); content: '♀'; }
+        .deco-2 { bottom: 10%; right: 5%; font-size: 150px; animation-delay: -3s; content: '🌸'; }
+        .deco-3 { top: 30%; right: 10%; font-size: 100px; animation-delay: -6s; content: '🌷'; }
+        .deco-4 { bottom: 20%; left: 8%; font-size: 180px; opacity: 0.15; content: '♀'; }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-30px) rotate(5deg); }
         }
 
-        /* Неоновые круги */
-        .glow-circle {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            background: radial-gradient(circle, #ff00ff80 0%, transparent 70%);
-            filter: blur(60px);
-            animation: floatGlow 8s infinite alternate;
-            z-index: 0;
-        }
-        .glow-circle:nth-child(1) { top: 10%; left: 5%; background: radial-gradient(circle, #00ffff80, transparent); }
-        .glow-circle:nth-child(2) { bottom: 15%; right: 10%; width: 400px; height: 400px; background: radial-gradient(circle, #aa00ff80, transparent); animation-delay: -3s; }
-        .glow-circle:nth-child(3) { top: 40%; left: 60%; width: 250px; height: 250px; background: radial-gradient(circle, #ffff0080, transparent); animation-delay: -5s; }
-
-        @keyframes floatGlow {
-            0% { transform: translate(0, 0) scale(1); opacity: 0.5; }
-            100% { transform: translate(40px, -40px) scale(1.2); opacity: 0.8; }
-        }
-
-        /* Контейнер (стеклянный, с неоновой рамкой) */
+        /* Основной контейнер */
         .container {
             width: 100%;
             max-width: 1300px;
-            background: rgba(10, 10, 10, 0.7);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(12px);
             border-radius: 50px;
-            box-shadow: 0 0 30px #ff00ff, 0 0 60px #00ffff, inset 0 0 20px #ffffff33;
+            box-shadow: 0 20px 40px rgba(210, 80, 120, 0.2), 0 4px 15px rgba(0,0,0,0.05);
             overflow: hidden;
             display: flex;
             flex-direction: row;
             min-height: 650px;
-            border: 2px solid #ffffff33;
+            border: 1px solid rgba(255, 255, 255, 0.7);
             z-index: 10;
-            animation: borderPulse 4s infinite alternate;
-        }
-
-        @keyframes borderPulse {
-            0% { box-shadow: 0 0 20px #ff00ff, 0 0 40px #00ffff; }
-            100% { box-shadow: 0 0 40px #00ffff, 0 0 80px #ff00ff; }
         }
 
         /* Боковое меню */
         .sidebar {
             width: 220px;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(255, 182, 193, 0.5);
             backdrop-filter: blur(5px);
             padding: 30px 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 20px;
-            border-right: 2px solid #ff00ff;
-            box-shadow: 10px 0 20px rgba(255, 0, 255, 0.3);
+            border-right: 1px solid rgba(255, 255, 255, 0.6);
         }
 
         .sidebar button {
             width: 160px;
             padding: 14px 10px;
             border: none;
-            background: black;
-            color: white;
+            background: white;
+            color: #b3435e;
             font-size: 18px;
-            font-weight: 800;
+            font-weight: 600;
             border-radius: 40px;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 0 15px #ff00ff, 0 0 30px #00ffff;
+            box-shadow: 0 8px 20px rgba(210, 80, 120, 0.15);
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            border: 1px solid #ffffff66;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
 
         .sidebar button:hover {
-            background: #ff00ff;
-            color: black;
-            transform: scale(1.05);
-            box-shadow: 0 0 30px #00ffff, 0 0 60px #ff00ff;
+            background: #ffe4ec;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(210, 80, 120, 0.25);
         }
 
         .sidebar button.active {
-            background: #00ffff;
-            color: black;
-            box-shadow: 0 0 30px #ff00ff, 0 0 60px #00ffff;
+            background: #d44e6c;
+            color: white;
+            box-shadow: 0 10px 25px rgba(200, 60, 90, 0.3);
         }
 
-        /* Основной контент */
+        /* Контент */
         .content {
             flex: 1;
             padding: 40px;
-            background: rgba(0, 0, 0, 0.4);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 249, 251, 0.5);
+            backdrop-filter: blur(8px);
             overflow-y: auto;
-            color: #fff;
-            text-shadow: 0 0 5px #ff00ff, 0 0 10px #00ffff;
         }
 
         h1, h2 {
-            color: #fff;
+            color: #9f3e5a;
             margin-bottom: 20px;
-            font-weight: 800;
-            text-transform: uppercase;
-            text-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff;
-            letter-spacing: 2px;
+            font-weight: 600;
+            text-shadow: 2px 2px 5px rgba(255, 255, 255, 0.8);
         }
 
         .rules {
-            background: rgba(255, 0, 255, 0.1);
-            border-left: 6px solid #00ffff;
+            background: rgba(255, 238, 242, 0.8);
+            border-left: 6px solid #ff8da1;
             padding: 18px 25px;
-            border-radius: 40px;
+            border-radius: 30px;
             margin-bottom: 30px;
             font-size: 16px;
-            color: #fff;
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.3);
-            backdrop-filter: blur(5px);
-            border: 1px solid #ffffff33;
+            color: #5a3e45;
+            box-shadow: 0 5px 15px rgba(255, 141, 161, 0.2);
+            backdrop-filter: blur(4px);
         }
 
         .form-group {
@@ -174,29 +147,26 @@
         label {
             display: block;
             margin-bottom: 8px;
-            font-weight: 800;
-            color: #00ffff;
-            text-shadow: 0 0 5px #ff00ff;
+            font-weight: 600;
+            color: #b3435e;
         }
 
         input, textarea {
             width: 100%;
             padding: 14px 18px;
-            border: 2px solid #ff00ff;
+            border: 2px solid #ffc1cc;
             border-radius: 40px;
             font-size: 16px;
             transition: 0.2s;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            font-weight: 600;
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(3px);
         }
 
         input:focus, textarea:focus {
             outline: none;
-            border-color: #00ffff;
-            box-shadow: 0 0 30px #00ffff, 0 0 60px #ff00ff;
-            background: black;
+            border-color: #ff8da1;
+            box-shadow: 0 0 0 4px rgba(255, 141, 161, 0.2);
+            background: white;
         }
 
         textarea {
@@ -205,45 +175,46 @@
         }
 
         button[type="submit"], .search-btn, .approve-btn, .delete-btn, .edit-btn, .save-btn, .cancel-btn, .logout-btn {
-            background: black;
+            background: #ff8da1;
             color: white;
             border: none;
             padding: 12px 25px;
             font-size: 16px;
-            font-weight: 800;
+            font-weight: 600;
             border-radius: 40px;
             cursor: pointer;
             transition: all 0.2s;
-            box-shadow: 0 0 15px #ff00ff, 0 0 30px #00ffff;
+            box-shadow: 0 5px 15px rgba(255, 141, 161, 0.4);
             margin-right: 10px;
             margin-top: 10px;
-            border: 1px solid #ffffff66;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
         }
 
-        .delete-btn { box-shadow: 0 0 15px #ff4444, 0 0 30px #ff8888; }
-        .delete-btn:hover { background: #ff4444; color: black; }
+        .delete-btn { background: #f07c8c; }
+        .delete-btn:hover { background: #dc5f73; }
 
-        .edit-btn { box-shadow: 0 0 15px #44ff44, 0 0 30px #88ff88; }
-        .edit-btn:hover { background: #44ff44; color: black; }
+        .edit-btn { background: #74b9ff; }
+        .edit-btn:hover { background: #4a9eff; }
 
-        .save-btn { box-shadow: 0 0 15px #4444ff, 0 0 30px #8888ff; }
-        .save-btn:hover { background: #4444ff; color: black; }
+        .save-btn { background: #6c5ce7; }
+        .save-btn:hover { background: #5b4bc4; }
 
-        .cancel-btn { box-shadow: 0 0 15px #aaaaaa, 0 0 30px #cccccc; }
-        .cancel-btn:hover { background: #aaaaaa; color: black; }
+        .cancel-btn { background: #a0a0a0; }
+        .cancel-btn:hover { background: #8a8a8a; }
 
-        .logout-btn {
-            background: #ff00ff;
-            color: black;
-            box-shadow: 0 0 20px #00ffff;
-        }
-        .logout-btn:hover { background: #00ffff; }
+        .logout-btn { background: #b3435e; }
+        .logout-btn:hover { background: #9f3e5a; }
 
         button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px currentColor;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 141, 161, 0.5);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
         }
 
         .message {
@@ -251,62 +222,59 @@
             padding: 15px;
             border-radius: 40px;
             display: none;
-            font-weight: 800;
+            font-weight: 500;
             text-align: center;
         }
 
         .message.success {
-            background: #00ff00;
-            color: black;
-            box-shadow: 0 0 30px #00ff00;
+            background: #b8e0c2;
+            color: #1f5f3a;
+            border: 1px solid #8fc9a0;
         }
 
         .message.error {
-            background: #ff4444;
-            color: black;
-            box-shadow: 0 0 30px #ff4444;
+            background: #f9cfd3;
+            color: #a12b3a;
+            border: 1px solid #f4a2ac;
         }
 
         .result-item {
-            background: rgba(255, 0, 255, 0.1);
+            background: rgba(255, 238, 242, 0.7);
             backdrop-filter: blur(5px);
-            border-radius: 40px;
+            border-radius: 30px;
             padding: 25px;
             margin-bottom: 25px;
-            border-left: 6px solid #00ffff;
-            box-shadow: 0 0 30px rgba(255, 0, 255, 0.3);
+            border-left: 6px solid #ff8da1;
+            box-shadow: 0 10px 20px rgba(210, 80, 120, 0.15);
             transition: all 0.3s;
-            animation: neonFadeIn 0.5s;
-            border: 1px solid #ffffff33;
+            animation: fadeIn 0.5s;
         }
 
-        @keyframes neonFadeIn {
-            from { opacity: 0; transform: translateY(30px); filter: blur(10px); }
-            to { opacity: 1; transform: translateY(0); filter: blur(0); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .result-item:hover {
             transform: translateY(-3px);
-            box-shadow: 0 0 50px #ff00ff, 0 0 100px #00ffff;
+            box-shadow: 0 15px 30px rgba(210, 80, 120, 0.25);
         }
 
         .result-item p {
             margin: 10px 0;
             font-size: 16px;
-            color: white;
-            text-shadow: 0 0 3px black;
+            color: #4a2e36;
         }
 
-        .result-item strong { color: #00ffff; text-shadow: 0 0 5px #ff00ff; }
+        .result-item strong { color: #b3435e; }
 
         .no-results, .search-hint {
             text-align: center;
-            color: #aaa;
+            color: #7f5a63;
             font-style: italic;
             padding: 40px;
-            background: rgba(0,0,0,0.5);
+            background: rgba(255, 240, 245, 0.6);
             border-radius: 40px;
-            border: 2px dashed #ff00ff;
         }
 
         .search-container {
@@ -325,12 +293,11 @@
             max-width: 350px;
             margin: 40px auto;
             text-align: center;
-            background: rgba(0,0,0,0.7);
+            background: rgba(255, 255, 255, 0.6);
             padding: 30px;
             border-radius: 50px;
             backdrop-filter: blur(10px);
-            border: 2px solid #ff00ff;
-            box-shadow: 0 0 40px #00ffff;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
 
         .admin-login input {
@@ -354,23 +321,22 @@
         }
 
         .moderation-tabs button {
-            background: black;
-            border: 2px solid #ff00ff;
+            background: rgba(255, 182, 193, 0.5);
+            border: none;
             padding: 12px 25px;
             border-radius: 40px;
-            font-weight: 800;
-            color: white;
+            font-weight: 600;
+            color: #9f3e5a;
             cursor: pointer;
             transition: all 0.2s;
-            text-transform: uppercase;
-            box-shadow: 0 0 10px #ff00ff;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.6);
         }
 
         .moderation-tabs button.active-tab {
-            background: #00ffff;
-            color: black;
-            border-color: #00ffff;
-            box-shadow: 0 0 30px #00ffff;
+            background: #d44e6c;
+            color: white;
+            box-shadow: 0 5px 10px rgba(200,60,90,0.2);
         }
 
         .inline-edit-input {
@@ -378,17 +344,23 @@
             margin: 5px 0;
             padding: 10px;
             border-radius: 30px;
-            border: 2px solid #ff00ff;
-            background: black;
-            color: white;
+            border: 2px solid #ffb6c1;
+            background: white;
+        }
+
+        .timer-message {
+            margin-top: 10px;
+            color: #b3435e;
+            font-weight: 500;
         }
     </style>
 </head>
 <body>
-    <!-- Неоновые круги фона -->
-    <div class="glow-circle"></div>
-    <div class="glow-circle"></div>
-    <div class="glow-circle"></div>
+    <!-- Декоративные элементы -->
+    <div class="deco deco-1">♀</div>
+    <div class="deco deco-2">🌸</div>
+    <div class="deco deco-3">🌷</div>
+    <div class="deco deco-4">♀</div>
 
     <div class="container">
         <div class="sidebar">
@@ -424,14 +396,37 @@
             const btnModeration = document.getElementById('btnModeration');
 
             const ADMIN_PASSWORD = '148867';
+            const POST_COOLDOWN = 5 * 60 * 1000; // 5 минут в миллисекундах
 
+            // Проверка администратора
             function isAdmin() {
                 return sessionStorage.getItem('adminLogged') === 'true';
             }
 
-            function setActiveButton(activeId) {
-                [btnHome, btnSearch, btnModeration].forEach(btn => btn.classList.remove('active'));
-                document.getElementById(activeId).classList.add('active');
+            // Получение времени последней отправки из localStorage
+            function getLastPostTime() {
+                const time = localStorage.getItem('lastPostTime');
+                return time ? parseInt(time, 10) : 0;
+            }
+
+            // Установка времени последней отправки
+            function setLastPostTime() {
+                localStorage.setItem('lastPostTime', Date.now().toString());
+            }
+
+            // Проверка, может ли пользователь отправить (не админ и прошло 5 минут)
+            function canPost() {
+                if (isAdmin()) return true; // модератор без ограничений
+                const last = getLastPostTime();
+                return (Date.now() - last) >= POST_COOLDOWN;
+            }
+
+            // Оставшееся время в секундах для таймера
+            function getRemainingSeconds() {
+                if (isAdmin()) return 0;
+                const last = getLastPostTime();
+                const diff = POST_COOLDOWN - (Date.now() - last);
+                return diff > 0 ? Math.ceil(diff / 1000) : 0;
             }
 
             // ---------- Firestore helpers ----------
@@ -497,40 +492,66 @@
             function renderHome() {
                 setActiveButton('btnHome');
                 contentDiv.innerHTML = `
-                    <h1>🌸 АЛЬТ‑ПОЗДРАВЛЕНИЯ</h1>
+                    <h1>🌸 Поздравления с 8 марта</h1>
                     <div class="rules">
-                        <strong>⚡ ПРАВИЛА:</strong>
+                        <strong>Правила:</strong>
                         <ul style="margin-top:10px; margin-left:20px;">
-                            <li>Заполни все поля, чел.</li>
-                            <li>Укажи, от кого и кому.</li>
-                            <li>Текст должен быть без токсики.</li>
-                            <li>Всё идёт на модерацию.</li>
+                            <li>Заполните все поля, чтобы отправить поздравление.</li>
+                            <li>Укажите, от кого и кому (имя и фамилию).</li>
+                            <li>Текст поздравления должен быть культурным.</li>
+                            <li>Все поздравления проходят модерацию перед публикацией.</li>
+                            <li>Одно поздравление можно отправлять не чаще, чем раз в 5 минут (для модераторов ограничение снято).</li>
                         </ul>
                     </div>
-                    <h2>✍️ ОТПРАВИТЬ ПОЗДРАВЛЕНИЕ</h2>
+                    <h2>✍️ Отправить поздравление</h2>
                     <form id="greetingForm">
                         <div class="form-group">
-                            <label for="from">ОТ КОГО:</label>
+                            <label for="from">От кого (ваше имя и фамилия):</label>
                             <input type="text" id="from" required placeholder="Иван Иванов">
                         </div>
                         <div class="form-group">
-                            <label for="to">КОМУ:</label>
+                            <label for="to">Кому (имя и фамилия получателя):</label>
                             <input type="text" id="to" required placeholder="Мария Петрова">
                         </div>
                         <div class="form-group">
-                            <label for="message">ТЕКСТ:</label>
-                            <textarea id="message" required placeholder="С 8 марта! Желаю..."></textarea>
+                            <label for="message">Текст поздравления:</label>
+                            <textarea id="message" required placeholder="С 8 марта! Желаю счастья..."></textarea>
                         </div>
-                        <button type="submit">ОТПРАВИТЬ НА МОДЕРАЦИЮ 💐</button>
+                        <button type="submit" id="submitBtn">Отправить на модерацию 💐</button>
                         <div id="formMessage" class="message"></div>
+                        <div id="timerMessage" class="timer-message"></div>
                     </form>
                 `;
 
                 const form = document.getElementById('greetingForm');
+                const submitBtn = document.getElementById('submitBtn');
                 const msg = document.getElementById('formMessage');
+                const timerMsg = document.getElementById('timerMessage');
+
+                // Функция обновления состояния кнопки и таймера
+                function updateButtonState() {
+                    if (canPost()) {
+                        submitBtn.disabled = false;
+                        timerMsg.textContent = '';
+                    } else {
+                        submitBtn.disabled = true;
+                        const sec = getRemainingSeconds();
+                        timerMsg.textContent = `⏳ Отправлять можно будет через ${sec} сек.`;
+                    }
+                }
+
+                // Запускаем интервал обновления таймера
+                const timerInterval = setInterval(updateButtonState, 1000);
+                updateButtonState();
 
                 form.addEventListener('submit', async (e) => {
                     e.preventDefault();
+                    if (!canPost()) {
+                        msg.className = 'message error';
+                        msg.textContent = 'Подождите 5 минут перед следующей отправкой.';
+                        return;
+                    }
+
                     const from = document.getElementById('from').value.trim();
                     const to = document.getElementById('to').value.trim();
                     const message = document.getElementById('message').value.trim();
@@ -544,25 +565,30 @@
                     const success = await addCongratulation(from, to, message);
                     if (success) {
                         form.reset();
+                        setLastPostTime(); // записываем время отправки
+                        updateButtonState(); // обновим кнопку сразу
                         msg.className = 'message success';
                         msg.textContent = 'Поздравление отправлено на модерацию! 💖';
                         setTimeout(() => msg.style.display = 'none', 3000);
                     } else {
                         msg.className = 'message error';
-                        msg.textContent = 'Ошибка отправки. Попробуй позже.';
+                        msg.textContent = 'Ошибка отправки. Попробуйте позже.';
                     }
                 });
+
+                // Очищаем интервал при уходе со страницы (но это не обязательно, можно оставить)
+                // При переключении вкладок интервал будет продолжать работать, но это не страшно.
             }
 
             function renderSearch() {
                 setActiveButton('btnSearch');
                 contentDiv.innerHTML = `
-                    <h1>🔎 ПОИСК ПОЗДРАВЛЕНИЙ</h1>
+                    <h1>🔎 Поиск поздравлений</h1>
                     <div class="search-container">
-                        <input type="text" id="searchInput" placeholder="Введи имя и фамилию получателя">
-                        <button class="search-btn" id="searchBtn">НАЙТИ</button>
+                        <input type="text" id="searchInput" placeholder="Введите имя и фамилию получателя">
+                        <button class="search-btn" id="searchBtn">Найти</button>
                     </div>
-                    <div id="searchResults" class="search-hint">Введи имя для поиска</div>
+                    <div id="searchResults" class="search-hint">Введите имя для поиска</div>
                 `;
 
                 const input = document.getElementById('searchInput');
@@ -572,7 +598,7 @@
                 async function perform() {
                     const query = input.value.trim();
                     if (!query) {
-                        results.innerHTML = '<div class="search-hint">Введи имя для поиска</div>';
+                        results.innerHTML = '<div class="search-hint">Введите имя для поиска</div>';
                         return;
                     }
                     const data = await searchApprovedCongrats(query);
@@ -605,9 +631,9 @@
                 if (!isAdmin()) {
                     contentDiv.innerHTML = `
                         <div class="admin-login">
-                            <h2>🔐 ВХОД ДЛЯ МОДЕРАТОРА</h2>
+                            <h2>🔐 Вход для модератора</h2>
                             <input type="password" id="adminPass" placeholder="Пароль">
-                            <button id="loginAdminBtn">ВОЙТИ</button>
+                            <button id="loginAdminBtn">Войти</button>
                             <div id="loginMessage"></div>
                         </div>
                     `;
@@ -626,12 +652,12 @@
                 // Шапка с вкладками и кнопкой выхода
                 let html = `
                     <div class="moderation-header">
-                        <h2>🛡️ ПАНЕЛЬ МОДЕРАТОРА</h2>
-                        <button class="logout-btn" id="logoutBtn">🚪 ВЫЙТИ</button>
+                        <h2>🛡️ Панель модератора</h2>
+                        <button class="logout-btn" id="logoutBtn">🚪 Выйти</button>
                     </div>
                     <div class="moderation-tabs">
-                        <button id="tabNew" class="active-tab">📬 НОВЫЕ</button>
-                        <button id="tabAll">📋 ВСЕ ЗАПИСИ</button>
+                        <button id="tabNew" class="active-tab">📬 Новые (неодобренные)</button>
+                        <button id="tabAll">📋 Все записи</button>
                     </div>
                     <div id="moderationContent"></div>
                 `;
@@ -646,8 +672,6 @@
                 const modContent = document.getElementById('moderationContent');
                 const tabNew = document.getElementById('tabNew');
                 const tabAll = document.getElementById('tabAll');
-
-                let currentTab = 'new';
 
                 function setActiveTab(tab) {
                     [tabNew, tabAll].forEach(b => b.classList.remove('active-tab'));
@@ -672,32 +696,32 @@
 
                 function renderItems(items, type) {
                     if (items.length === 0) {
-                        modContent.innerHTML = '<p class="no-results">✨ НЕТ ЗАПИСЕЙ</p>';
+                        modContent.innerHTML = '<p class="no-results">✨ Нет записей</p>';
                         return;
                     }
 
                     let out = '';
                     items.forEach(item => {
                         const dateStr = item.date ? new Date(item.date.seconds * 1000).toLocaleString() : '';
-                        const approvedStatus = item.approved ? '✅ ОДОБРЕНО' : '⏳ НА МОДЕРАЦИИ';
+                        const approvedStatus = item.approved ? '✅ Одобрено' : '⏳ На модерации';
 
                         out += `
                             <div class="result-item" data-id="${item.id}">
                                 <div class="item-view">
-                                    <p><strong>ОТ:</strong> <span class="from-text">${item.from}</span></p>
-                                    <p><strong>КОМУ:</strong> <span class="to-text">${item.to}</span></p>
-                                    <p><strong>ТЕКСТ:</strong> <span class="msg-text">${item.message}</span></p>
+                                    <p><strong>От:</strong> <span class="from-text">${item.from}</span></p>
+                                    <p><strong>Кому:</strong> <span class="to-text">${item.to}</span></p>
+                                    <p><strong>Текст:</strong> <span class="msg-text">${item.message}</span></p>
                                     <p><small>${dateStr} | ${approvedStatus}</small></p>
-                                    <button class="edit-btn" data-id="${item.id}">✏️ РЕДАКТИРОВАТЬ</button>
-                                    <button class="delete-btn" data-id="${item.id}">🗑️ УДАЛИТЬ</button>
-                                    ${!item.approved ? `<button class="approve-btn" data-id="${item.id}">✅ ОДОБРИТЬ</button>` : ''}
+                                    <button class="edit-btn" data-id="${item.id}">✏️ Редактировать</button>
+                                    <button class="delete-btn" data-id="${item.id}">🗑️ Удалить</button>
+                                    ${!item.approved ? `<button class="approve-btn" data-id="${item.id}">✅ Одобрить</button>` : ''}
                                 </div>
                                 <div class="item-edit" style="display:none;">
                                     <input class="inline-edit-input edit-from" value="${item.from.replace(/"/g, '&quot;')}">
                                     <input class="inline-edit-input edit-to" value="${item.to.replace(/"/g, '&quot;')}">
                                     <textarea class="inline-edit-input edit-msg">${item.message.replace(/"/g, '&quot;')}</textarea>
-                                    <button class="save-btn" data-id="${item.id}">💾 СОХРАНИТЬ</button>
-                                    <button class="cancel-btn">❌ ОТМЕНА</button>
+                                    <button class="save-btn" data-id="${item.id}">💾 Сохранить</button>
+                                    <button class="cancel-btn">❌ Отмена</button>
                                 </div>
                             </div>
                         `;
@@ -730,7 +754,7 @@
                             const msg = card.querySelector('.edit-msg').value.trim();
 
                             if (!from || !to || !msg) {
-                                alert('Заполни все поля!');
+                                alert('Заполните все поля!');
                                 return;
                             }
 
@@ -741,7 +765,7 @@
 
                     document.querySelectorAll('.delete-btn').forEach(btn => {
                         btn.addEventListener('click', async (e) => {
-                            if (!confirm('Точно удалить?')) return;
+                            if (!confirm('Удалить это поздравление?')) return;
                             const id = e.target.dataset.id;
                             await deleteCongratulation(id);
                             if (type === 'new') loadNew(); else loadAll();
@@ -761,6 +785,11 @@
                 tabAll.addEventListener('click', () => setActiveTab('all'));
 
                 setActiveTab('new');
+            }
+
+            function setActiveButton(activeId) {
+                [btnHome, btnSearch, btnModeration].forEach(btn => btn.classList.remove('active'));
+                document.getElementById(activeId).classList.add('active');
             }
 
             btnHome.addEventListener('click', renderHome);
