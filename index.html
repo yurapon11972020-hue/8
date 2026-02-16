@@ -2,10 +2,10 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Поздравления с 8 марта | Колледж</title>
     <style>
-        /* Все стили без изменений (можно оставить как в предыдущей версии) */
+        /* Общие стили (без изменений, но добавим адаптивность) */
         * {
             margin: 0;
             padding: 0;
@@ -18,7 +18,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
+            padding: 10px;
             background: linear-gradient(145deg, #fdf0f5 0%, #f9d8e6 50%, #fcccd9 100%);
             background-size: 300% 300%;
             animation: gradientBG 15s ease infinite;
@@ -32,6 +32,7 @@
             100% { background-position: 0% 50%; }
         }
 
+        /* Фото-наклейки */
         .floating-photo {
             position: absolute;
             width: 120px;
@@ -56,22 +57,24 @@
             100% { transform: translate(-30px, -20px) rotate(-5deg); }
         }
 
+        /* Основной контейнер */
         .container {
             width: 100%;
             max-width: 1300px;
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(12px);
-            border-radius: 50px;
-            box-shadow: 0 20px 40px rgba(210, 80, 120, 0.2), 0 4px 15px rgba(0,0,0,0.05);
+            border-radius: 30px;
+            box-shadow: 0 20px 40px rgba(210, 80, 120, 0.2);
             overflow: hidden;
             display: flex;
             flex-direction: row;
-            min-height: 650px;
+            min-height: 600px;
             border: 1px solid rgba(255, 255, 255, 0.7);
             z-index: 10;
             position: relative;
         }
 
+        /* Боковое меню (десктоп) */
         .sidebar {
             width: 220px;
             background: rgba(255, 182, 193, 0.5);
@@ -115,6 +118,7 @@
             box-shadow: 0 10px 25px rgba(200, 60, 90, 0.3);
         }
 
+        /* Контентная область */
         .content {
             flex: 1;
             padding: 40px;
@@ -182,7 +186,7 @@
             background: #ff8da1;
             color: white;
             border: none;
-            padding: 12px 25px;
+            padding: 14px 25px;
             font-size: 16px;
             font-weight: 600;
             border-radius: 40px;
@@ -357,6 +361,137 @@
             color: #b3435e;
             font-weight: 500;
         }
+
+        /* ========== АДАПТАЦИЯ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ ========== */
+        @media (max-width: 768px) {
+            body {
+                padding: 5px;
+                align-items: flex-start;
+            }
+
+            .container {
+                flex-direction: column;
+                border-radius: 20px;
+                min-height: auto;
+            }
+
+            .sidebar {
+                width: 100%;
+                flex-direction: row;
+                justify-content: center;
+                padding: 15px 10px;
+                gap: 10px;
+                border-right: none;
+                border-bottom: 1px solid rgba(255,255,255,0.6);
+                background: rgba(255, 182, 193, 0.7);
+                flex-wrap: wrap;
+            }
+
+            .sidebar button {
+                width: auto;
+                min-width: 100px;
+                padding: 12px 10px;
+                font-size: 16px;
+                margin: 0;
+                flex: 1 1 auto;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            h2 {
+                font-size: 22px;
+            }
+
+            .rules {
+                padding: 15px;
+                font-size: 14px;
+            }
+
+            .form-group input,
+            .form-group textarea {
+                padding: 12px;
+                font-size: 16px; /* Чтобы не масштабировалось на мобильных */
+            }
+
+            button[type="submit"], .search-btn, .approve-btn, .delete-btn, .edit-btn, .save-btn, .cancel-btn, .logout-btn {
+                padding: 12px 20px;
+                font-size: 16px;
+                width: 100%;
+                margin-right: 0;
+            }
+
+            .search-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .search-container input {
+                width: 100%;
+            }
+
+            .result-item {
+                padding: 20px;
+            }
+
+            .moderation-tabs {
+                flex-direction: row;
+                width: 100%;
+            }
+
+            .moderation-tabs button {
+                flex: 1;
+                text-align: center;
+                padding: 12px 5px;
+                font-size: 14px;
+            }
+
+            .admin-login {
+                padding: 20px;
+                margin: 20px auto;
+            }
+
+            /* Уменьшаем количество плавающих фото на мобильных, чтобы не тормозило */
+            .floating-photo {
+                opacity: 0.15;
+            }
+
+            .floating-photo.size-sm { width: 60px; }
+            .floating-photo.size-md { width: 80px; }
+            .floating-photo.size-lg { width: 100px; }
+            .floating-photo.size-xl { width: 120px; }
+        }
+
+        /* Для очень маленьких экранов (до 480px) */
+        @media (max-width: 480px) {
+            .sidebar button {
+                font-size: 14px;
+                min-width: 70px;
+                padding: 10px 5px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            h2 {
+                font-size: 18px;
+            }
+
+            .rules {
+                font-size: 13px;
+            }
+
+            .moderation-tabs button {
+                font-size: 12px;
+                padding: 10px 2px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -412,8 +547,10 @@
                 // Удаляем старые фото
                 document.querySelectorAll('.floating-photo').forEach(photo => photo.remove());
 
-                // Создаём 40 копий
-                const totalPhotos = 40;
+                // Определяем количество фото в зависимости от устройства (на мобильных меньше)
+                const isMobile = window.innerWidth <= 768;
+                const totalPhotos = isMobile ? 20 : 40; // на мобильных 20 фото, чтобы не нагружать
+
                 for (let i = 0; i < totalPhotos; i++) {
                     const randomUrl = photoUrls[Math.floor(Math.random() * photoUrls.length)];
                     const img = document.createElement('img');
@@ -438,6 +575,15 @@
 
             // Запускаем создание фото
             createFloatingPhotos();
+
+            // При изменении размера окна можно пересоздать фото (опционально)
+            window.addEventListener('resize', () => {
+                // Простой debounce
+                clearTimeout(window.resizedFinished);
+                window.resizedFinished = setTimeout(() => {
+                    createFloatingPhotos();
+                }, 250);
+            });
 
             // ---------- ВЕСЬ ОСТАЛЬНОЙ КОД (БЕЗ ИЗМЕНЕНИЙ) ----------
             function isAdmin() {
@@ -690,7 +836,7 @@
                         <button class="logout-btn" id="logoutBtn">🚪 Выйти</button>
                     </div>
                     <div class="moderation-tabs">
-                        <button id="tabNew" class="active-tab">📬 Новые (неодобренные)</button>
+                        <button id="tabNew" class="active-tab">📬 Новые</button>
                         <button id="tabAll">📋 Все записи</button>
                     </div>
                     <div id="moderationContent"></div>
