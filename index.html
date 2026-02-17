@@ -330,23 +330,6 @@
             animation: fadeIn 0.5s;
         }
 
-        .gallery-item {
-            display: inline-block;
-            width: 200px;
-            margin: 10px;
-            vertical-align: top;
-            background: rgba(255,238,242,0.8);
-            border-radius: 30px;
-            padding: 15px;
-            text-align: center;
-        }
-
-        .gallery-item img {
-            max-width: 100%;
-            border-radius: 20px;
-            margin-bottom: 10px;
-        }
-
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -492,9 +475,6 @@
             .content {
                 padding: 20px;
             }
-            .gallery-item {
-                width: 150px;
-            }
         }
     </style>
 </head>
@@ -504,7 +484,6 @@
         <div class="sidebar">
             <button id="btnHome" class="active">🏠 Главная</button>
             <button id="btnSearch">🔍 Поиск</button>
-            <button id="btnGallery">🖼️ Галерея</button>
             <button id="btnModeration">🛡️ Модерация</button>
         </div>
         <div class="content" id="content"></div>
@@ -530,11 +509,14 @@
         const db = firebase.firestore();
         const auth = firebase.auth();
 
+        // Включаем persistence для кеширования
+        db.enablePersistence()
+          .catch(err => console.log("Ошибка включения persistence:", err));
+
         (function() {
             const contentDiv = document.getElementById('content');
             const btnHome = document.getElementById('btnHome');
             const btnSearch = document.getElementById('btnSearch');
-            const btnGallery = document.getElementById('btnGallery');
             const btnModeration = document.getElementById('btnModeration');
             const themeToggle = document.getElementById('themeToggle');
 
@@ -670,21 +652,21 @@
                 }
             }
 
-            // Получение статистики
-          async function getStats() {
-    const totalSnap = await db.collection('congratulations').get();
-    const approvedSnap = await db.collection('congratulations').where('approved', '==', true).get();
-    return { 
-        total: totalSnap.size, 
-        approved: approvedSnap.size 
-    };
-}
+            // Получение статистики (загружаем все документы для подсчёта – оптимизировать можно позже)
+            async function getStats() {
+                const totalSnap = await db.collection('congratulations').get();
+                const approvedSnap = await db.collection('congratulations').where('approved', '==', true).get();
+                return { 
+                    total: totalSnap.size, 
+                    approved: approvedSnap.size 
+                };
+            }
 
             // ---------- РАБОТА С FIRESTORE ----------
-            async function addCongratulation(from, to, category, message, imageUrl) {
+            async function addCongratulation(from, to, category, message) {
                 try {
                     const docRef = await db.collection('congratulations').add({
-                        from, to, category, message, imageUrl: imageUrl || '',
+                        from, to, category, message,
                         date: firebase.firestore.FieldValue.serverTimestamp(),
                         approved: false,
                         likes: 0,
@@ -727,20 +709,10 @@
 
             async function getAllCongrats() {
                 try {
-                    const snapshot = await db.collection('congratulations').orderBy('date', 'desc').get();
+                    const snapshot = await db.collection('congratulations').orderBy('date', 'desc').limit(50).get();
                     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 } catch (error) {
                     console.error("Ошибка получения всех записей: ", error);
-                    return [];
-                }
-            }
-
-            async function getGalleryItems() {
-                try {
-                    const snapshot = await db.collection('congratulations').where('approved', '==', true).where('imageUrl', '!=', '').get();
-                    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                } catch (error) {
-                    console.error("Ошибка получения галереи: ", error);
                     return [];
                 }
             }
@@ -767,7 +739,7 @@
 
             // ---------- НАВИГАЦИЯ ----------
             function setActiveButton(activeId) {
-                [btnHome, btnSearch, btnGallery, btnModeration].forEach(btn => btn.classList.remove('active'));
+                [btnHome, btnSearch, btnModeration].forEach(btn => btn.classList.remove('active'));
                 document.getElementById(activeId).classList.add('active');
             }
 
@@ -787,7 +759,6 @@
                             <li>Заполните все поля, чтобы отправить поздравление.</li>
                             <li>Укажите, от кого и кому (имя и фамилию).</li>
                             <li>Текст поздравления должен быть культурным, без нецензурной лексики и оскорблений.</li>
-                            <li>Можно добавить ссылку на картинку (по желанию).</li>
                             <li>Все поздравления проходят модерацию перед публикацией.</li>
                             <li>Одно поздравление можно отправлять не чаще, чем раз в 5 минут.</li>
                         </ul>
@@ -812,10 +783,6 @@
                         <div class="form-group">
                             <label for="message">Текст поздравления:</label>
                             <textarea id="message" required placeholder="С 8 марта! Желаю счастья..."></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="image">Ссылка на картинку (необязательно):</label>
-                            <input type="url" id="image" placeholder="https://example.com/flower.jpg">
                         </div>
                         <button type="submit" id="submitBtn">Отправить на модерацию 💐</button>
                         <div id="formMessage" class="message"></div>
@@ -843,7 +810,6 @@
                             document.getElementById('to').value = item.to;
                             document.getElementById('category').value = item.category || 'teacher';
                             document.getElementById('message').value = item.message;
-                            document.getElementById('image').value = item.imageUrl || '';
                             // Удалим старую запись и создадим новую (или можно обновлять)
                             if (confirm('Вы сможете отправить исправленную версию. Старая будет удалена.')) {
                                 await deleteCongratulation(item.id);
@@ -877,7 +843,6 @@
                     const to = document.getElementById('to').value.trim();
                     const category = document.getElementById('category').value;
                     const message = document.getElementById('message').value.trim();
-                    const imageUrl = document.getElementById('image').value.trim();
 
                     if (!from || !to || !message) {
                         msg.className = 'message error';
@@ -900,7 +865,7 @@
                         return;
                     }
 
-                    const result = await addCongratulation(from, to, category, message, imageUrl);
+                    const result = await addCongratulation(from, to, category, message);
                     if (result.success) {
                         form.reset();
                         setLastPostTime();
@@ -920,7 +885,6 @@
                                 document.getElementById('to').value = item.to;
                                 document.getElementById('category').value = item.category || 'teacher';
                                 document.getElementById('message').value = item.message;
-                                document.getElementById('image').value = item.imageUrl || '';
                                 await deleteCongratulation(item.id);
                                 localStorage.removeItem('lastEditToken');
                                 editNotif.innerHTML = '';
@@ -979,7 +943,6 @@
                                 <div class="result-item">
                                     <p><strong>От кого:</strong> ${item.from}</p>
                                     <p><strong>Кому:</strong> ${item.to} (${item.category === 'teacher' ? '👩‍🏫' : '👥'})</p>
-                                    ${item.imageUrl ? `<img src="${item.imageUrl}" alt="image" style="max-width:200px; border-radius:20px;">` : ''}
                                     <p><strong>Текст:</strong> ${item.message}</p>
                                     <small>${d} | ❤️ ${item.likes || 0}</small>
                                     <br>
@@ -1014,28 +977,6 @@
                 btn.addEventListener('click', () => perform(true));
                 input.addEventListener('keypress', e => e.key === 'Enter' && perform(true));
                 loadMore.addEventListener('click', () => perform(false));
-            }
-
-            async function renderGallery() {
-                setActiveButton('btnGallery');
-                contentDiv.innerHTML = `<h1>🖼️ Галерея поздравлений с картинками</h1><div id="galleryContainer"></div>`;
-                const container = document.getElementById('galleryContainer');
-                const items = await getGalleryItems();
-                if (items.length === 0) {
-                    container.innerHTML = '<p class="no-results">Пока нет поздравлений с картинками.</p>';
-                    return;
-                }
-                items.forEach(item => {
-                    const d = item.date ? new Date(item.date.seconds * 1000).toLocaleDateString() : '';
-                    container.innerHTML += `
-                        <div class="gallery-item">
-                            <img src="${item.imageUrl}" alt="image" onerror="this.src='https://via.placeholder.com/150?text=Ошибка'">
-                            <p><strong>${item.to}</strong></p>
-                            <p>${item.message.substring(0,50)}...</p>
-                            <small>${d} | ❤️ ${item.likes || 0}</small>
-                        </div>
-                    `;
-                });
             }
 
             async function renderModeration() {
@@ -1126,7 +1067,6 @@
                                 <div class="item-view">
                                     <p><strong>От:</strong> <span class="from-text">${item.from}</span></p>
                                     <p><strong>Кому:</strong> <span class="to-text">${item.to} (${item.category === 'teacher' ? '👩‍🏫' : '👥'})</span></p>
-                                    ${item.imageUrl ? `<img src="${item.imageUrl}" alt="image" style="max-width:200px; border-radius:20px;">` : ''}
                                     <p><strong>Текст:</strong> <span class="msg-text">${item.message}</span></p>
                                     <p><small>${dateStr} | ${approvedStatus} | ❤️ ${item.likes || 0}</small></p>
                                     <button class="edit-btn" data-id="${item.id}">✏️ Редактировать</button>
@@ -1137,7 +1077,6 @@
                                     <input class="inline-edit-input edit-from" value="${item.from.replace(/"/g, '&quot;')}">
                                     <input class="inline-edit-input edit-to" value="${item.to.replace(/"/g, '&quot;')}">
                                     <input class="inline-edit-input edit-category" value="${item.category || 'teacher'}">
-                                    <input class="inline-edit-input edit-image" value="${item.imageUrl || ''}">
                                     <textarea class="inline-edit-input edit-msg">${item.message.replace(/"/g, '&quot;')}</textarea>
                                     <button class="save-btn" data-id="${item.id}">💾 Сохранить</button>
                                     <button class="cancel-btn">❌ Отмена</button>
@@ -1171,7 +1110,6 @@
                             const from = card.querySelector('.edit-from').value.trim();
                             const to = card.querySelector('.edit-to').value.trim();
                             const category = card.querySelector('.edit-category').value.trim();
-                            const image = card.querySelector('.edit-image').value.trim();
                             const msg = card.querySelector('.edit-msg').value.trim();
 
                             if (!from || !to || !msg) {
@@ -1179,7 +1117,7 @@
                                 return;
                             }
 
-                            await updateCongratulation(id, { from, to, category, message: msg, imageUrl: image });
+                            await updateCongratulation(id, { from, to, category, message: msg });
                             await logModeratorAction('edit', `Изменил запись ${id}`, id);
                             if (type === 'new') loadNew(); else loadAll();
                         });
@@ -1192,7 +1130,6 @@
                             const id = e.target.dataset.id;
                             await deleteCongratulation(id);
                             await logModeratorAction('delete', `Удалил запись ${id}. Причина: ${reason}`, id);
-                            // Здесь можно отправить уведомление автору, но для простоты просто удаляем
                             if (type === 'new') loadNew(); else loadAll();
                         });
                     });
@@ -1221,7 +1158,6 @@
 
             btnHome.addEventListener('click', renderHome);
             btnSearch.addEventListener('click', renderSearch);
-            btnGallery.addEventListener('click', renderGallery);
             btnModeration.addEventListener('click', renderModeration);
 
             renderHome();
@@ -1233,7 +1169,6 @@
                 btnSearch.click();
                 setTimeout(() => {
                     document.getElementById('searchInput').value = '';
-                    // здесь можно добавить подсветку
                 }, 500);
             }
         })();
