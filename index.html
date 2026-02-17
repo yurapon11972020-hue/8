@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Поздравления с 8 марта | Колледж</title>
     <style>
-        /* Общие стили */
+        /* Общие стили (без изменений) */
         * {
             margin: 0;
             padding: 0;
@@ -32,6 +32,7 @@
             100% { background-position: 0% 50%; }
         }
 
+        /* Фото-наклейки */
         .floating-photo {
             position: absolute;
             width: 120px;
@@ -56,6 +57,7 @@
             100% { transform: translate(-30px, -20px) rotate(-5deg); }
         }
 
+        /* Основной контейнер */
         .container {
             width: 100%;
             max-width: 1300px;
@@ -72,6 +74,7 @@
             position: relative;
         }
 
+        /* Боковое меню (десктоп) */
         .sidebar {
             width: 220px;
             background: rgba(255, 182, 193, 0.5);
@@ -115,6 +118,7 @@
             box-shadow: 0 10px 25px rgba(200, 60, 90, 0.3);
         }
 
+        /* Контентная область */
         .content {
             flex: 1;
             padding: 40px;
@@ -358,16 +362,19 @@
             font-weight: 500;
         }
 
+        /* ========== АДАПТАЦИЯ ДЛЯ МОБИЛЬНЫХ УСТРОЙСТВ ========== */
         @media (max-width: 768px) {
             body {
                 padding: 5px;
                 align-items: flex-start;
             }
+
             .container {
                 flex-direction: column;
                 border-radius: 20px;
                 min-height: auto;
             }
+
             .sidebar {
                 width: 100%;
                 flex-direction: row;
@@ -379,6 +386,7 @@
                 background: rgba(255, 182, 193, 0.7);
                 flex-wrap: wrap;
             }
+
             .sidebar button {
                 width: auto;
                 min-width: 100px;
@@ -387,57 +395,71 @@
                 margin: 0;
                 flex: 1 1 auto;
             }
+
             .content {
                 padding: 20px;
             }
+
             h1 {
                 font-size: 26px;
             }
+
             h2 {
                 font-size: 22px;
             }
+
             .rules {
                 padding: 15px;
                 font-size: 14px;
             }
+
             .form-group input,
             .form-group textarea {
                 padding: 12px;
                 font-size: 16px;
             }
+
             button[type="submit"], .search-btn, .approve-btn, .delete-btn, .edit-btn, .save-btn, .cancel-btn, .logout-btn {
                 padding: 12px 20px;
                 font-size: 16px;
                 width: 100%;
                 margin-right: 0;
             }
+
             .search-container {
                 flex-direction: column;
                 gap: 10px;
             }
+
             .search-container input {
                 width: 100%;
             }
+
             .result-item {
                 padding: 20px;
             }
+
             .moderation-tabs {
                 flex-direction: row;
                 width: 100%;
             }
+
             .moderation-tabs button {
                 flex: 1;
                 text-align: center;
                 padding: 12px 5px;
                 font-size: 14px;
             }
+
             .admin-login {
                 padding: 20px;
                 margin: 20px auto;
             }
+
             .floating-photo {
                 opacity: 0.15;
             }
+
             .floating-photo.size-sm { width: 60px; }
             .floating-photo.size-md { width: 80px; }
             .floating-photo.size-lg { width: 100px; }
@@ -450,15 +472,19 @@
                 min-width: 70px;
                 padding: 10px 5px;
             }
+
             h1 {
                 font-size: 22px;
             }
+
             h2 {
                 font-size: 18px;
             }
+
             .rules {
                 font-size: 13px;
             }
+
             .moderation-tabs button {
                 font-size: 12px;
                 padding: 10px 2px;
@@ -476,12 +502,13 @@
         <div class="content" id="content"></div>
     </div>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK (App, Firestore, Auth) -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
     <script>
+        // Конфиг Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBw8OCvgXEqj0ZVPuFMMg3DTR5BfpYnNKk",
             authDomain: "marta-ebc25.firebaseapp.com",
@@ -493,7 +520,7 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        const auth = firebase.auth();
+        const auth = firebase.auth();  // Инициализация аутентификации
 
         (function() {
             const contentDiv = document.getElementById('content');
@@ -501,22 +528,10 @@
             const btnSearch = document.getElementById('btnSearch');
             const btnModeration = document.getElementById('btnModeration');
 
+            // Email модератора (ваш)
             const MODERATOR_EMAIL = 'yurapon11972020@gmail.com';
+
             const POST_COOLDOWN = 5 * 60 * 1000; // 5 минут
-
-            // ---------- СПИСОК ЗАПРЕЩЁННЫХ СЛОВ ----------
-            const BAD_WORDS = [
-                'хуй', 'пизда', 'блядь', 'ебать', 'ебан', 'сука', 'гандон', 'пидор', 'мудак',
-                'долбоеб', 'уебок', 'залупа', 'шлюха', 'проститутка', 'пидорас', 'педик',
-                'мразь', 'тварь', 'сволочь', 'гадина', 'козел', 'редиска', 'дурак', 'идиот'
-            ];
-
-            // Функция проверки текста на наличие нецензурных слов
-            function containsProfanity(text) {
-                const lowerText = text.toLowerCase();
-                const regex = new RegExp('\\b(' + BAD_WORDS.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\\b', 'i');
-                return regex.test(lowerText);
-            }
 
             // ---------- ФУНКЦИЯ ДЛЯ ЗАГРУЗКИ ФОТО ----------
             function createFloatingPhotos() {
@@ -579,7 +594,7 @@
             }
 
             function canPost() {
-                if (isAdmin()) return true;
+                if (isAdmin()) return true; // модератор может постить без задержки
                 const last = getLastPostTime();
                 return (Date.now() - last) >= POST_COOLDOWN;
             }
@@ -666,7 +681,7 @@
                         <ul style="margin-top:10px; margin-left:20px;">
                             <li>Заполните все поля, чтобы отправить поздравление.</li>
                             <li>Укажите, от кого и кому (имя и фамилию).</li>
-                            <li>Текст поздравления должен быть культурным, без нецензурной лексики и оскорблений.</li>
+                            <li>Текст поздравления должен быть культурным.</li>
                             <li>Все поздравления проходят модерацию перед публикацией.</li>
                             <li>Одно поздравление можно отправлять не чаще, чем раз в 5 минут (для модераторов ограничение снято).</li>
                         </ul>
@@ -712,6 +727,11 @@
 
                 form.addEventListener('submit', async (e) => {
                     e.preventDefault();
+                    if (!canPost()) {
+                        msg.className = 'message error';
+                        msg.textContent = 'Подождите 5 минут перед следующей отправкой.';
+                        return;
+                    }
 
                     const from = document.getElementById('from').value.trim();
                     const to = document.getElementById('to').value.trim();
@@ -720,21 +740,6 @@
                     if (!from || !to || !message) {
                         msg.className = 'message error';
                         msg.textContent = 'Все поля должны быть заполнены!';
-                        msg.style.display = 'block';
-                        return;
-                    }
-
-                    if (containsProfanity(from) || containsProfanity(to) || containsProfanity(message)) {
-                        msg.className = 'message error';
-                        msg.textContent = 'Ваше поздравление содержит недопустимые слова (мат или оскорбления). Пожалуйста, исправьте текст.';
-                        msg.style.display = 'block';
-                        return;
-                    }
-
-                    if (!canPost()) {
-                        msg.className = 'message error';
-                        msg.textContent = 'Подождите 5 минут перед следующей отправкой.';
-                        msg.style.display = 'block';
                         return;
                     }
 
@@ -745,12 +750,10 @@
                         updateButtonState();
                         msg.className = 'message success';
                         msg.textContent = 'Поздравление отправлено на модерацию! 💖';
-                        msg.style.display = 'block';
                         setTimeout(() => msg.style.display = 'none', 3000);
                     } else {
                         msg.className = 'message error';
                         msg.textContent = 'Ошибка отправки. Попробуйте позже.';
-                        msg.style.display = 'block';
                     }
                 });
             }
@@ -804,6 +807,7 @@
                 setActiveButton('btnModeration');
 
                 if (!isAdmin()) {
+                    // Показываем форму входа
                     contentDiv.innerHTML = `
                         <div class="admin-login">
                             <h2>🔐 Вход для модератора</h2>
@@ -819,7 +823,7 @@
                         const pass = document.getElementById('adminPass').value;
                         auth.signInWithEmailAndPassword(email, pass)
                             .then(() => {
-                                renderModeration();
+                                renderModeration(); // после успешного входа перерисовываем панель
                             })
                             .catch(error => {
                                 document.getElementById('loginMessage').textContent = 'Ошибка входа: ' + error.message;
@@ -828,6 +832,7 @@
                     return;
                 }
 
+                // Панель модератора
                 let html = `
                     <div class="moderation-header">
                         <h2>🛡️ Панель модератора</h2>
@@ -843,7 +848,7 @@
 
                 document.getElementById('logoutBtn').addEventListener('click', () => {
                     auth.signOut().then(() => {
-                        renderModeration();
+                        renderModeration(); // после выхода вернём форму входа
                     });
                 });
 
@@ -965,16 +970,20 @@
                 setActiveTab('new');
             }
 
+            // Слушатель изменения статуса аутентификации
             auth.onAuthStateChanged(user => {
+                // Если открыта вкладка модерации, обновляем её
                 if (btnModeration.classList.contains('active')) {
                     renderModeration();
                 }
             });
 
+            // Привязка кнопок
             btnHome.addEventListener('click', renderHome);
             btnSearch.addEventListener('click', renderSearch);
             btnModeration.addEventListener('click', renderModeration);
 
+            // Запуск главной страницы
             renderHome();
         })();
     </script>
