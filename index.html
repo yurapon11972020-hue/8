@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>Поздравления с 8 марта | Колледж</title>
     <style>
-        /* Общие стили (без изменений, но добавим адаптивность) */
+        /* Общие стили (без изменений) */
         * {
             margin: 0;
             padding: 0;
@@ -416,7 +416,7 @@
             .form-group input,
             .form-group textarea {
                 padding: 12px;
-                font-size: 16px; /* Чтобы не масштабировалось на мобильных */
+                font-size: 16px;
             }
 
             button[type="submit"], .search-btn, .approve-btn, .delete-btn, .edit-btn, .save-btn, .cancel-btn, .logout-btn {
@@ -456,7 +456,6 @@
                 margin: 20px auto;
             }
 
-            /* Уменьшаем количество плавающих фото на мобильных, чтобы не тормозило */
             .floating-photo {
                 opacity: 0.15;
             }
@@ -467,7 +466,6 @@
             .floating-photo.size-xl { width: 120px; }
         }
 
-        /* Для очень маленьких экранов (до 480px) */
         @media (max-width: 480px) {
             .sidebar button {
                 font-size: 14px;
@@ -504,12 +502,13 @@
         <div class="content" id="content"></div>
     </div>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK (App, Firestore, Auth) -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
     <script>
-        // Ваш конфиг Firebase
+        // Конфиг Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBw8OCvgXEqj0ZVPuFMMg3DTR5BfpYnNKk",
             authDomain: "marta-ebc25.firebaseapp.com",
@@ -521,6 +520,7 @@
 
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const auth = firebase.auth();  // Инициализация аутентификации
 
         (function() {
             const contentDiv = document.getElementById('content');
@@ -528,12 +528,13 @@
             const btnSearch = document.getElementById('btnSearch');
             const btnModeration = document.getElementById('btnModeration');
 
-            const ADMIN_PASSWORD = '148867';
-            const POST_COOLDOWN = 5 * 60 * 1000;
+            // Email модератора (ваш)
+            const MODERATOR_EMAIL = 'yurapon11972020@gmail.com';
 
-            // ---------- ФУНКЦИЯ ДЛЯ ЗАГРУЗКИ ФОТО (НОВЫЕ ИМЕНА) ----------
+            const POST_COOLDOWN = 5 * 60 * 1000; // 5 минут
+
+            // ---------- ФУНКЦИЯ ДЛЯ ЗАГРУЗКИ ФОТО ----------
             function createFloatingPhotos() {
-                // ✅ НОВЫЕ ИМЕНА ФАЙЛОВ (12.jpg ... 18.jpg)
                 const photoUrls = [
                     "12.jpg",
                     "13.jpg",
@@ -544,12 +545,10 @@
                     "18.jpg"
                 ];
 
-                // Удаляем старые фото
                 document.querySelectorAll('.floating-photo').forEach(photo => photo.remove());
 
-                // Определяем количество фото в зависимости от устройства (на мобильных меньше)
                 const isMobile = window.innerWidth <= 768;
-                const totalPhotos = isMobile ? 20 : 40; // на мобильных 20 фото, чтобы не нагружать
+                const totalPhotos = isMobile ? 20 : 40;
 
                 for (let i = 0; i < totalPhotos; i++) {
                     const randomUrl = photoUrls[Math.floor(Math.random() * photoUrls.length)];
@@ -557,15 +556,12 @@
                     img.src = randomUrl;
                     img.className = 'floating-photo';
 
-                    // Случайный размер
                     const sizes = ['size-sm', 'size-md', 'size-lg', 'size-xl'];
                     img.classList.add(sizes[Math.floor(Math.random() * sizes.length)]);
 
-                    // Случайная позиция
                     img.style.left = Math.random() * 100 + '%';
                     img.style.top = Math.random() * 100 + '%';
 
-                    // Случайные задержки и длительность анимации
                     img.style.animationDelay = Math.random() * 10 + 's';
                     img.style.animationDuration = 15 + Math.random() * 15 + 's';
 
@@ -573,21 +569,19 @@
                 }
             }
 
-            // Запускаем создание фото
             createFloatingPhotos();
 
-            // При изменении размера окна можно пересоздать фото (опционально)
             window.addEventListener('resize', () => {
-                // Простой debounce
                 clearTimeout(window.resizedFinished);
                 window.resizedFinished = setTimeout(() => {
                     createFloatingPhotos();
                 }, 250);
             });
 
-            // ---------- ВЕСЬ ОСТАЛЬНОЙ КОД (БЕЗ ИЗМЕНЕНИЙ) ----------
+            // ---------- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ----------
             function isAdmin() {
-                return sessionStorage.getItem('adminLogged') === 'true';
+                const user = auth.currentUser;
+                return user && user.email === MODERATOR_EMAIL;
             }
 
             function getLastPostTime() {
@@ -600,7 +594,7 @@
             }
 
             function canPost() {
-                if (isAdmin()) return true;
+                if (isAdmin()) return true; // модератор может постить без задержки
                 const last = getLastPostTime();
                 return (Date.now() - last) >= POST_COOLDOWN;
             }
@@ -612,6 +606,7 @@
                 return diff > 0 ? Math.ceil(diff / 1000) : 0;
             }
 
+            // ---------- РАБОТА С FIRESTORE ----------
             async function addCongratulation(from, to, message) {
                 try {
                     await db.collection('congratulations').add({
@@ -670,11 +665,13 @@
                 await db.collection('congratulations').doc(id).delete();
             }
 
+            // ---------- НАВИГАЦИЯ ----------
             function setActiveButton(activeId) {
                 [btnHome, btnSearch, btnModeration].forEach(btn => btn.classList.remove('active'));
                 document.getElementById(activeId).classList.add('active');
             }
 
+            // ---------- РЕНДЕР РАЗДЕЛОВ ----------
             function renderHome() {
                 setActiveButton('btnHome');
                 contentDiv.innerHTML = `
@@ -810,26 +807,32 @@
                 setActiveButton('btnModeration');
 
                 if (!isAdmin()) {
+                    // Показываем форму входа
                     contentDiv.innerHTML = `
                         <div class="admin-login">
                             <h2>🔐 Вход для модератора</h2>
+                            <input type="email" id="adminEmail" placeholder="Email" value="${MODERATOR_EMAIL}">
                             <input type="password" id="adminPass" placeholder="Пароль">
                             <button id="loginAdminBtn">Войти</button>
                             <div id="loginMessage"></div>
                         </div>
                     `;
+
                     document.getElementById('loginAdminBtn').addEventListener('click', () => {
+                        const email = document.getElementById('adminEmail').value;
                         const pass = document.getElementById('adminPass').value;
-                        if (pass === ADMIN_PASSWORD) {
-                            sessionStorage.setItem('adminLogged', 'true');
-                            renderModeration();
-                        } else {
-                            document.getElementById('loginMessage').textContent = 'Неверный пароль';
-                        }
+                        auth.signInWithEmailAndPassword(email, pass)
+                            .then(() => {
+                                renderModeration(); // после успешного входа перерисовываем панель
+                            })
+                            .catch(error => {
+                                document.getElementById('loginMessage').textContent = 'Ошибка входа: ' + error.message;
+                            });
                     });
                     return;
                 }
 
+                // Панель модератора
                 let html = `
                     <div class="moderation-header">
                         <h2>🛡️ Панель модератора</h2>
@@ -844,8 +847,9 @@
                 contentDiv.innerHTML = html;
 
                 document.getElementById('logoutBtn').addEventListener('click', () => {
-                    sessionStorage.removeItem('adminLogged');
-                    renderModeration();
+                    auth.signOut().then(() => {
+                        renderModeration(); // после выхода вернём форму входа
+                    });
                 });
 
                 const modContent = document.getElementById('moderationContent');
@@ -966,10 +970,20 @@
                 setActiveTab('new');
             }
 
+            // Слушатель изменения статуса аутентификации
+            auth.onAuthStateChanged(user => {
+                // Если открыта вкладка модерации, обновляем её
+                if (btnModeration.classList.contains('active')) {
+                    renderModeration();
+                }
+            });
+
+            // Привязка кнопок
             btnHome.addEventListener('click', renderHome);
             btnSearch.addEventListener('click', renderSearch);
             btnModeration.addEventListener('click', renderModeration);
 
+            // Запуск главной страницы
             renderHome();
         })();
     </script>
