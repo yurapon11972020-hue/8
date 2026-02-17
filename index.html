@@ -671,11 +671,14 @@
             }
 
             // Получение статистики
-            async function getStats() {
-                const total = await db.collection('congratulations').count().get();
-                const approved = await db.collection('congratulations').where('approved', '==', true).count().get();
-                return { total: total.data().count, approved: approved.data().count };
-            }
+          async function getStats() {
+    const totalSnap = await db.collection('congratulations').get();
+    const approvedSnap = await db.collection('congratulations').where('approved', '==', true).get();
+    return { 
+        total: totalSnap.size, 
+        approved: approvedSnap.size 
+    };
+}
 
             // ---------- РАБОТА С FIRESTORE ----------
             async function addCongratulation(from, to, category, message, imageUrl) {
