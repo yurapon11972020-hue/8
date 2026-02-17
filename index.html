@@ -162,10 +162,10 @@
             z-index: 11;
         }
 
-        /* Кнопка переключения темы */
+        /* Кнопка переключения темы — теперь в правом нижнем углу */
         .theme-toggle {
             position: absolute;
-            top: 20px;
+            bottom: 20px;
             right: 20px;
             z-index: 20;
             background: rgba(255,255,255,0.5);
@@ -463,9 +463,11 @@
 
         /* ========== УЛУЧШЕННАЯ АДАПТАЦИЯ ДЛЯ МОБИЛЬНЫХ ========== */
         @media (max-width: 768px) {
-            body {
-                padding: 5px;
-                align-items: flex-start;
+            .theme-toggle {
+                bottom: 10px;
+                right: 10px;
+                padding: 6px 12px;
+                font-size: 14px;
             }
             .container {
                 flex-direction: column;
@@ -475,7 +477,7 @@
             .sidebar {
                 width: 100%;
                 flex-direction: row;
-                justify-content: center;  /* кнопки по центру */
+                justify-content: center;
                 padding: 15px 5px;
                 gap: 8px;
                 border-right: none;
