@@ -113,13 +113,13 @@
             width: 220px;
             background: rgba(255, 182, 193, 0.5);
             backdrop-filter: blur(5px);
-            padding: 30px 0;
+            padding: 30px 0 80px 0; /* снизу место для круглой кнопки */
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 20px;
             border-right: 1px solid rgba(255, 255, 255, 0.6);
-            position: relative; /* для позиционирования круглой кнопки */
+            position: relative;
         }
 
         .sidebar button {
@@ -494,172 +494,185 @@
             100% { transform: translateY(-200px) scale(1.5); opacity: 0; }
         }
 
-        /* Адаптация для мобильных */
+        /* ========== УЛУЧШЕННАЯ МОБИЛЬНАЯ АДАПТАЦИЯ ========== */
         @media (max-width: 768px) {
-            .theme-toggle {
-                bottom: 10px;
-                right: 10px;
-                padding: 6px 12px;
-                font-size: 14px;
+            body {
+                padding: 5px;
+                align-items: flex-start;
             }
-            .moderation-circle {
-                width: 50px;
-                height: 50px;
-                font-size: 24px;
-                bottom: 10px;
-            }
+
             .container {
                 flex-direction: column;
                 border-radius: 20px;
                 min-height: auto;
             }
+
             .sidebar {
                 width: 100%;
                 flex-direction: row;
-                justify-content: center;
-                padding: 15px 5px;
+                flex-wrap: wrap;
+                justify-content: space-around;
+                align-items: center;
+                padding: 15px 5px 60px 5px; /* снизу оставляем место для круглой кнопки */
                 gap: 8px;
                 border-right: none;
                 border-bottom: 1px solid rgba(255,255,255,0.6);
                 background: rgba(255, 182, 193, 0.7);
-                flex-wrap: wrap;
-                min-height: 80px;
+                min-height: auto;
+                position: relative;
             }
+
             .sidebar button {
                 width: auto;
-                min-width: 100px;
-                padding: 12px 8px;
-                font-size: 16px;
+                min-width: 90px;
+                padding: 10px 6px;
+                font-size: 14px;
                 margin: 0;
                 flex: 1 1 auto;
             }
+
+            .moderation-circle {
+                bottom: 5px;
+                width: 45px;
+                height: 45px;
+                font-size: 24px;
+            }
+
             .content {
-                padding: 20px 15px;
+                padding: 15px;
             }
+
             h1 {
-                font-size: 26px;
-            }
-            h2 {
                 font-size: 22px;
             }
-            .rules {
-                padding: 15px;
-                font-size: 14px;
+
+            h2 {
+                font-size: 18px;
             }
+
+            .rules {
+                padding: 12px;
+                font-size: 13px;
+            }
+
             .stats {
                 flex-direction: column;
                 gap: 5px;
-                padding: 12px 15px;
-                font-size: 16px;
+                padding: 10px 15px;
+                font-size: 14px;
             }
+
             .form-group input,
             .form-group textarea,
             .form-group select {
-                padding: 12px;
-                font-size: 16px;
+                padding: 10px;
+                font-size: 14px;
             }
+
             button[type="submit"], .search-btn, .approve-btn, .delete-btn, .edit-btn, .save-btn, .cancel-btn, .logout-btn, .load-more {
-                padding: 12px 20px;
-                font-size: 16px;
+                padding: 10px 15px;
+                font-size: 14px;
                 width: 100%;
                 margin-right: 0;
             }
+
             .like-btn, .share-btn {
                 width: auto;
                 margin-right: 5px;
+                font-size: 12px;
+                padding: 6px 10px;
             }
+
             .search-container {
                 flex-direction: column;
-                gap: 10px;
+                gap: 8px;
             }
+
             .search-container input {
                 width: 100%;
             }
+
             .result-item {
-                padding: 20px;
+                padding: 15px;
             }
+
+            .result-item p {
+                font-size: 14px;
+            }
+
             .moderation-tabs {
                 flex-direction: row;
                 width: 100%;
                 justify-content: center;
             }
+
             .moderation-tabs button {
                 flex: 1;
                 text-align: center;
-                padding: 12px 5px;
-                font-size: 14px;
+                padding: 10px 5px;
+                font-size: 13px;
                 min-width: 0;
             }
+
             .admin-login {
-                padding: 20px;
-                margin: 20px auto;
+                padding: 15px;
+                margin: 15px auto;
             }
+
             .floating-photo {
                 opacity: 0.15;
             }
-            .floating-photo.size-sm { width: 60px; }
-            .floating-photo.size-md { width: 80px; }
-            .floating-photo.size-lg { width: 100px; }
-            .floating-photo.size-xl { width: 120px; }
+            .floating-photo.size-sm { width: 50px; }
+            .floating-photo.size-md { width: 70px; }
+            .floating-photo.size-lg { width: 90px; }
+            .floating-photo.size-xl { width: 110px; }
         }
 
         @media (max-width: 480px) {
             .sidebar button {
-                min-width: 80px;
-                font-size: 14px;
-                padding: 10px 4px;
+                min-width: 70px;
+                font-size: 12px;
+                padding: 8px 4px;
             }
+
             h1 {
-                font-size: 22px;
+                font-size: 20px;
             }
-            h2 {
-                font-size: 18px;
-            }
-            .rules {
-                font-size: 13px;
-                padding: 12px;
-            }
+
             .stats {
-                font-size: 14px;
+                font-size: 13px;
+                padding: 8px 10px;
             }
-            .content {
-                padding: 15px 10px;
+
+            .rules {
+                font-size: 12px;
+                padding: 10px;
             }
-            .result-item {
-                padding: 15px;
+
+            .rules ul {
+                margin-left: 15px;
             }
-            .result-item p {
-                font-size: 14px;
-            }
+
             .moderation-tabs button {
-                font-size: 12px;
-                padding: 10px 2px;
-            }
-            .like-btn, .share-btn {
-                font-size: 12px;
-                padding: 6px 10px;
+                font-size: 11px;
+                padding: 8px 2px;
             }
         }
 
         @media (max-width: 360px) {
             .sidebar button {
-                min-width: 70px;
-                font-size: 12px;
-                padding: 8px 2px;
-            }
-            h1 {
-                font-size: 20px;
-            }
-            .stats {
-                font-size: 13px;
-                padding: 10px;
-            }
-            .rules ul {
-                margin-left: 15px;
-            }
-            .moderation-tabs button {
+                min-width: 60px;
                 font-size: 11px;
-                padding: 8px 1px;
+                padding: 6px 2px;
+            }
+
+            h1 {
+                font-size: 18px;
+            }
+
+            .moderation-tabs button {
+                font-size: 10px;
+                padding: 6px 1px;
             }
         }
     </style>
@@ -712,12 +725,29 @@
             const MODERATOR_EMAIL = 'yurapon11972020@gmail.com';
             const POST_COOLDOWN = 5 * 60 * 1000; // 5 минут
 
-            // ---------- СПИСОК ЗАПРЕЩЁННЫХ СЛОВ ----------
+            // ---------- РАСШИРЕННЫЙ СПИСОК ЗАПРЕЩЁННЫХ СЛОВ ----------
             const BAD_WORDS = [
                 'хуй', 'пизда', 'блядь', 'ебать', 'ебан', 'сука', 'гандон', 'пидор', 'мудак',
                 'долбоеб', 'уебок', 'залупа', 'шлюха', 'проститутка', 'пидорас', 'педик',
-                'мразь', 'тварь', 'сволочь', 'гадина', 'козел', 'редиска', 'дурак', 'идиот'
+                'мразь', 'тварь', 'сволочь', 'гадина', 'козел', 'редиска', 'дурак', 'идиот',
+                'лох', 'тупица', 'дебил', 'кретин', 'чмо', 'ублюдок', 'тварина', 'скотина',
+                'падла', 'гнида', 'шалава', 'курва', 'блядун', 'петух', 'пидор', 'гомосек'
             ];
+
+            // Улучшенная функция проверки мата (по словам)
+            function containsProfanity(text) {
+                if (!text) return false;
+                // Приводим к нижнему регистру
+                const lowerText = text.toLowerCase();
+                // Разбиваем на слова (разделители: пробелы, знаки препинания)
+                const words = lowerText.split(/[\\s,.\!?;:()\\[\\]{}"']+/);
+                for (let word of words) {
+                    if (BAD_WORDS.includes(word)) {
+                        return true;
+                    }
+                }
+                return false;
+            }
 
             // Тема
             let darkTheme = localStorage.getItem('theme') === 'dark';
@@ -729,13 +759,6 @@
                 localStorage.setItem('theme', darkTheme ? 'dark' : 'light');
                 themeToggle.textContent = darkTheme ? '☀️ Светлая тема' : '🌙 Тёмная тема';
             });
-
-            // Функция проверки мата
-            function containsProfanity(text) {
-                const lowerText = text.toLowerCase();
-                const regex = new RegExp('\\b(' + BAD_WORDS.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')\\b', 'i');
-                return regex.test(lowerText);
-            }
 
             // Анимация сердечек
             function showHeartAnimation() {
@@ -1048,6 +1071,7 @@
                         return;
                     }
 
+                    // Проверка на мат во всех полях
                     if (containsProfanity(from) || containsProfanity(to) || containsProfanity(message)) {
                         msg.className = 'message error';
                         msg.textContent = 'Ваше поздравление содержит недопустимые слова (мат или оскорбления). Пожалуйста, исправьте текст.';
@@ -1186,7 +1210,7 @@
             }
 
             async function renderModeration() {
-                // Не меняем активную кнопку, так как это круглая кнопка
+                // Не меняем активную кнопку
                 if (!isAdmin()) {
                     contentDiv.innerHTML = `
                         <div class="admin-login">
@@ -1357,9 +1381,7 @@
 
             // Слушатель изменения статуса аутентификации
             auth.onAuthStateChanged(user => {
-                // Если открыта модерация, обновим её
-                // Но мы не знаем, открыта ли она. Можно просто ничего не делать.
-                // Если нужно автоматически обновлять, то придётся хранить состояние.
+                // Если открыта модерация, можно обновить, но для простоты ничего не делаем
             });
 
             // Привязка кнопок
