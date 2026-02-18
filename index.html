@@ -27,7 +27,7 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
-        /* Тёмная тема (меняет только цвета интерфейса, фон остаётся) */
+        /* Тёмная тема */
         body.dark-theme {
             background: linear-gradient(145deg, #2d1f24 0%, #3a2a30 50%, #2d1f24 100%);
             color: #f0e0e5;
@@ -119,6 +119,7 @@
             align-items: center;
             gap: 20px;
             border-right: 1px solid rgba(255, 255, 255, 0.6);
+            position: relative;
         }
 
         .sidebar button {
@@ -152,6 +153,39 @@
             box-shadow: 0 10px 25px rgba(200, 60, 90, 0.3);
         }
 
+        /* Кнопка модерации в левом нижнем углу */
+        .moderation-circle {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #d44e6c;
+            color: white;
+            border: 3px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            font-size: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 30;
+        }
+
+        .moderation-circle:hover {
+            transform: translateX(-50%) scale(1.1);
+            background: #b3435e;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+        }
+
+        .moderation-circle.active {
+            background: #333;
+            box-shadow: 0 0 0 3px #ff8da1;
+        }
+
         .content {
             flex: 1;
             padding: 40px;
@@ -162,7 +196,7 @@
             z-index: 11;
         }
 
-        /* Кнопка переключения темы — теперь в правом нижнем углу */
+        /* Кнопка переключения темы */
         .theme-toggle {
             position: absolute;
             bottom: 20px;
@@ -447,7 +481,6 @@
             cursor: pointer;
         }
 
-        /* Анимация сердечек */
         .heart-animation {
             position: fixed;
             pointer-events: none;
@@ -461,13 +494,18 @@
             100% { transform: translateY(-200px) scale(1.5); opacity: 0; }
         }
 
-        /* ========== УЛУЧШЕННАЯ АДАПТАЦИЯ ДЛЯ МОБИЛЬНЫХ ========== */
         @media (max-width: 768px) {
             .theme-toggle {
                 bottom: 10px;
                 right: 10px;
                 padding: 6px 12px;
                 font-size: 14px;
+            }
+            .moderation-circle {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+                bottom: 10px;
             }
             .container {
                 flex-direction: column;
@@ -484,6 +522,7 @@
                 border-bottom: 1px solid rgba(255,255,255,0.6);
                 background: rgba(255, 182, 193, 0.7);
                 flex-wrap: wrap;
+                min-height: 80px;
             }
             .sidebar button {
                 width: auto;
@@ -629,8 +668,10 @@
     <div class="container">
         <div class="sidebar">
             <button id="btnHome" class="active">🏠 Главная</button>
+            <button id="btnSend">📝 Отправить</button>
             <button id="btnSearch">🔍 Поиск</button>
-            <button id="btnModeration">🛡️ Модерация</button>
+            <!-- Круглая кнопка модерации в левом нижнем углу -->
+            <div class="moderation-circle" id="btnModeration" title="Панель модератора">👮</div>
         </div>
         <div class="content" id="content"></div>
     </div>
@@ -662,6 +703,7 @@
         (function() {
             const contentDiv = document.getElementById('content');
             const btnHome = document.getElementById('btnHome');
+            const btnSend = document.getElementById('btnSend');
             const btnSearch = document.getElementById('btnSearch');
             const btnModeration = document.getElementById('btnModeration');
             const themeToggle = document.getElementById('themeToggle');
@@ -798,7 +840,7 @@
                 }
             }
 
-            // Получение статистики (загружаем все документы для подсчёта – оптимизировать можно позже)
+            // Получение статистики
             async function getStats() {
                 const totalSnap = await db.collection('congratulations').get();
                 const approvedSnap = await db.collection('congratulations').where('approved', '==', true).get();
@@ -816,7 +858,7 @@
                         date: firebase.firestore.FieldValue.serverTimestamp(),
                         approved: false,
                         likes: 0,
-                        editToken: Math.random().toString(36).substring(2, 15) // простой токен для редактирования
+                        editToken: Math.random().toString(36).substring(2, 15)
                     });
                     return { success: true, id: docRef.id, editToken: docRef.editToken };
                 } catch (error) {
@@ -885,8 +927,12 @@
 
             // ---------- НАВИГАЦИЯ ----------
             function setActiveButton(activeId) {
-                [btnHome, btnSearch, btnModeration].forEach(btn => btn.classList.remove('active'));
-                document.getElementById(activeId).classList.add('active');
+                [btnHome, btnSend, btnSearch].forEach(btn => btn.classList.remove('active'));
+                if (activeId !== 'btnModeration') {
+                    document.getElementById(activeId).classList.add('active');
+                }
+                // Убираем активный класс с круглой кнопки
+                btnModeration.classList.remove('active');
             }
 
             // ---------- РЕНДЕР РАЗДЕЛОВ ----------
@@ -909,415 +955,13 @@
                             <li>Одно поздравление можно отправлять не чаще, чем раз в 5 минут.</li>
                         </ul>
                     </div>
+                    <p style="text-align: center; margin-top: 30px;">👆 Нажмите "Отправить" в меню, чтобы написать поздравление</p>
+                `;
+            }
+
+            async function renderSend() {
+                setActiveButton('btnSend');
+                contentDiv.innerHTML = `
                     <h2>✍️ Отправить поздравление</h2>
                     <form id="greetingForm">
-                        <div class="form-group">
-                            <label for="from">От кого (ваше имя и фамилия):</label>
-                            <input type="text" id="from" required placeholder="Иван Иванов">
-                        </div>
-                        <div class="form-group">
-                            <label for="to">Кому (имя и фамилия получателя):</label>
-                            <input type="text" id="to" required placeholder="Мария Петрова">
-                        </div>
-                        <div class="form-group">
-                            <label for="category">Категория получателя:</label>
-                            <select id="category" required>
-                                <option value="teacher">👩‍🏫 Преподаватель</option>
-                                <option value="classmate">👥 Одногруппник</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="message">Текст поздравления:</label>
-                            <textarea id="message" required placeholder="С 8 марта! Желаю счастья..."></textarea>
-                        </div>
-                        <button type="submit" id="submitBtn">Отправить на модерацию 💐</button>
-                        <div id="formMessage" class="message"></div>
-                        <div id="timerMessage" class="timer-message"></div>
-                    </form>
-                    <div id="editNotification"></div>
-                `;
-
-                const form = document.getElementById('greetingForm');
-                const submitBtn = document.getElementById('submitBtn');
-                const msg = document.getElementById('formMessage');
-                const timerMsg = document.getElementById('timerMessage');
-                const editNotif = document.getElementById('editNotification');
-
-                // Если есть токен в localStorage, показываем ссылку на редактирование
-                const lastToken = localStorage.getItem('lastEditToken');
-                if (lastToken) {
-                    editNotif.innerHTML = `<p>✏️ <a href="#" class="edit-link" data-token="${lastToken}">Редактировать последнее отправленное поздравление</a> (до модерации)</p>`;
-                    editNotif.querySelector('.edit-link').addEventListener('click', async (e) => {
-                        e.preventDefault();
-                        const token = e.target.dataset.token;
-                        const item = await findByEditToken(token);
-                        if (item && !item.approved) {
-                            document.getElementById('from').value = item.from;
-                            document.getElementById('to').value = item.to;
-                            document.getElementById('category').value = item.category || 'teacher';
-                            document.getElementById('message').value = item.message;
-                            // Удалим старую запись и создадим новую (или можно обновлять)
-                            if (confirm('Вы сможете отправить исправленную версию. Старая будет удалена.')) {
-                                await deleteCongratulation(item.id);
-                                localStorage.removeItem('lastEditToken');
-                                editNotif.innerHTML = '';
-                            }
-                        } else {
-                            alert('Поздравление уже одобрено или не найдено.');
-                        }
-                    });
-                }
-
-                function updateButtonState() {
-                    if (canPost()) {
-                        submitBtn.disabled = false;
-                        timerMsg.textContent = '';
-                    } else {
-                        submitBtn.disabled = true;
-                        const sec = getRemainingSeconds();
-                        timerMsg.textContent = `⏳ Отправлять можно будет через ${sec} сек.`;
-                    }
-                }
-
-                const timerInterval = setInterval(updateButtonState, 1000);
-                updateButtonState();
-
-                form.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-
-                    const from = document.getElementById('from').value.trim();
-                    const to = document.getElementById('to').value.trim();
-                    const category = document.getElementById('category').value;
-                    const message = document.getElementById('message').value.trim();
-
-                    if (!from || !to || !message) {
-                        msg.className = 'message error';
-                        msg.textContent = 'Все поля должны быть заполнены!';
-                        msg.style.display = 'block';
-                        return;
-                    }
-
-                    if (containsProfanity(from) || containsProfanity(to) || containsProfanity(message)) {
-                        msg.className = 'message error';
-                        msg.textContent = 'Ваше поздравление содержит недопустимые слова (мат или оскорбления). Пожалуйста, исправьте текст.';
-                        msg.style.display = 'block';
-                        return;
-                    }
-
-                    if (!canPost()) {
-                        msg.className = 'message error';
-                        msg.textContent = 'Подождите 5 минут перед следующей отправкой.';
-                        msg.style.display = 'block';
-                        return;
-                    }
-
-                    const result = await addCongratulation(from, to, category, message);
-                    if (result.success) {
-                        form.reset();
-                        setLastPostTime();
-                        updateButtonState();
-                        msg.className = 'message success';
-                        msg.textContent = 'Поздравление отправлено на модерацию! 💖';
-                        msg.style.display = 'block';
-                        showHeartAnimation();
-                        localStorage.setItem('lastEditToken', result.editToken);
-                        editNotif.innerHTML = `<p>✏️ <a href="#" class="edit-link" data-token="${result.editToken}">Редактировать отправленное</a> (до модерации)</p>`;
-                        editNotif.querySelector('.edit-link').addEventListener('click', async (e) => {
-                            e.preventDefault();
-                            const token = e.target.dataset.token;
-                            const item = await findByEditToken(token);
-                            if (item && !item.approved) {
-                                document.getElementById('from').value = item.from;
-                                document.getElementById('to').value = item.to;
-                                document.getElementById('category').value = item.category || 'teacher';
-                                document.getElementById('message').value = item.message;
-                                await deleteCongratulation(item.id);
-                                localStorage.removeItem('lastEditToken');
-                                editNotif.innerHTML = '';
-                            } else {
-                                alert('Поздравление уже одобрено или не найдено.');
-                            }
-                        });
-                        setTimeout(() => msg.style.display = 'none', 3000);
-                    } else {
-                        msg.className = 'message error';
-                        msg.textContent = 'Ошибка отправки. Попробуйте позже.';
-                        msg.style.display = 'block';
-                    }
-                });
-            }
-
-            function renderSearch() {
-                setActiveButton('btnSearch');
-                contentDiv.innerHTML = `
-                    <h1>🔎 Поиск поздравлений</h1>
-                    <div class="search-container">
-                        <input type="text" id="searchInput" placeholder="Введите имя и фамилию получателя">
-                        <button class="search-btn" id="searchBtn">Найти</button>
-                    </div>
-                    <div id="searchResults" class="search-hint">Введите имя для поиска</div>
-                    <button id="loadMoreBtn" class="load-more" style="display:none;">Загрузить ещё</button>
-                `;
-
-                const input = document.getElementById('searchInput');
-                const btn = document.getElementById('searchBtn');
-                const results = document.getElementById('searchResults');
-                const loadMore = document.getElementById('loadMoreBtn');
-                let lastDoc = null;
-                let currentQuery = '';
-
-                async function perform(reset = true) {
-                    const query = input.value.trim();
-                    if (!query && reset) {
-                        results.innerHTML = '<div class="search-hint">Введите имя для поиска</div>';
-                        loadMore.style.display = 'none';
-                        return;
-                    }
-                    if (reset) {
-                        currentQuery = query;
-                        lastDoc = null;
-                    }
-                    const data = await searchApprovedCongrats(currentQuery, lastDoc);
-                    if (data.results.length === 0 && reset) {
-                        results.innerHTML = `<div class="no-results">😔 По запросу «${currentQuery}» ничего не найдено.</div>`;
-                        loadMore.style.display = 'none';
-                    } else {
-                        if (reset) results.innerHTML = '';
-                        data.results.forEach(item => {
-                            const d = item.date ? new Date(item.date.seconds * 1000).toLocaleString() : '';
-                            results.innerHTML += `
-                                <div class="result-item">
-                                    <p><strong>От кого:</strong> ${item.from}</p>
-                                    <p><strong>Кому:</strong> ${item.to} (${item.category === 'teacher' ? '👩‍🏫' : '👥'})</p>
-                                    <p><strong>Текст:</strong> ${item.message}</p>
-                                    <small>${d} | ❤️ ${item.likes || 0}</small>
-                                    <br>
-                                    <button class="like-btn" data-id="${item.id}">❤️ Нравится</button>
-                                    <button class="share-btn" data-id="${item.id}">🔗 Поделиться</button>
-                                </div>
-                            `;
-                        });
-                        lastDoc = data.last;
-                        loadMore.style.display = data.last ? 'block' : 'none';
-
-                        // Обработчики лайков и поделиться
-                        document.querySelectorAll('.like-btn').forEach(btn => {
-                            btn.addEventListener('click', async (e) => {
-                                const id = e.target.dataset.id;
-                                await likeCongratulation(id);
-                                e.target.disabled = true;
-                                e.target.textContent = '❤️ Спасибо!';
-                            });
-                        });
-                        document.querySelectorAll('.share-btn').forEach(btn => {
-                            btn.addEventListener('click', (e) => {
-                                const id = e.target.dataset.id;
-                                const url = window.location.href.split('#')[0] + '#congratulation=' + id;
-                                navigator.clipboard.writeText(url);
-                                alert('Ссылка скопирована!');
-                            });
-                        });
-                    }
-                }
-
-                btn.addEventListener('click', () => perform(true));
-                input.addEventListener('keypress', e => e.key === 'Enter' && perform(true));
-                loadMore.addEventListener('click', () => perform(false));
-            }
-
-            async function renderModeration() {
-                setActiveButton('btnModeration');
-
-                if (!isAdmin()) {
-                    contentDiv.innerHTML = `
-                        <div class="admin-login">
-                            <h2>🔐 Вход для модератора</h2>
-                            <input type="email" id="adminEmail" placeholder="Email" value="${MODERATOR_EMAIL}">
-                            <input type="password" id="adminPass" placeholder="Пароль">
-                            <button id="loginAdminBtn">Войти</button>
-                            <div id="loginMessage"></div>
-                        </div>
-                    `;
-
-                    document.getElementById('loginAdminBtn').addEventListener('click', () => {
-                        const email = document.getElementById('adminEmail').value;
-                        const pass = document.getElementById('adminPass').value;
-                        auth.signInWithEmailAndPassword(email, pass)
-                            .then(() => {
-                                renderModeration();
-                            })
-                            .catch(error => {
-                                document.getElementById('loginMessage').textContent = 'Ошибка входа: ' + error.message;
-                            });
-                    });
-                    return;
-                }
-
-                let html = `
-                    <div class="moderation-header">
-                        <h2>🛡️ Панель модератора</h2>
-                        <button class="logout-btn" id="logoutBtn">🚪 Выйти</button>
-                    </div>
-                    <div class="moderation-tabs">
-                        <button id="tabNew" class="active-tab">📬 Новые</button>
-                        <button id="tabAll">📋 Все записи</button>
-                    </div>
-                    <div id="moderationContent"></div>
-                `;
-                contentDiv.innerHTML = html;
-
-                document.getElementById('logoutBtn').addEventListener('click', () => {
-                    auth.signOut().then(() => {
-                        renderModeration();
-                    });
-                });
-
-                const modContent = document.getElementById('moderationContent');
-                const tabNew = document.getElementById('tabNew');
-                const tabAll = document.getElementById('tabAll');
-
-                function setActiveTab(tab) {
-                    [tabNew, tabAll].forEach(b => b.classList.remove('active-tab'));
-                    if (tab === 'new') {
-                        tabNew.classList.add('active-tab');
-                        loadNew();
-                    } else {
-                        tabAll.classList.add('active-tab');
-                        loadAll();
-                    }
-                }
-
-                async function loadNew() {
-                    const items = await getUnapprovedCongrats();
-                    renderItems(items, 'new');
-                }
-
-                async function loadAll() {
-                    const items = await getAllCongrats();
-                    renderItems(items, 'all');
-                }
-
-                function renderItems(items, type) {
-                    if (items.length === 0) {
-                        modContent.innerHTML = '<p class="no-results">✨ Нет записей</p>';
-                        return;
-                    }
-
-                    let out = '';
-                    items.forEach(item => {
-                        const dateStr = item.date ? new Date(item.date.seconds * 1000).toLocaleString() : '';
-                        const approvedStatus = item.approved ? '✅ Одобрено' : '⏳ На модерации';
-
-                        out += `
-                            <div class="result-item" data-id="${item.id}">
-                                <div class="item-view">
-                                    <p><strong>От:</strong> <span class="from-text">${item.from}</span></p>
-                                    <p><strong>Кому:</strong> <span class="to-text">${item.to} (${item.category === 'teacher' ? '👩‍🏫' : '👥'})</span></p>
-                                    <p><strong>Текст:</strong> <span class="msg-text">${item.message}</span></p>
-                                    <p><small>${dateStr} | ${approvedStatus} | ❤️ ${item.likes || 0}</small></p>
-                                    <button class="edit-btn" data-id="${item.id}">✏️ Редактировать</button>
-                                    <button class="delete-btn" data-id="${item.id}">🗑️ Удалить</button>
-                                    ${!item.approved ? `<button class="approve-btn" data-id="${item.id}">✅ Одобрить</button>` : ''}
-                                </div>
-                                <div class="item-edit" style="display:none;">
-                                    <input class="inline-edit-input edit-from" value="${item.from.replace(/"/g, '&quot;')}">
-                                    <input class="inline-edit-input edit-to" value="${item.to.replace(/"/g, '&quot;')}">
-                                    <input class="inline-edit-input edit-category" value="${item.category || 'teacher'}">
-                                    <textarea class="inline-edit-input edit-msg">${item.message.replace(/"/g, '&quot;')}</textarea>
-                                    <button class="save-btn" data-id="${item.id}">💾 Сохранить</button>
-                                    <button class="cancel-btn">❌ Отмена</button>
-                                </div>
-                            </div>
-                        `;
-                    });
-
-                    modContent.innerHTML = out;
-
-                    document.querySelectorAll('.edit-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            const card = e.target.closest('.result-item');
-                            card.querySelector('.item-view').style.display = 'none';
-                            card.querySelector('.item-edit').style.display = 'block';
-                        });
-                    });
-
-                    document.querySelectorAll('.cancel-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            const card = e.target.closest('.result-item');
-                            card.querySelector('.item-view').style.display = 'block';
-                            card.querySelector('.item-edit').style.display = 'none';
-                        });
-                    });
-
-                    document.querySelectorAll('.save-btn').forEach(btn => {
-                        btn.addEventListener('click', async (e) => {
-                            const card = e.target.closest('.result-item');
-                            const id = card.dataset.id;
-                            const from = card.querySelector('.edit-from').value.trim();
-                            const to = card.querySelector('.edit-to').value.trim();
-                            const category = card.querySelector('.edit-category').value.trim();
-                            const msg = card.querySelector('.edit-msg').value.trim();
-
-                            if (!from || !to || !msg) {
-                                alert('Заполните все поля!');
-                                return;
-                            }
-
-                            await updateCongratulation(id, { from, to, category, message: msg });
-                            await logModeratorAction('edit', `Изменил запись ${id}`, id);
-                            if (type === 'new') loadNew(); else loadAll();
-                        });
-                    });
-
-                    document.querySelectorAll('.delete-btn').forEach(btn => {
-                        btn.addEventListener('click', async (e) => {
-                            const reason = prompt('Укажите причину удаления (будет показана автору):');
-                            if (reason === null) return;
-                            const id = e.target.dataset.id;
-                            await deleteCongratulation(id);
-                            await logModeratorAction('delete', `Удалил запись ${id}. Причина: ${reason}`, id);
-                            if (type === 'new') loadNew(); else loadAll();
-                        });
-                    });
-
-                    document.querySelectorAll('.approve-btn').forEach(btn => {
-                        btn.addEventListener('click', async (e) => {
-                            const id = e.target.dataset.id;
-                            await updateCongratulation(id, { approved: true });
-                            await logModeratorAction('approve', `Одобрил запись ${id}`, id);
-                            if (type === 'new') loadNew(); else loadAll();
-                        });
-                    });
-                }
-
-                tabNew.addEventListener('click', () => setActiveTab('new'));
-                tabAll.addEventListener('click', () => setActiveTab('all'));
-
-                setActiveTab('new');
-            }
-
-            auth.onAuthStateChanged(user => {
-                if (btnModeration.classList.contains('active')) {
-                    renderModeration();
-                }
-            });
-
-            btnHome.addEventListener('click', renderHome);
-            btnSearch.addEventListener('click', renderSearch);
-            btnModeration.addEventListener('click', renderModeration);
-
-            renderHome();
-
-            // Обработка ссылки с #congratulation=id
-            if (window.location.hash.startsWith('#congratulation=')) {
-                const id = window.location.hash.split('=')[1];
-                // можно показать конкретное поздравление, но для простоты перейдём в поиск
-                btnSearch.click();
-                setTimeout(() => {
-                    document.getElementById('searchInput').value = '';
-                }, 500);
-            }
-        })();
-    </script>
-</body>
-</html>
+                        <div class
