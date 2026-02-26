@@ -1035,10 +1035,10 @@
             // Массив email-адресов модераторов (точные копии из Authentication)
             const MODERATOR_EMAILS = [
                 'yurapon11972020@gmail.com',
-                'yraslavskibididobi@mail.ru',   // исправлено
+                'yraslavskibididobi@mail.ru',
                 'iluhamoder@mail.ru',
                 'danilsupervpn@mail.ru',
-                'skvizzymedium@mail.ru',        // исправлено
+                'skvizzymedium@mail.ru',
                 'dlaprepodov@mail.ru'
             ].map(email => email.toLowerCase());
 
@@ -1164,10 +1164,35 @@
                 }
             }
 
+            // ========== ОПТИМИЗИРОВАННАЯ СТАТИСТИКА С КЭШЕМ ==========
+            const STATS_CACHE_KEY = 'stats_cache';
+            const STATS_CACHE_TTL = 5 * 60 * 1000; // 5 минут
+
             async function getStats() {
-                const totalSnap = await db.collection('congratulations').get();
-                const approvedSnap = await db.collection('congratulations').where('approved', '==', true).get();
-                return { total: totalSnap.size, approved: approvedSnap.size };
+                // Пытаемся взять из кэша
+                const cached = localStorage.getItem(STATS_CACHE_KEY);
+                if (cached) {
+                    const { stats, timestamp } = JSON.parse(cached);
+                    if (Date.now() - timestamp < STATS_CACHE_TTL) {
+                        return stats;
+                    }
+                }
+
+                // Если кэш устарел или отсутствует, делаем запросы параллельно
+                const [totalSnap, approvedSnap] = await Promise.all([
+                    db.collection('congratulations').get(),
+                    db.collection('congratulations').where('approved', '==', true).get()
+                ]);
+                const stats = { total: totalSnap.size, approved: approvedSnap.size };
+
+                // Сохраняем в кэш
+                localStorage.setItem(STATS_CACHE_KEY, JSON.stringify({ stats, timestamp: Date.now() }));
+                return stats;
+            }
+
+            // Функция для сброса кэша статистики (вызывать при изменении данных)
+            function invalidateStatsCache() {
+                localStorage.removeItem(STATS_CACHE_KEY);
             }
 
             async function addCongratulation(from, to, category, message) {
@@ -1178,6 +1203,7 @@
                         approved: false,
                         likes: 0
                     });
+                    invalidateStatsCache(); // сброс кэша статистики
                     return { success: true, id: docRef.id };
                 } catch (error) {
                     console.error("Ошибка добавления: ", error);
@@ -1295,15 +1321,16 @@
                 btnModeration.classList.remove('active');
             }
 
-            // ==================== ГЛАВНАЯ ====================
+            // ==================== ГЛАВНАЯ (ОПТИМИЗИРОВАННАЯ) ====================
             async function renderHome() {
                 setActiveButton('btnHome');
-                const stats = await getStats();
+                
+                // Сразу показываем шаблон с плейсхолдерами
                 contentDiv.innerHTML = `
                     <h1>🌸 Поздравления с 8 марта</h1>
                     <div class="stats">
-                        <span>📨 Всего отправлено: ${stats.total}</span>
-                        <span>✅ Одобрено: ${stats.approved}</span>
+                        <span>📨 Всего отправлено: <span id="totalStat">...</span></span>
+                        <span>✅ Одобрено: <span id="approvedStat">...</span></span>
                     </div>
                     <div class="rules">
                         <strong>Правила:</strong>
@@ -1319,33 +1346,34 @@
                     <button id="loadMoreRecentBtn" class="load-more" style="display:none;">Загрузить ещё 3</button>
                 `;
 
+                // Загружаем статистику и последние записи параллельно
+                const [stats, recentData] = await Promise.all([
+                    getStats(),
+                    loadRecentApproved(null, 3)  // первая загрузка трёх записей
+                ]);
+
+                // Обновляем статистику
+                document.getElementById('totalStat').textContent = stats.total;
+                document.getElementById('approvedStat').textContent = stats.approved;
+
                 const recentDiv = document.getElementById('recentResults');
                 const loadMoreBtn = document.getElementById('loadMoreRecentBtn');
-                let lastDoc = null;
-                let allLoaded = false;
+                let lastDoc = recentData.last;
+                let allLoaded = recentData.results.length < 3;
 
-                async function loadRecent(reset = true) {
-                    if (reset) {
-                        lastDoc = null;
-                        recentDiv.innerHTML = '<div class="search-hint">Загрузка...</div>';
-                        allLoaded = false;
-                    }
+                // Отображаем первые три записи
+                if (recentData.results.length === 0) {
+                    recentDiv.innerHTML = '<div class="no-results">😔 Пока нет одобренных поздравлений.</div>';
+                    loadMoreBtn.style.display = 'none';
+                } else {
+                    recentDiv.innerHTML = ''; // очищаем "Загрузка..."
+                    renderRecentItems(recentData.results, recentDiv);
+                    loadMoreBtn.style.display = allLoaded ? 'none' : 'block';
+                }
 
-                    const data = await loadRecentApproved(lastDoc, 3);
-                    
-                    if (data.results.length === 0) {
-                        if (reset) {
-                            recentDiv.innerHTML = '<div class="no-results">😔 Пока нет одобренных поздравлений.</div>';
-                        } else {
-                            allLoaded = true;
-                        }
-                        loadMoreBtn.style.display = 'none';
-                        return;
-                    }
-
-                    if (reset) recentDiv.innerHTML = '';
-
-                    data.results.forEach((item, index) => {
+                // Функция для отрисовки карточек (вынесена для переиспользования)
+                function renderRecentItems(items, container) {
+                    items.forEach((item, index) => {
                         const d = item.date ? new Date(item.date.seconds * 1000).toLocaleString() : '';
                         const cardHtml = `
                             <div class="result-item" style="animation-delay: ${index * 0.1}s">
@@ -1358,22 +1386,11 @@
                                 <button class="share-btn" data-id="${item.id}" data-to="${item.to}">🔗 Поделиться</button>
                             </div>
                         `;
-                        recentDiv.insertAdjacentHTML('beforeend', cardHtml);
+                        container.insertAdjacentHTML('beforeend', cardHtml);
                     });
 
-                    lastDoc = data.last;
-                    allLoaded = data.results.length < 3;
-                    loadMoreBtn.style.display = allLoaded ? 'none' : 'block';
-
-                    // Обновляем обработчики (удаляем старые через replace)
-                    document.querySelectorAll('#recentResults .like-btn').forEach(btn => {
-                        btn.replaceWith(btn.cloneNode(true));
-                    });
-                    document.querySelectorAll('#recentResults .share-btn').forEach(btn => {
-                        btn.replaceWith(btn.cloneNode(true));
-                    });
-
-                    document.querySelectorAll('#recentResults .like-btn').forEach(btn => {
+                    // Навешиваем обработчики
+                    container.querySelectorAll('.like-btn').forEach(btn => {
                         btn.addEventListener('click', async (e) => {
                             const id = e.target.dataset.id;
                             await likeCongratulation(id);
@@ -1381,7 +1398,7 @@
                             e.target.textContent = '❤️ Спасибо!';
                         });
                     });
-                    document.querySelectorAll('#recentResults .share-btn').forEach(btn => {
+                    container.querySelectorAll('.share-btn').forEach(btn => {
                         btn.addEventListener('click', (e) => {
                             const id = e.target.dataset.id;
                             const to = e.target.dataset.to;
@@ -1393,11 +1410,20 @@
                     });
                 }
 
-                loadMoreBtn.addEventListener('click', () => {
-                    if (!allLoaded) loadRecent(false);
+                // Обработчик кнопки "Загрузить ещё"
+                loadMoreBtn.addEventListener('click', async () => {
+                    if (allLoaded) return;
+                    const data = await loadRecentApproved(lastDoc, 3);
+                    if (data.results.length > 0) {
+                        renderRecentItems(data.results, recentDiv);
+                        lastDoc = data.last;
+                        allLoaded = data.results.length < 3;
+                        loadMoreBtn.style.display = allLoaded ? 'none' : 'block';
+                    } else {
+                        allLoaded = true;
+                        loadMoreBtn.style.display = 'none';
+                    }
                 });
-
-                await loadRecent(true);
             }
 
             // ==================== ОТПРАВКА ====================
@@ -1794,6 +1820,7 @@
                             try {
                                 await updateCongratulation(id, { from, to, category, message: msg });
                                 await logModeratorAction('edit', `Изменил запись ${id}`, id);
+                                invalidateStatsCache(); // сброс кэша статистики
                                 if (type === 'new') loadNew(); else loadAll();
                             } catch (error) {
                                 alert('Ошибка сохранения: ' + error.message);
@@ -1808,6 +1835,7 @@
                                 try {
                                     await deleteCongratulation(id);
                                     await logModeratorAction('delete', `Удалил запись ${id}`, id);
+                                    invalidateStatsCache(); // сброс кэша статистики
                                     if (type === 'new') loadNew(); else loadAll();
                                 } catch (error) {
                                     alert('Ошибка удаления: ' + error.message);
@@ -1822,6 +1850,7 @@
                             try {
                                 await updateCongratulation(id, { approved: true });
                                 await logModeratorAction('approve', `Одобрил запись ${id}`, id);
+                                invalidateStatsCache(); // сброс кэша статистики
                                 if (type === 'new') loadNew(); else loadAll();
                             } catch (error) {
                                 alert('Ошибка одобрения: ' + error.message);
