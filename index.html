@@ -537,7 +537,7 @@
             .sidebar button {
                 width: auto;
                 min-width: 90px;
-                padding: 10px 6px;
+                padding: 12px 6px;
                 font-size: 14px;
                 margin: 0;
                 flex: 1 1 auto;
@@ -545,13 +545,137 @@
 
             .moderation-circle {
                 bottom: 5px;
-                width: 45px;
-                height: 45px;
-                font-size: 24px;
+                width: 48px;
+                height: 48px;
+                font-size: 26px;
             }
 
             .content {
                 padding: 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            .rules {
+                padding: 15px;
+                font-size: 14px;
+            }
+
+            .stats {
+                flex-direction: column;
+                gap: 8px;
+                padding: 12px 15px;
+                font-size: 15px;
+            }
+
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                padding: 12px;
+                font-size: 16px;
+            }
+
+            button[type="submit"], .search-btn, .approve-btn, .delete-btn, .edit-btn,
+            .save-btn, .cancel-btn, .logout-btn, .load-more {
+                padding: 14px 15px;
+                font-size: 16px;
+                width: 100%;
+                margin-right: 0;
+                margin-top: 8px;
+            }
+
+            .like-btn, .share-btn {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 8px;
+                font-size: 16px;
+                padding: 12px 10px;
+            }
+
+            .search-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .search-container input {
+                width: 100%;
+                font-size: 16px;
+                padding: 12px;
+            }
+
+            .result-item {
+                padding: 18px;
+                margin-bottom: 20px;
+            }
+
+            .result-item p {
+                font-size: 15px;
+                line-height: 1.5;
+            }
+
+            .result-item small {
+                font-size: 13px;
+            }
+
+            .moderation-tabs {
+                flex-direction: row;
+                width: 100%;
+                justify-content: center;
+                gap: 5px;
+            }
+
+            .moderation-tabs button {
+                flex: 1;
+                text-align: center;
+                padding: 12px 5px;
+                font-size: 14px;
+                min-width: 0;
+            }
+
+            .admin-login {
+                padding: 20px;
+                margin: 20px auto;
+            }
+
+            .admin-login input {
+                padding: 12px;
+                font-size: 16px;
+            }
+
+            .floating-photo {
+                opacity: 0.1;
+            }
+            .floating-photo.size-sm { width: 40px; }
+            .floating-photo.size-md { width: 60px; }
+            .floating-photo.size-lg { width: 80px; }
+            .floating-photo.size-xl { width: 100px; }
+
+            .sort-container select {
+                width: 100%;
+                padding: 12px;
+                font-size: 16px;
+            }
+
+            .sort-container label {
+                font-size: 16px;
+            }
+
+            .timer-message {
+                font-size: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .sidebar button {
+                min-width: 70px;
+                font-size: 13px;
+                padding: 10px 4px;
             }
 
             h1 {
@@ -562,107 +686,14 @@
                 font-size: 18px;
             }
 
+            .stats {
+                font-size: 14px;
+                padding: 10px 12px;
+            }
+
             .rules {
+                font-size: 13px;
                 padding: 12px;
-                font-size: 13px;
-            }
-
-            .stats {
-                flex-direction: column;
-                gap: 5px;
-                padding: 10px 15px;
-                font-size: 14px;
-            }
-
-            .form-group input,
-            .form-group textarea,
-            .form-group select {
-                padding: 10px;
-                font-size: 14px;
-            }
-
-            button[type="submit"], .search-btn, .approve-btn, .delete-btn, .edit-btn, .save-btn, .cancel-btn, .logout-btn, .load-more {
-                padding: 10px 15px;
-                font-size: 14px;
-                width: 100%;
-                margin-right: 0;
-            }
-
-            .like-btn, .share-btn {
-                width: auto;
-                margin-right: 5px;
-                font-size: 12px;
-                padding: 6px 10px;
-            }
-
-            .search-container {
-                flex-direction: column;
-                gap: 8px;
-            }
-
-            .search-container input {
-                width: 100%;
-            }
-
-            .result-item {
-                padding: 15px;
-            }
-
-            .result-item p {
-                font-size: 14px;
-            }
-
-            .moderation-tabs {
-                flex-direction: row;
-                width: 100%;
-                justify-content: center;
-            }
-
-            .moderation-tabs button {
-                flex: 1;
-                text-align: center;
-                padding: 10px 5px;
-                font-size: 13px;
-                min-width: 0;
-            }
-
-            .admin-login {
-                padding: 15px;
-                margin: 15px auto;
-            }
-
-            .floating-photo {
-                opacity: 0.15;
-            }
-            .floating-photo.size-sm { width: 50px; }
-            .floating-photo.size-md { width: 70px; }
-            .floating-photo.size-lg { width: 90px; }
-            .floating-photo.size-xl { width: 110px; }
-
-            .sort-container select {
-                width: 100%;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .sidebar button {
-                min-width: 70px;
-                font-size: 12px;
-                padding: 8px 4px;
-            }
-
-            h1 {
-                font-size: 20px;
-            }
-
-            .stats {
-                font-size: 13px;
-                padding: 8px 10px;
-            }
-
-            .rules {
-                font-size: 12px;
-                padding: 10px;
             }
 
             .rules ul {
@@ -670,25 +701,37 @@
             }
 
             .moderation-tabs button {
-                font-size: 11px;
-                padding: 8px 2px;
+                font-size: 12px;
+                padding: 10px 2px;
+            }
+
+            .content {
+                padding: 12px;
             }
         }
 
         @media (max-width: 360px) {
             .sidebar button {
                 min-width: 60px;
-                font-size: 11px;
-                padding: 6px 2px;
+                font-size: 12px;
+                padding: 8px 2px;
             }
 
             h1 {
-                font-size: 18px;
+                font-size: 20px;
             }
 
             .moderation-tabs button {
-                font-size: 10px;
-                padding: 6px 1px;
+                font-size: 11px;
+                padding: 8px 1px;
+            }
+
+            .content {
+                padding: 10px;
+            }
+
+            .result-item {
+                padding: 15px;
             }
         }
     </style>
@@ -1004,7 +1047,6 @@
                         <ul style="margin-top:10px; margin-left:20px;">
                             <li>Заполните все поля, чтобы отправить поздравление.</li>
                             <li>Укажите, от кого и кому (имя и фамилию).</li>
-                            <li>Текст поздравления должен быть культурным, без нецензурной лексики и оскорблений.</li>
                             <li>Все поздравления проходят модерацию перед публикацией.</li>
                             <li>Одно поздравление можно отправлять не чаще, чем раз в 5 минут.</li>
                         </ul>
@@ -1099,7 +1141,6 @@
                         <div id="timerMessage" class="timer-message"></div>
                     </form>
                 `;
-                // Весь код, связанный с editToken, удалён
 
                 const form = document.getElementById('greetingForm');
                 const submitBtn = document.getElementById('submitBtn');
@@ -1134,9 +1175,6 @@
                         msg.style.display = 'block';
                         return;
                     }
-
-                    // Проверка на мат (можно удалить, если не нужна)
-                    // Оставлена для примера
 
                     if (!canPost()) {
                         msg.className = 'message error';
