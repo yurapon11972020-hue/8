@@ -902,11 +902,14 @@
                 margin-top: 10px;
             }
             .load-more {
-                width: auto;
-                min-width: 220px;
-                padding: 16px 24px;
+                width: 100%;
+                padding: 18px 20px;
                 font-size: 18px;
-                margin: 15px auto 0;
+                margin: 20px 0 10px;
+                background: linear-gradient(145deg, #ffb3c6, #ff8da1);
+                border-radius: 50px;
+                font-weight: 600;
+                letter-spacing: 0.5px;
             }
             .like-btn, .share-btn {
                 width: 100%;
@@ -923,6 +926,7 @@
             }
             .result-item { padding: 24px; margin-bottom: 20px; }
             .result-item p { font-size: 17px; line-height: 1.5; }
+            .result-item small { font-size: 14px; }
             .sort-container {
                 flex-direction: column;
                 align-items: stretch;
@@ -1028,13 +1032,14 @@
             const btnModeration = document.getElementById('btnModeration');
             const themeToggle = document.getElementById('themeToggle');
 
-            // Массив email-адресов модераторов
+            // Массив email-адресов модераторов (точные копии из Authentication)
             const MODERATOR_EMAILS = [
                 'yurapon11972020@gmail.com',
-                'yraslavskibididobi@mail.ru',
+                'yraslavskibididobi@mail.ru',   // исправлено
                 'iluhamoder@mail.ru',
                 'danilsupervpn@mail.ru',
-                'skvizzymedium@mail.ru'
+                'skvizzymedium@mail.ru',        // исправлено
+                'dlaprepodov@mail.ru'
             ].map(email => email.toLowerCase());
 
             const POST_COOLDOWN = 5 * 60 * 1000;
@@ -1043,7 +1048,7 @@
             let clickCount = 0;
             let firstClickTime = 0;
             let easterEggActive = false;
-            let currentEggIndex = 1; // 1 или 2 для чередования
+            let currentEggIndex = 1;
 
             const audio = document.getElementById('easterAudio');
             const egg1 = document.getElementById('egg1');
@@ -1052,49 +1057,33 @@
             function showEasterEgg() {
                 if (easterEggActive) return;
                 easterEggActive = true;
-
-                // Выбираем текущее фото
                 const currentEgg = currentEggIndex === 1 ? egg1 : egg2;
                 const nextIndex = currentEggIndex === 1 ? 2 : 1;
-
-                // Убираем предыдущие классы
                 currentEgg.classList.remove('hide', 'show');
-                // Показываем фото (мгновенно)
                 currentEgg.style.display = 'block';
-                // Принудительный reflow для применения display
                 void currentEgg.offsetWidth;
-                // Добавляем класс show (opacity 1) — появляется резко, без анимации
                 currentEgg.classList.add('show');
-
-                // Воспроизводим музыку
                 audio.currentTime = 0;
                 audio.play().catch(e => console.log("Ошибка воспроизведения аудио:", e));
-
-                // Через 4.5 секунды начинаем исчезновение
                 setTimeout(() => {
                     currentEgg.classList.remove('show');
-                    currentEgg.classList.add('hide'); // запускает transition на opacity
+                    currentEgg.classList.add('hide');
                 }, 4500);
-
-                // Через 6 секунд (4.5 + 1.5) полностью скрываем и разрешаем следующее фото
                 setTimeout(() => {
                     currentEgg.style.display = 'none';
                     currentEgg.classList.remove('hide');
                     easterEggActive = false;
-                    currentEggIndex = nextIndex; // переключаем на следующее фото
+                    currentEggIndex = nextIndex;
                 }, 6000);
             }
 
-            // Модифицируем обработчик клика на кнопку темы
             themeToggle.addEventListener('click', (e) => {
-                // Стандартное действие (смена темы)
                 let darkTheme = localStorage.getItem('theme') === 'dark';
                 darkTheme = !darkTheme;
                 document.body.classList.toggle('dark-theme', darkTheme);
                 localStorage.setItem('theme', darkTheme ? 'dark' : 'light');
                 themeToggle.textContent = darkTheme ? '☀️' : '🌙';
 
-                // Пасхалка: считаем клики
                 const now = Date.now();
                 if (firstClickTime === 0 || now - firstClickTime > 2000) {
                     clickCount = 1;
@@ -1107,13 +1096,10 @@
                         firstClickTime = 0;
                     }
                 }
-
-                // Вращение иконки
                 themeToggle.style.transform = 'rotate(360deg)';
                 setTimeout(() => themeToggle.style.transform = '', 300);
             });
 
-            // Инициализация темы
             let darkTheme = localStorage.getItem('theme') === 'dark';
             if (darkTheme) {
                 document.body.classList.add('dark-theme');
@@ -1199,12 +1185,13 @@
                 }
             }
 
-            async function loadRecentApproved(lastDoc = null) {
+            // Функция загрузки одобренных записей с пагинацией (для главной)
+            async function loadRecentApproved(lastDoc = null, limit = 3) {
                 try {
                     let query = db.collection('congratulations')
                         .where('approved', '==', true)
                         .orderBy('date', 'desc')
-                        .limit(10);
+                        .limit(limit);
                     if (lastDoc) query = query.startAfter(lastDoc);
                     const snapshot = await query.get();
                     const last = snapshot.docs[snapshot.docs.length - 1];
@@ -1308,6 +1295,7 @@
                 btnModeration.classList.remove('active');
             }
 
+            // ==================== ГЛАВНАЯ ====================
             async function renderHome() {
                 setActiveButton('btnHome');
                 const stats = await getStats();
@@ -1328,66 +1316,91 @@
                     </div>
                     <h2>📬 Последние поздравления</h2>
                     <div id="recentResults" class="search-hint">Загрузка...</div>
-                    <button id="loadMoreRecentBtn" class="load-more" style="display:none;">Загрузить ещё</button>
+                    <button id="loadMoreRecentBtn" class="load-more" style="display:none;">Загрузить ещё 3</button>
                 `;
 
                 const recentDiv = document.getElementById('recentResults');
                 const loadMoreBtn = document.getElementById('loadMoreRecentBtn');
                 let lastDoc = null;
+                let allLoaded = false;
 
                 async function loadRecent(reset = true) {
                     if (reset) {
                         lastDoc = null;
                         recentDiv.innerHTML = '<div class="search-hint">Загрузка...</div>';
+                        allLoaded = false;
                     }
-                    const data = await loadRecentApproved(lastDoc);
-                    if (data.results.length === 0 && reset) {
-                        recentDiv.innerHTML = '<div class="no-results">😔 Пока нет одобренных поздравлений.</div>';
-                        loadMoreBtn.style.display = 'none';
-                    } else {
-                        if (reset) recentDiv.innerHTML = '';
-                        data.results.forEach((item, index) => {
-                            const d = item.date ? new Date(item.date.seconds * 1000).toLocaleString() : '';
-                            recentDiv.innerHTML += `
-                                <div class="result-item" style="animation-delay: ${index * 0.1}s">
-                                    <p><strong>От кого:</strong> ${item.from}</p>
-                                    <p><strong>Кому:</strong> ${item.to} (${item.category === 'teacher' ? '👩‍🏫' : '👥'})</p>
-                                    <p><strong>Текст:</strong> ${item.message}</p>
-                                    <small>${d} | ❤️ ${item.likes || 0}</small>
-                                    <br>
-                                    <button class="like-btn" data-id="${item.id}">❤️ Нравится</button>
-                                    <button class="share-btn" data-id="${item.id}" data-to="${item.to}">🔗 Поделиться</button>
-                                </div>
-                            `;
-                        });
-                        lastDoc = data.last;
-                        loadMoreBtn.style.display = data.last ? 'block' : 'none';
 
-                        document.querySelectorAll('#recentResults .like-btn').forEach(btn => {
-                            btn.addEventListener('click', async (e) => {
-                                const id = e.target.dataset.id;
-                                await likeCongratulation(id);
-                                e.target.disabled = true;
-                                e.target.textContent = '❤️ Спасибо!';
-                            });
-                        });
-                        document.querySelectorAll('#recentResults .share-btn').forEach(btn => {
-                            btn.addEventListener('click', (e) => {
-                                const id = e.target.dataset.id;
-                                const to = e.target.dataset.to;
-                                const url = window.location.href.split('#')[0] + '#congratulation=' + id;
-                                const text = `Напиши ${to} чтобы увидеть поздравления ${url}`;
-                                navigator.clipboard.writeText(text);
-                                alert('Ссылка с именем скопирована!');
-                            });
-                        });
+                    const data = await loadRecentApproved(lastDoc, 3);
+                    
+                    if (data.results.length === 0) {
+                        if (reset) {
+                            recentDiv.innerHTML = '<div class="no-results">😔 Пока нет одобренных поздравлений.</div>';
+                        } else {
+                            allLoaded = true;
+                        }
+                        loadMoreBtn.style.display = 'none';
+                        return;
                     }
+
+                    if (reset) recentDiv.innerHTML = '';
+
+                    data.results.forEach((item, index) => {
+                        const d = item.date ? new Date(item.date.seconds * 1000).toLocaleString() : '';
+                        const cardHtml = `
+                            <div class="result-item" style="animation-delay: ${index * 0.1}s">
+                                <p><strong>От кого:</strong> ${item.from}</p>
+                                <p><strong>Кому:</strong> ${item.to} (${item.category === 'teacher' ? '👩‍🏫' : '👥'})</p>
+                                <p><strong>Текст:</strong> ${item.message}</p>
+                                <small>${d} | ❤️ ${item.likes || 0}</small>
+                                <br>
+                                <button class="like-btn" data-id="${item.id}">❤️ Нравится</button>
+                                <button class="share-btn" data-id="${item.id}" data-to="${item.to}">🔗 Поделиться</button>
+                            </div>
+                        `;
+                        recentDiv.insertAdjacentHTML('beforeend', cardHtml);
+                    });
+
+                    lastDoc = data.last;
+                    allLoaded = data.results.length < 3;
+                    loadMoreBtn.style.display = allLoaded ? 'none' : 'block';
+
+                    // Обновляем обработчики (удаляем старые через replace)
+                    document.querySelectorAll('#recentResults .like-btn').forEach(btn => {
+                        btn.replaceWith(btn.cloneNode(true));
+                    });
+                    document.querySelectorAll('#recentResults .share-btn').forEach(btn => {
+                        btn.replaceWith(btn.cloneNode(true));
+                    });
+
+                    document.querySelectorAll('#recentResults .like-btn').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            const id = e.target.dataset.id;
+                            await likeCongratulation(id);
+                            e.target.disabled = true;
+                            e.target.textContent = '❤️ Спасибо!';
+                        });
+                    });
+                    document.querySelectorAll('#recentResults .share-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const id = e.target.dataset.id;
+                            const to = e.target.dataset.to;
+                            const url = window.location.href.split('#')[0] + '#congratulation=' + id;
+                            const text = `Напиши ${to} чтобы увидеть поздравления ${url}`;
+                            navigator.clipboard.writeText(text);
+                            alert('Ссылка с именем скопирована!');
+                        });
+                    });
                 }
 
-                loadMoreBtn.addEventListener('click', () => loadRecent(false));
+                loadMoreBtn.addEventListener('click', () => {
+                    if (!allLoaded) loadRecent(false);
+                });
+
                 await loadRecent(true);
             }
 
+            // ==================== ОТПРАВКА ====================
             function renderSend() {
                 setActiveButton('btnSend');
                 contentDiv.innerHTML = `
@@ -1476,6 +1489,7 @@
                 });
             }
 
+            // ==================== ПОИСК ====================
             function renderSearch() {
                 setActiveButton('btnSearch');
                 contentDiv.innerHTML = `
@@ -1504,7 +1518,7 @@
                         </select>
                     </div>
                     <div id="searchResults" class="search-hint">Загрузка...</div>
-                    <button id="loadMoreBtn" class="load-more" style="display:none;">Загрузить ещё</button>
+                    <button id="loadMoreBtn" class="load-more" style="display:none;">Загрузить ещё 10</button>
                 `;
 
                 const input = document.getElementById('searchInput');
@@ -1538,8 +1552,9 @@
                         filtered = allItems.filter(item => item.to.toLowerCase().includes(lower));
                     }
                     const sorted = sortCongrats(filtered, currentSort);
+                    const totalFiltered = sorted.length;
 
-                    if (sorted.length === 0) {
+                    if (totalFiltered === 0) {
                         results.innerHTML = `<div class="no-results">😔 По запросу «${currentQuery || 'все'}» ничего не найдено.</div>`;
                         loadMore.style.display = 'none';
                         return;
@@ -1563,10 +1578,11 @@
                     });
                     results.innerHTML = html;
 
-                    if (displayedCount < sorted.length) {
-                        loadMore.style.display = 'block';
-                    } else {
+                    // Скрываем кнопку, если показаны все
+                    if (displayedCount >= totalFiltered) {
                         loadMore.style.display = 'none';
+                    } else {
+                        loadMore.style.display = 'block';
                     }
 
                     document.querySelectorAll('.like-btn').forEach(btn => {
@@ -1627,6 +1643,7 @@
                 loadAllData(false);
             }
 
+            // ==================== МОДЕРАЦИЯ ====================
             async function renderModeration() {
                 if (!isAdmin()) {
                     contentDiv.innerHTML = `
@@ -1688,21 +1705,32 @@
                 }
 
                 async function loadNew() {
-                    const items = await getUnapprovedCongrats();
-                    renderItems(items, 'new');
+                    try {
+                        const items = await getUnapprovedCongrats();
+                        if (items.length === 0) {
+                            modContent.innerHTML = '<p class="no-results">✨ Нет новых записей</p>';
+                        } else {
+                            renderItems(items, 'new');
+                        }
+                    } catch (error) {
+                        modContent.innerHTML = `<p class="message error">❌ Ошибка загрузки: ${error.message}</p>`;
+                    }
                 }
 
                 async function loadAll() {
-                    const items = await getAllCongrats();
-                    renderItems(items, 'all');
+                    try {
+                        const items = await getAllCongrats();
+                        if (items.length === 0) {
+                            modContent.innerHTML = '<p class="no-results">✨ Нет записей</p>';
+                        } else {
+                            renderItems(items, 'all');
+                        }
+                    } catch (error) {
+                        modContent.innerHTML = `<p class="message error">❌ Ошибка загрузки: ${error.message}</p>`;
+                    }
                 }
 
                 function renderItems(items, type) {
-                    if (items.length === 0) {
-                        modContent.innerHTML = '<p class="no-results">✨ Нет записей</p>';
-                        return;
-                    }
-
                     let out = '';
                     items.forEach((item, index) => {
                         const dateStr = item.date ? new Date(item.date.seconds * 1000).toLocaleString() : '';
@@ -1763,9 +1791,13 @@
                                 return;
                             }
 
-                            await updateCongratulation(id, { from, to, category, message: msg });
-                            await logModeratorAction('edit', `Изменил запись ${id}`, id);
-                            if (type === 'new') loadNew(); else loadAll();
+                            try {
+                                await updateCongratulation(id, { from, to, category, message: msg });
+                                await logModeratorAction('edit', `Изменил запись ${id}`, id);
+                                if (type === 'new') loadNew(); else loadAll();
+                            } catch (error) {
+                                alert('Ошибка сохранения: ' + error.message);
+                            }
                         });
                     });
 
@@ -1773,9 +1805,13 @@
                         btn.addEventListener('click', async (e) => {
                             const id = e.target.dataset.id;
                             if (confirm('Вы уверены, что хотите удалить это поздравление?')) {
-                                await deleteCongratulation(id);
-                                await logModeratorAction('delete', `Удалил запись ${id}`, id);
-                                if (type === 'new') loadNew(); else loadAll();
+                                try {
+                                    await deleteCongratulation(id);
+                                    await logModeratorAction('delete', `Удалил запись ${id}`, id);
+                                    if (type === 'new') loadNew(); else loadAll();
+                                } catch (error) {
+                                    alert('Ошибка удаления: ' + error.message);
+                                }
                             }
                         });
                     });
@@ -1783,9 +1819,13 @@
                     document.querySelectorAll('.approve-btn').forEach(btn => {
                         btn.addEventListener('click', async (e) => {
                             const id = e.target.dataset.id;
-                            await updateCongratulation(id, { approved: true });
-                            await logModeratorAction('approve', `Одобрил запись ${id}`, id);
-                            if (type === 'new') loadNew(); else loadAll();
+                            try {
+                                await updateCongratulation(id, { approved: true });
+                                await logModeratorAction('approve', `Одобрил запись ${id}`, id);
+                                if (type === 'new') loadNew(); else loadAll();
+                            } catch (error) {
+                                alert('Ошибка одобрения: ' + error.message);
+                            }
                         });
                     });
                 }
