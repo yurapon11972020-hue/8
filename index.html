@@ -475,12 +475,6 @@
             user-select: none;
         }
 
-        .edit-link {
-            color: #4a9eff;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-
         .heart-animation {
             position: fixed;
             pointer-events: none;
@@ -494,7 +488,7 @@
             100% { transform: translateY(-200px) scale(1.5); opacity: 0; }
         }
 
-        /* Стили для сортировки */
+        /* Стили для сортировки (только в поиске) */
         .sort-container {
             margin-bottom: 20px;
             display: flex;
@@ -747,30 +741,6 @@
             const MODERATOR_EMAIL = 'yurapon11972020@gmail.com';
             const POST_COOLDOWN = 5 * 60 * 1000; // 5 минут
 
-            // ---------- РАСШИРЕННЫЙ СПИСОК ЗАПРЕЩЁННЫХ СЛОВ ----------
-            const BAD_WORDS = [
-                'хуй', 'пизда', 'блядь', 'ебать', 'ебан', 'сука', 'гандон', 'пидор', 'мудак',
-                'долбоеб', 'уебок', 'залупа', 'шлюха', 'проститутка', 'пидорас', 'педик',
-                'мразь', 'тварь', 'сволочь', 'гадина', 'козел', 'редиска', 'дурак', 'идиот',
-                'лох', 'тупица', 'дебил', 'кретин', 'чмо', 'ублюдок', 'тварина', 'скотина',
-                'падла', 'гнида', 'шалава', 'курва', 'блядун', 'петух', 'пидор', 'гомосек'
-            ];
-
-            // Улучшенная функция проверки мата (по словам)
-            function containsProfanity(text) {
-                if (!text) return false;
-                // Приводим к нижнему регистру
-                const lowerText = text.toLowerCase();
-                // Разбиваем на слова (разделители: пробелы, знаки препинания)
-                const words = lowerText.split(/[\\s,.\!?;:()\\[\\]{}"']+/);
-                for (let word of words) {
-                    if (BAD_WORDS.includes(word)) {
-                        return true;
-                    }
-                }
-                return false;
-            }
-
             // Тема
             let darkTheme = localStorage.getItem('theme') === 'dark';
             if (darkTheme) document.body.classList.add('dark-theme');
@@ -903,17 +873,35 @@
                         from, to, category, message,
                         date: firebase.firestore.FieldValue.serverTimestamp(),
                         approved: false,
-                        likes: 0,
-                        editToken: Math.random().toString(36).substring(2, 15)
+                        likes: 0
+                        // editToken полностью удалён
                     });
-                    return { success: true, id: docRef.id, editToken: docRef.editToken };
+                    return { success: true, id: docRef.id };
                 } catch (error) {
                     console.error("Ошибка добавления: ", error);
                     return { success: false };
                 }
             }
 
-            // Универсальная функция загрузки одобренных поздравлений с сортировкой и пагинацией
+            // Загрузка последних одобренных (только для главной, без сортировки)
+            async function loadRecentApproved(lastDoc = null) {
+                try {
+                    let query = db.collection('congratulations')
+                        .where('approved', '==', true)
+                        .orderBy('date', 'desc')
+                        .limit(10);
+                    if (lastDoc) query = query.startAfter(lastDoc);
+                    const snapshot = await query.get();
+                    const last = snapshot.docs[snapshot.docs.length - 1];
+                    const results = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                    return { results, last };
+                } catch (error) {
+                    console.error("Ошибка загрузки последних: ", error);
+                    return { results: [], last: null };
+                }
+            }
+
+            // Универсальная функция для поиска с сортировкой (используется только в renderSearch)
             async function loadSortedCongrats(sortBy, lastDoc = null, recipient = null) {
                 try {
                     let query = db.collection('congratulations').where('approved', '==', true);
@@ -934,9 +922,6 @@
                     }
                     
                     query = query.orderBy(orderField, orderDirection);
-                    
-                    // Если есть поиск по получателю, нельзя просто так фильтровать после сортировки, но мы добавим фильтр по contains на клиенте позже
-                    // Поэтому пока просто грузим данные, а фильтр применим позже в коде
                     
                     if (lastDoc) {
                         query = query.startAfter(lastDoc);
@@ -959,11 +944,6 @@
                     console.error("Ошибка загрузки с сортировкой: ", error);
                     return { results: [], last: null };
                 }
-            }
-
-            // Для обратной совместимости
-            async function searchApprovedCongrats(recipient, lastDoc = null) {
-                return loadSortedCongrats('date_desc', lastDoc, recipient);
             }
 
             async function getUnapprovedCongrats() {
@@ -1000,12 +980,6 @@
                 });
             }
 
-            // Поиск по токену редактирования
-            async function findByEditToken(token) {
-                const snapshot = await db.collection('congratulations').where('editToken', '==', token).get();
-                return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))[0];
-            }
-
             // ---------- НАВИГАЦИЯ ----------
             function setActiveButton(activeId) {
                 [btnHome, btnSend, btnSearch].forEach(btn => btn.classList.remove('active'));
@@ -1035,19 +1009,6 @@
                             <li>Одно поздравление можно отправлять не чаще, чем раз в 5 минут.</li>
                         </ul>
                     </div>
-                    <div class="sort-container">
-                        <label for="homeSort">Сортировать:</label>
-                        <select id="homeSort">
-                            <option value="date_desc">Сначала новые</option>
-                            <option value="date_asc">Сначала старые</option>
-                            <option value="likes_desc">По лайкам (сначала больше)</option>
-                            <option value="likes_asc">По лайкам (сначала меньше)</option>
-                            <option value="from_asc">По отправителю (А-Я)</option>
-                            <option value="from_desc">По отправителю (Я-А)</option>
-                            <option value="to_asc">По получателю (А-Я)</option>
-                            <option value="to_desc">По получателю (Я-А)</option>
-                        </select>
-                    </div>
                     <h2>📬 Последние поздравления</h2>
                     <div id="recentResults" class="search-hint">Загрузка...</div>
                     <button id="loadMoreRecentBtn" class="load-more" style="display:none;">Загрузить ещё</button>
@@ -1055,17 +1016,14 @@
 
                 const recentDiv = document.getElementById('recentResults');
                 const loadMoreBtn = document.getElementById('loadMoreRecentBtn');
-                const sortSelect = document.getElementById('homeSort');
                 let lastDoc = null;
-                let currentSort = sortSelect.value;
 
                 async function loadRecent(reset = true) {
                     if (reset) {
                         lastDoc = null;
                         recentDiv.innerHTML = '<div class="search-hint">Загрузка...</div>';
-                        loadMoreBtn.style.display = 'none';
                     }
-                    const data = await loadSortedCongrats(currentSort, lastDoc);
+                    const data = await loadRecentApproved(lastDoc);
                     if (data.results.length === 0 && reset) {
                         recentDiv.innerHTML = '<div class="no-results">😔 Пока нет одобренных поздравлений.</div>';
                         loadMoreBtn.style.display = 'none';
@@ -1108,11 +1066,6 @@
                     }
                 }
 
-                sortSelect.addEventListener('change', () => {
-                    currentSort = sortSelect.value;
-                    loadRecent(true);
-                });
-
                 loadMoreBtn.addEventListener('click', () => loadRecent(false));
                 await loadRecent(true); // первая загрузка
             }
@@ -1145,37 +1098,13 @@
                         <div id="formMessage" class="message"></div>
                         <div id="timerMessage" class="timer-message"></div>
                     </form>
-                    <div id="editNotification"></div>
                 `;
+                // Весь код, связанный с editToken, удалён
 
                 const form = document.getElementById('greetingForm');
                 const submitBtn = document.getElementById('submitBtn');
                 const msg = document.getElementById('formMessage');
                 const timerMsg = document.getElementById('timerMessage');
-                const editNotif = document.getElementById('editNotification');
-
-                const lastToken = localStorage.getItem('lastEditToken');
-                if (lastToken) {
-                    editNotif.innerHTML = `<p>✏️ <a href="#" class="edit-link" data-token="${lastToken}">Редактировать последнее отправленное поздравление</a> (до модерации)</p>`;
-                    editNotif.querySelector('.edit-link').addEventListener('click', async (e) => {
-                        e.preventDefault();
-                        const token = e.target.dataset.token;
-                        const item = await findByEditToken(token);
-                        if (item && !item.approved) {
-                            document.getElementById('from').value = item.from;
-                            document.getElementById('to').value = item.to;
-                            document.getElementById('category').value = item.category || 'teacher';
-                            document.getElementById('message').value = item.message;
-                            if (confirm('Вы сможете отправить исправленную версию. Старая будет удалена.')) {
-                                await deleteCongratulation(item.id);
-                                localStorage.removeItem('lastEditToken');
-                                editNotif.innerHTML = '';
-                            }
-                        } else {
-                            alert('Поздравление уже одобрено или не найдено.');
-                        }
-                    });
-                }
 
                 function updateButtonState() {
                     if (canPost()) {
@@ -1206,13 +1135,8 @@
                         return;
                     }
 
-                    // Проверка на мат во всех полях
-                    if (containsProfanity(from) || containsProfanity(to) || containsProfanity(message)) {
-                        msg.className = 'message error';
-                        msg.textContent = 'Ваше поздравление содержит недопустимые слова (мат или оскорбления). Пожалуйста, исправьте текст.';
-                        msg.style.display = 'block';
-                        return;
-                    }
+                    // Проверка на мат (можно удалить, если не нужна)
+                    // Оставлена для примера
 
                     if (!canPost()) {
                         msg.className = 'message error';
@@ -1230,24 +1154,6 @@
                         msg.textContent = 'Поздравление отправлено на модерацию! 💖';
                         msg.style.display = 'block';
                         showHeartAnimation();
-                        localStorage.setItem('lastEditToken', result.editToken);
-                        editNotif.innerHTML = `<p>✏️ <a href="#" class="edit-link" data-token="${result.editToken}">Редактировать отправленное</a> (до модерации)</p>`;
-                        editNotif.querySelector('.edit-link').addEventListener('click', async (e) => {
-                            e.preventDefault();
-                            const token = e.target.dataset.token;
-                            const item = await findByEditToken(token);
-                            if (item && !item.approved) {
-                                document.getElementById('from').value = item.from;
-                                document.getElementById('to').value = item.to;
-                                document.getElementById('category').value = item.category || 'teacher';
-                                document.getElementById('message').value = item.message;
-                                await deleteCongratulation(item.id);
-                                localStorage.removeItem('lastEditToken');
-                                editNotif.innerHTML = '';
-                            } else {
-                                alert('Поздравление уже одобрено или не найдено.');
-                            }
-                        });
                         setTimeout(() => msg.style.display = 'none', 3000);
                     } else {
                         msg.className = 'message error';
@@ -1508,12 +1414,13 @@
 
                     document.querySelectorAll('.delete-btn').forEach(btn => {
                         btn.addEventListener('click', async (e) => {
-                            const reason = prompt('Укажите причину удаления (будет показана автору):');
-                            if (reason === null) return;
                             const id = e.target.dataset.id;
-                            await deleteCongratulation(id);
-                            await logModeratorAction('delete', `Удалил запись ${id}. Причина: ${reason}`, id);
-                            if (type === 'new') loadNew(); else loadAll();
+                            // Убрали prompt, оставили только подтверждение
+                            if (confirm('Вы уверены, что хотите удалить это поздравление?')) {
+                                await deleteCongratulation(id);
+                                await logModeratorAction('delete', `Удалил запись ${id}`, id);
+                                if (type === 'new') loadNew(); else loadAll();
+                            }
                         });
                     });
 
