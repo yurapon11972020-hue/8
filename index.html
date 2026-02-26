@@ -1,5 +1,4 @@
-<meta name='viewport' content='width=device-width, initial-scale=1'/>```html
-<!DOCTYPE html>
+<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -19,7 +18,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 10px;
+            padding: 8px;
             background: linear-gradient(145deg, #fdf0f5 0%, #f9d8e6 50%, #fcccd9 100%);
             background-size: 300% 300%;
             animation: gradientBG 15s ease infinite;
@@ -114,7 +113,7 @@
             width: 220px;
             background: rgba(255, 182, 193, 0.5);
             backdrop-filter: blur(5px);
-            padding: 30px 0 80px 0; /* снизу место для круглой кнопки */
+            padding: 30px 0 80px 0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -154,7 +153,6 @@
             box-shadow: 0 10px 25px rgba(200, 60, 90, 0.3);
         }
 
-        /* Круглая кнопка модерации в левом нижнем углу */
         .moderation-circle {
             position: absolute;
             bottom: 20px;
@@ -197,7 +195,6 @@
             z-index: 11;
         }
 
-        /* Кнопка переключения темы */
         .theme-toggle {
             position: absolute;
             bottom: 20px;
@@ -511,44 +508,42 @@
         @media (max-width: 768px) {
             body {
                 padding: 5px;
-                align-items: flex-start;
             }
 
             .container {
                 flex-direction: column;
-                border-radius: 20px;
-                min-height: auto;
+                border-radius: 24px;
             }
 
             .sidebar {
                 width: 100%;
                 flex-direction: row;
                 flex-wrap: wrap;
-                justify-content: space-around;
+                justify-content: center;
                 align-items: center;
-                padding: 15px 5px 60px 5px;
-                gap: 8px;
+                padding: 12px 5px 65px 5px;
+                gap: 6px;
                 border-right: none;
                 border-bottom: 1px solid rgba(255,255,255,0.6);
-                background: rgba(255, 182, 193, 0.7);
+                background: rgba(255, 182, 193, 0.8);
                 min-height: auto;
-                position: relative;
             }
 
             .sidebar button {
                 width: auto;
-                min-width: 90px;
-                padding: 12px 6px;
-                font-size: 14px;
+                min-width: 100px;
+                padding: 14px 8px;
+                font-size: 16px;
                 margin: 0;
                 flex: 1 1 auto;
+                border-radius: 30px;
             }
 
             .moderation-circle {
                 bottom: 5px;
-                width: 48px;
-                height: 48px;
-                font-size: 26px;
+                width: 52px;
+                height: 52px;
+                font-size: 28px;
             }
 
             .content {
@@ -556,72 +551,80 @@
             }
 
             h1 {
-                font-size: 24px;
+                font-size: 26px;
+                margin-bottom: 15px;
             }
 
             h2 {
-                font-size: 20px;
-            }
-
-            .rules {
-                padding: 15px;
-                font-size: 14px;
+                font-size: 22px;
+                margin-bottom: 15px;
             }
 
             .stats {
                 flex-direction: column;
                 gap: 8px;
-                padding: 12px 15px;
+                padding: 15px;
+                font-size: 16px;
+                border-radius: 30px;
+            }
+
+            .rules {
+                padding: 15px;
                 font-size: 15px;
+                border-radius: 25px;
             }
 
             .form-group input,
             .form-group textarea,
             .form-group select {
-                padding: 12px;
-                font-size: 16px;
+                padding: 16px;
+                font-size: 18px;
+                border-radius: 30px;
             }
 
             button[type="submit"], .search-btn, .approve-btn, .delete-btn, .edit-btn,
             .save-btn, .cancel-btn, .logout-btn, .load-more {
-                padding: 14px 15px;
-                font-size: 16px;
+                padding: 16px 15px;
+                font-size: 18px;
                 width: 100%;
                 margin-right: 0;
-                margin-top: 8px;
+                margin-top: 10px;
+                border-radius: 40px;
             }
 
             .like-btn, .share-btn {
                 width: 100%;
                 margin-right: 0;
                 margin-bottom: 8px;
-                font-size: 16px;
-                padding: 12px 10px;
+                font-size: 18px;
+                padding: 14px 10px;
+                border-radius: 40px;
             }
 
             .search-container {
                 flex-direction: column;
-                gap: 10px;
+                gap: 12px;
             }
 
             .search-container input {
                 width: 100%;
-                font-size: 16px;
-                padding: 12px;
+                font-size: 18px;
+                padding: 16px;
             }
 
             .result-item {
                 padding: 18px;
                 margin-bottom: 20px;
+                border-radius: 25px;
             }
 
             .result-item p {
-                font-size: 15px;
+                font-size: 16px;
                 line-height: 1.5;
             }
 
             .result-item small {
-                font-size: 13px;
+                font-size: 14px;
             }
 
             .moderation-tabs {
@@ -634,97 +637,103 @@
             .moderation-tabs button {
                 flex: 1;
                 text-align: center;
-                padding: 12px 5px;
-                font-size: 14px;
+                padding: 14px 5px;
+                font-size: 15px;
                 min-width: 0;
+                border-radius: 30px;
             }
 
             .admin-login {
                 padding: 20px;
                 margin: 20px auto;
+                border-radius: 40px;
             }
 
             .admin-login input {
-                padding: 12px;
-                font-size: 16px;
+                padding: 16px;
+                font-size: 18px;
             }
 
             .floating-photo {
-                opacity: 0.1;
+                opacity: 0.08;
             }
-            .floating-photo.size-sm { width: 40px; }
-            .floating-photo.size-md { width: 60px; }
-            .floating-photo.size-lg { width: 80px; }
-            .floating-photo.size-xl { width: 100px; }
+            .floating-photo.size-sm { width: 35px; }
+            .floating-photo.size-md { width: 50px; }
+            .floating-photo.size-lg { width: 65px; }
+            .floating-photo.size-xl { width: 80px; }
 
+            .sort-container {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+            }
+            .sort-container label {
+                font-size: 18px;
+            }
             .sort-container select {
                 width: 100%;
-                padding: 12px;
-                font-size: 16px;
-            }
-
-            .sort-container label {
-                font-size: 16px;
+                padding: 16px;
+                font-size: 18px;
             }
 
             .timer-message {
-                font-size: 15px;
+                font-size: 16px;
             }
         }
 
         @media (max-width: 480px) {
             .sidebar button {
+                min-width: 80px;
+                font-size: 14px;
+                padding: 12px 4px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            .stats {
+                font-size: 15px;
+                padding: 12px;
+            }
+
+            .rules {
+                font-size: 14px;
+                padding: 12px;
+            }
+
+            .moderation-tabs button {
+                font-size: 13px;
+                padding: 12px 2px;
+            }
+
+            .content {
+                padding: 12px;
+            }
+
+            .result-item {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .sidebar button {
                 min-width: 70px;
                 font-size: 13px;
-                padding: 10px 4px;
+                padding: 10px 2px;
             }
 
             h1 {
                 font-size: 22px;
             }
 
-            h2 {
-                font-size: 18px;
-            }
-
-            .stats {
-                font-size: 14px;
-                padding: 10px 12px;
-            }
-
-            .rules {
-                font-size: 13px;
-                padding: 12px;
-            }
-
-            .rules ul {
-                margin-left: 15px;
-            }
-
             .moderation-tabs button {
                 font-size: 12px;
-                padding: 10px 2px;
-            }
-
-            .content {
-                padding: 12px;
-            }
-        }
-
-        @media (max-width: 360px) {
-            .sidebar button {
-                min-width: 60px;
-                font-size: 12px;
-                padding: 8px 2px;
-            }
-
-            h1 {
-                font-size: 20px;
-            }
-
-            .moderation-tabs button {
-                font-size: 11px;
-                padding: 8px 1px;
+                padding: 10px 1px;
             }
 
             .content {
@@ -732,7 +741,7 @@
             }
 
             .result-item {
-                padding: 15px;
+                padding: 12px;
             }
         }
     </style>
@@ -826,7 +835,7 @@
                 document.querySelectorAll('.floating-photo').forEach(photo => photo.remove());
 
                 const isMobile = window.innerWidth <= 768;
-                const totalPhotos = isMobile ? 20 : 40;
+                const totalPhotos = isMobile ? 15 : 40;
 
                 for (let i = 0; i < totalPhotos; i++) {
                     const randomUrl = photoUrls[Math.floor(Math.random() * photoUrls.length)];
@@ -986,14 +995,13 @@
                     return { results, last };
                 } catch (error) {
                     console.error("Ошибка загрузки с сортировкой: ", error);
-                    // Если ошибка из-за отсутствия индекса, пробуем извлечь ссылку из сообщения ошибки
+                    // Если ошибка из-за отсутствия индекса, пробуем извлечь ссылку
                     if (error.code === 'failed-precondition' || error.message.includes('index')) {
-                        // Попытаемся найти ссылку на создание индекса в тексте ошибки
                         const match = error.message.match(/https:\/\/console\.firebase\.google\.com[^\s]*/);
                         const link = match ? match[0] : null;
                         let userMessage = '❌ Для сортировки необходимо создать индекс в Firebase Console.';
                         if (link) {
-                            userMessage += ` Перейдите по ссылке: <a href="${link}" target="_blank">${link}</a> и нажмите "Create index".`;
+                            userMessage += ` Перейдите по ссылке: <a href="${link}" target="_blank" style="color: #ff8da1;">${link}</a> и нажмите "Create index".`;
                         } else {
                             userMessage += ' Откройте консоль Firebase (F12 -> вкладка Console) и перейдите по ссылке из ошибки.';
                         }
@@ -1102,7 +1110,6 @@
                         lastDoc = data.last;
                         loadMoreBtn.style.display = data.last ? 'block' : 'none';
 
-                        // Обработчики лайков и шаринга
                         document.querySelectorAll('#recentResults .like-btn').forEach(btn => {
                             btn.addEventListener('click', async (e) => {
                                 const id = e.target.dataset.id;
@@ -1123,7 +1130,7 @@
                 }
 
                 loadMoreBtn.addEventListener('click', () => loadRecent(false));
-                await loadRecent(true); // первая загрузка
+                await loadRecent(true);
             }
 
             function renderSend() {
@@ -1249,7 +1256,6 @@
                 let currentQuery = '';
                 let currentSort = sortSelect.value;
 
-                // Переменная для debounce
                 let searchTimeout;
 
                 input.addEventListener('input', () => {
@@ -1309,7 +1315,6 @@
                             });
                         }
                     } catch (error) {
-                        // Ошибка, скорее всего, из-за отсутствия индекса
                         results.innerHTML = `<div class="no-results" style="color: red;">${error.message}</div>`;
                         loadMore.style.display = 'none';
                     }
@@ -1323,12 +1328,10 @@
                 });
                 loadMore.addEventListener('click', () => perform(false));
 
-                // При загрузке страницы сразу показываем все записи
                 perform(true);
             }
 
             async function renderModeration() {
-                // Не меняем активную кнопку
                 if (!isAdmin()) {
                     contentDiv.innerHTML = `
                         <div class="admin-login">
@@ -1473,7 +1476,6 @@
                     document.querySelectorAll('.delete-btn').forEach(btn => {
                         btn.addEventListener('click', async (e) => {
                             const id = e.target.dataset.id;
-                            // Убрали prompt, оставили только подтверждение
                             if (confirm('Вы уверены, что хотите удалить это поздравление?')) {
                                 await deleteCongratulation(id);
                                 await logModeratorAction('delete', `Удалил запись ${id}`, id);
@@ -1498,31 +1500,15 @@
                 setActiveTab('new');
             }
 
-            // Слушатель изменения статуса аутентификации
-            auth.onAuthStateChanged(user => {
-                // Если открыта модерация, можно обновить, но для простоты ничего не делаем
-            });
+            auth.onAuthStateChanged(user => {});
 
-            // Привязка кнопок
             btnHome.addEventListener('click', renderHome);
             btnSend.addEventListener('click', renderSend);
             btnSearch.addEventListener('click', renderSearch);
             btnModeration.addEventListener('click', renderModeration);
 
-            // Запуск главной
             renderHome();
         })();
     </script>
 </body>
 </html>
-```
-
-Что сделано:
-
-1. Поиск теперь показывает все записи при загрузке – убран заглушка "Введите имя для поиска", сразу вызывается perform(true).
-2. Улучшена обработка ошибок индексов – теперь из сообщения об ошибке извлекается ссылка на создание индекса (если есть) и показывается пользователю с активной ссылкой. Если ссылки нет, даётся понятная инструкция.
-3. Кнопка "Загрузить ещё" работает при любой сортировке и фильтрации.
-4. Мобильная адаптация сохранена – все кнопки крупные, удобные для тапа.
-5. Все предыдущие изменения (удаление мата, удаление редактирования, удаление причины при удалении) остались.
-
-Теперь пользователь сразу видит все поздравления, может сортировать их и пользоваться поиском. Если сортировка не работает из-за отсутствия индексов, он увидит понятную инструкцию со ссылкой для создания индекса в Firebase Console.
