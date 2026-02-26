@@ -829,7 +829,7 @@
             100% { transform: translateY(-250px) scale(1.8) rotate(20deg); opacity: 0; }
         }
 
-        /* ===== Пасхалка с изображениями (простое появление и fadeOut) ===== */
+        /* ===== Пасхалка с изображениями (мгновенное появление, плавное исчезновение) ===== */
         .easter-egg-img {
             position: fixed;
             top: 50%;
@@ -840,8 +840,8 @@
             z-index: 10000;
             display: none;
             pointer-events: none;
-            opacity: 1;
-            transition: opacity 0.5s ease-in-out;
+            opacity: 0;
+            transition: none; /* Убираем общий переход */
         }
 
         .easter-egg-img.show {
@@ -851,6 +851,7 @@
 
         .easter-egg-img.hide {
             opacity: 0;
+            transition: opacity 1.5s ease-in-out; /* Плавное исчезновение */
         }
 
         /* ========== МОБИЛЬНАЯ АДАПТАЦИЯ ========== */
@@ -991,8 +992,8 @@
     </div>
 
     <!-- Изображения для пасхалки -->
-    <img src="19.jpg" id="egg1" class="easter-egg-img" alt="Easter egg 1">
-    <img src="20.jpg" id="egg2" class="easter-egg-img" alt="Easter egg 2">
+    <img src="19.png" id="egg1" class="easter-egg-img" alt="Easter egg 1">
+    <img src="20.png" id="egg2" class="easter-egg-img" alt="Easter egg 2">
 
     <!-- Аудио для пасхалки -->
     <audio id="easterAudio" src="machomen.mp3" preload="auto"></audio>
@@ -1058,11 +1059,11 @@
 
                 // Убираем предыдущие классы
                 currentEgg.classList.remove('hide', 'show');
-                // Показываем фото (без анимации появления)
+                // Показываем фото (мгновенно)
                 currentEgg.style.display = 'block';
                 // Принудительный reflow для применения display
                 void currentEgg.offsetWidth;
-                // Добавляем класс show (opacity 1) — появляется резко, потому что transition не влияет на появление, только на исчезновение
+                // Добавляем класс show (opacity 1) — появляется резко, без анимации
                 currentEgg.classList.add('show');
 
                 // Воспроизводим музыку
