@@ -1120,7 +1120,7 @@
                                     <small>${d} | ❤️ ${item.likes || 0}</small>
                                     <br>
                                     <button class="like-btn" data-id="${item.id}">❤️ Нравится</button>
-                                    <button class="share-btn" data-id="${item.id}">🔗 Поделиться</button>
+                                    <button class="share-btn" data-id="${item.id}" data-to="${item.to}">🔗 Поделиться</button>
                                 </div>
                             `;
                         });
@@ -1138,9 +1138,11 @@
                         document.querySelectorAll('#recentResults .share-btn').forEach(btn => {
                             btn.addEventListener('click', (e) => {
                                 const id = e.target.dataset.id;
+                                const to = e.target.dataset.to;
                                 const url = window.location.href.split('#')[0] + '#congratulation=' + id;
-                                navigator.clipboard.writeText(url);
-                                alert('Ссылка скопирована!');
+                                const text = `Напиши ${to} чтобы увидеть поздравления ${url}`;
+                                navigator.clipboard.writeText(text);
+                                alert('Ссылка с именем скопирована!');
                             });
                         });
                     }
@@ -1306,7 +1308,7 @@
                                 <small>${d} | ❤️ ${item.likes || 0}</small>
                                 <br>
                                 <button class="like-btn" data-id="${item.id}">❤️ Нравится</button>
-                                <button class="share-btn" data-id="${item.id}">🔗 Поделиться</button>
+                                <button class="share-btn" data-id="${item.id}" data-to="${item.to}">🔗 Поделиться</button>
                             </div>
                         `;
                     });
@@ -1331,9 +1333,11 @@
                     document.querySelectorAll('.share-btn').forEach(btn => {
                         btn.addEventListener('click', (e) => {
                             const id = e.target.dataset.id;
+                            const to = e.target.dataset.to;
                             const url = window.location.href.split('#')[0] + '#congratulation=' + id;
-                            navigator.clipboard.writeText(url);
-                            alert('Ссылка скопирована!');
+                            const text = `Напиши ${to} чтобы увидеть поздравления ${url}`;
+                            navigator.clipboard.writeText(text);
+                            alert('Ссылка с именем скопирована!');
                         });
                     });
                 }
