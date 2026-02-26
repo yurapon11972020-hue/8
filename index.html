@@ -195,6 +195,7 @@
             z-index: 11;
         }
 
+        /* Кнопка переключения темы — только иконка */
         .theme-toggle {
             position: absolute;
             bottom: 20px;
@@ -202,12 +203,21 @@
             z-index: 20;
             background: rgba(255,255,255,0.5);
             border: 2px solid #ff8da1;
-            border-radius: 30px;
-            padding: 8px 16px;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            font-weight: 600;
+            font-size: 28px;
             color: #b3435e;
             backdrop-filter: blur(5px);
+            transition: all 0.2s;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: rgba(255,255,255,0.8);
         }
 
         h1, h2 {
@@ -583,13 +593,23 @@
             }
 
             button[type="submit"], .search-btn, .approve-btn, .delete-btn, .edit-btn,
-            .save-btn, .cancel-btn, .logout-btn, .load-more {
+            .save-btn, .cancel-btn, .logout-btn {
                 padding: 16px 15px;
                 font-size: 18px;
                 width: 100%;
                 margin-right: 0;
                 margin-top: 10px;
                 border-radius: 40px;
+            }
+
+            /* Кнопка "Загрузить ещё" меньше и по центру */
+            .load-more {
+                width: auto;
+                min-width: 200px;
+                padding: 12px 20px;
+                font-size: 16px;
+                margin: 10px auto 0;
+                display: block;
             }
 
             .like-btn, .share-btn {
@@ -679,6 +699,15 @@
             .timer-message {
                 font-size: 16px;
             }
+
+            /* Кнопка темы на мобильных */
+            .theme-toggle {
+                width: 44px;
+                height: 44px;
+                font-size: 26px;
+                bottom: 10px;
+                right: 10px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -747,7 +776,8 @@
     </style>
 </head>
 <body>
-    <div class="theme-toggle" id="themeToggle">🌙 Тёмная тема</div>
+    <!-- Кнопка переключения темы только с иконкой -->
+    <div class="theme-toggle" id="themeToggle">🌙</div>
     <div class="container">
         <div class="sidebar">
             <button id="btnHome" class="active">🏠 Главная</button>
@@ -792,15 +822,20 @@
             const MODERATOR_EMAIL = 'yurapon11972020@gmail.com';
             const POST_COOLDOWN = 5 * 60 * 1000; // 5 минут
 
-            // Тема
+            // Тема: только иконка
             let darkTheme = localStorage.getItem('theme') === 'dark';
-            if (darkTheme) document.body.classList.add('dark-theme');
-            themeToggle.textContent = darkTheme ? '☀️ Светлая тема' : '🌙 Тёмная тема';
+            if (darkTheme) {
+                document.body.classList.add('dark-theme');
+                themeToggle.textContent = '☀️';
+            } else {
+                themeToggle.textContent = '🌙';
+            }
+
             themeToggle.addEventListener('click', () => {
                 darkTheme = !darkTheme;
                 document.body.classList.toggle('dark-theme', darkTheme);
                 localStorage.setItem('theme', darkTheme ? 'dark' : 'light');
-                themeToggle.textContent = darkTheme ? '☀️ Светлая тема' : '🌙 Тёмная тема';
+                themeToggle.textContent = darkTheme ? '☀️' : '🌙';
             });
 
             // Анимация сердечек
