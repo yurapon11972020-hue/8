@@ -829,46 +829,28 @@
             100% { transform: translateY(-250px) scale(1.8) rotate(20deg); opacity: 0; }
         }
 
-        /* ===== Пасхалка с изображениями под музыку ===== */
+        /* ===== Пасхалка с изображениями (простое появление и fadeOut) ===== */
         .easter-egg-img {
             position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0);
+            transform: translate(-50%, -50%);
             max-width: 70vw;
             max-height: 70vh;
             z-index: 10000;
             display: none;
             pointer-events: none;
             opacity: 0;
+            transition: opacity 1.5s ease-in-out;
         }
 
         .easter-egg-img.show {
             display: block;
-            animation: growAndShake 2s ease-in-out forwards, chaoticMove 13s 2s linear forwards;
+            opacity: 1;
         }
 
-        @keyframes growAndShake {
-            0% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
-            20% { transform: translate(-50%, -50%) scale(0.8) rotate(-5deg); opacity: 1; }
-            40% { transform: translate(-50%, -50%) scale(1.1) rotate(5deg); opacity: 1; }
-            60% { transform: translate(-50%, -50%) scale(1) rotate(-2deg); opacity: 1; }
-            80% { transform: translate(-50%, -50%) scale(1) rotate(2deg); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(1) rotate(0); opacity: 1; }
-        }
-
-        @keyframes chaoticMove {
-            0% { transform: translate(-50%, -50%) translate(0, 0) rotate(0deg); }
-            10% { transform: translate(-50%, -50%) translate(30px, -20px) rotate(15deg); }
-            20% { transform: translate(-50%, -50%) translate(-40px, 30px) rotate(-20deg); }
-            30% { transform: translate(-50%, -50%) translate(50px, 40px) rotate(25deg); }
-            40% { transform: translate(-50%, -50%) translate(-60px, -30px) rotate(-30deg); }
-            50% { transform: translate(-50%, -50%) translate(70px, -50px) rotate(35deg); }
-            60% { transform: translate(-50%, -50%) translate(-80px, 60px) rotate(-40deg); }
-            70% { transform: translate(-50%, -50%) translate(90px, 70px) rotate(45deg); }
-            80% { transform: translate(-50%, -50%) translate(-100px, -80px) rotate(-50deg); }
-            90% { transform: translate(-50%, -50%) translate(110px, 90px) rotate(55deg); }
-            100% { transform: translate(-50%, -50%) translate(0, 0) rotate(0deg); opacity: 0; }
+        .easter-egg-img.hide {
+            opacity: 0;
         }
 
         /* ========== МОБИЛЬНАЯ АДАПТАЦИЯ ========== */
@@ -1009,8 +991,8 @@
     </div>
 
     <!-- Изображения для пасхалки -->
-    <img src="19.jpg" id="egg1" class="easter-egg-img" alt="Easter egg 1">
-    <img src="20.jpg" id="egg2" class="easter-egg-img" alt="Easter egg 2">
+    <img src="19.png" id="egg1" class="easter-egg-img" alt="Easter egg 1">
+    <img src="20.png" id="egg2" class="easter-egg-img" alt="Easter egg 2">
 
     <!-- Аудио для пасхалки -->
     <audio id="easterAudio" src="machomen.mp3" preload="auto"></audio>
@@ -1074,19 +1056,32 @@
                 const currentEgg = currentEggIndex === 1 ? egg1 : egg2;
                 const nextIndex = currentEggIndex === 1 ? 2 : 1;
 
-                // Показываем фото
+                // Убираем предыдущие классы
+                currentEgg.classList.remove('hide', 'show');
+                // Показываем фото (без анимации появления)
+                currentEgg.style.display = 'block';
+                // Принудительный reflow для применения display
+                void currentEgg.offsetWidth;
+                // Добавляем класс show (opacity 1) — появляется резко, потому что transition не влияет на появление, только на исчезновение
                 currentEgg.classList.add('show');
 
                 // Воспроизводим музыку
                 audio.currentTime = 0;
                 audio.play().catch(e => console.log("Ошибка воспроизведения аудио:", e));
 
-                // Через 15 секунд убираем фото и разрешаем следующее
+                // Через 4.5 секунды начинаем исчезновение
                 setTimeout(() => {
                     currentEgg.classList.remove('show');
+                    currentEgg.classList.add('hide'); // запускает transition на opacity
+                }, 4500);
+
+                // Через 6 секунд (4.5 + 1.5) полностью скрываем и разрешаем следующее фото
+                setTimeout(() => {
+                    currentEgg.style.display = 'none';
+                    currentEgg.classList.remove('hide');
                     easterEggActive = false;
                     currentEggIndex = nextIndex; // переключаем на следующее фото
-                }, 15000);
+                }, 6000);
             }
 
             // Модифицируем обработчик клика на кнопку темы
