@@ -819,7 +819,14 @@
             const btnModeration = document.getElementById('btnModeration');
             const themeToggle = document.getElementById('themeToggle');
 
-            const MODERATOR_EMAIL = 'yurapon11972020@gmail.com';
+            // Массив email-адресов модераторов
+            const MODERATOR_EMAILS = [
+                'yurapon11972020@gmail.com',
+                'YraslavSkibididobi@mail.ru',
+                'iluhamoder@mail.ru',
+                'DanilSuperVPN@mail.ru',
+                'SkvizzyMedium@mail.ru'
+            ];
             const POST_COOLDOWN = 5 * 60 * 1000; // 5 минут
 
             // Тема: только иконка
@@ -901,7 +908,7 @@
             // ---------- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ----------
             function isAdmin() {
                 const user = auth.currentUser;
-                return user && user.email === MODERATOR_EMAIL;
+                return user && MODERATOR_EMAILS.includes(user.email);
             }
 
             function getLastPostTime() {
@@ -982,11 +989,18 @@
             }
 
             // Загрузка ВСЕХ одобренных записей (без сортировки на сервере) для страницы поиска
-            async function loadAllApproved() {
+            async function loadAllApproved(forceRefresh = false) {
                 try {
-                    const snapshot = await db.collection('congratulations')
-                        .where('approved', '==', true)
-                        .get();
+                    let query = db.collection('congratulations').where('approved', '==', true);
+                    let snapshot;
+                    
+                    if (forceRefresh) {
+                        snapshot = await query.get({ source: 'server' });
+                    } else {
+                        snapshot = await query.get();
+                    }
+                    
+                    localStorage.setItem('lastUpdate', Date.now().toString());
                     return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 } catch (error) {
                     console.error("Ошибка загрузки всех записей: ", error);
@@ -1246,6 +1260,12 @@
                 setActiveButton('btnSearch');
                 contentDiv.innerHTML = `
                     <h1>🔎 Все поздравления</h1>
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
+                        <div>
+                            <span id="lastUpdateLabel"></span>
+                            <button id="refreshDataBtn" class="load-more" style="width: auto; padding: 8px 15px; margin: 0;">🔄 Обновить</button>
+                        </div>
+                    </div>
                     <div class="search-container">
                         <input type="text" id="searchInput" placeholder="Введите имя получателя для поиска (оставьте пустым, чтобы показать все)">
                         <button class="search-btn" id="searchBtn">Найти</button>
@@ -1272,21 +1292,31 @@
                 const results = document.getElementById('searchResults');
                 const loadMore = document.getElementById('loadMoreBtn');
                 const sortSelect = document.getElementById('searchSort');
+                const refreshBtn = document.getElementById('refreshDataBtn');
+                const lastUpdateLabel = document.getElementById('lastUpdateLabel');
 
-                let allItems = [];           // все загруженные записи
-                let displayedCount = 0;       // сколько уже показано
+                let allItems = [];
+                let displayedCount = 0;
                 let currentQuery = '';
                 let currentSort = sortSelect.value;
 
-                // Функция отображения текущей порции
+                function updateLastUpdateLabel() {
+                    const lastUpdate = localStorage.getItem('lastUpdate');
+                    if (lastUpdate) {
+                        const date = new Date(parseInt(lastUpdate));
+                        lastUpdateLabel.textContent = `📅 Последнее обновление: ${date.toLocaleString()}`;
+                    } else {
+                        lastUpdateLabel.textContent = '';
+                    }
+                }
+                updateLastUpdateLabel();
+
                 function displayItems() {
-                    // Сначала фильтруем по поиску
                     let filtered = allItems;
                     if (currentQuery.trim() !== '') {
                         const lower = currentQuery.toLowerCase();
                         filtered = allItems.filter(item => item.to.toLowerCase().includes(lower));
                     }
-                    // Затем сортируем
                     const sorted = sortCongrats(filtered, currentSort);
 
                     if (sorted.length === 0) {
@@ -1295,7 +1325,6 @@
                         return;
                     }
 
-                    // Показываем первые displayedCount записей (или все, если displayedCount больше)
                     const toShow = sorted.slice(0, displayedCount);
                     let html = '';
                     toShow.forEach(item => {
@@ -1314,14 +1343,12 @@
                     });
                     results.innerHTML = html;
 
-                    // Показываем кнопку "Загрузить ещё", если есть ещё записи
                     if (displayedCount < sorted.length) {
                         loadMore.style.display = 'block';
                     } else {
                         loadMore.style.display = 'none';
                     }
 
-                    // Назначаем обработчики лайков и шаринга
                     document.querySelectorAll('.like-btn').forEach(btn => {
                         btn.addEventListener('click', async (e) => {
                             const id = e.target.dataset.id;
@@ -1342,18 +1369,17 @@
                     });
                 }
 
-                // Загрузка всех данных (один раз)
-                async function loadAllData() {
+                async function loadAllData(forceRefresh = false) {
                     results.innerHTML = '<div class="search-hint">Загрузка...</div>';
-                    allItems = await loadAllApproved();
-                    displayedCount = 10; // показываем первые 10
+                    allItems = await loadAllApproved(forceRefresh);
+                    displayedCount = 10;
                     displayItems();
+                    updateLastUpdateLabel();
                 }
 
-                // Обработчики событий
                 input.addEventListener('input', () => {
                     currentQuery = input.value.trim();
-                    displayedCount = 10; // сброс пагинации
+                    displayedCount = 10;
                     displayItems();
                 });
 
@@ -1374,8 +1400,11 @@
                     displayItems();
                 });
 
-                // Первоначальная загрузка
-                loadAllData();
+                refreshBtn.addEventListener('click', () => {
+                    loadAllData(true);
+                });
+
+                loadAllData(false);
             }
 
             async function renderModeration() {
@@ -1383,7 +1412,7 @@
                     contentDiv.innerHTML = `
                         <div class="admin-login">
                             <h2>🔐 Вход для модератора</h2>
-                            <input type="email" id="adminEmail" placeholder="Email" value="${MODERATOR_EMAIL}">
+                            <input type="email" id="adminEmail" placeholder="Email" value="">
                             <input type="password" id="adminPass" placeholder="Пароль">
                             <button id="loginAdminBtn">Войти</button>
                             <div id="loginMessage"></div>
