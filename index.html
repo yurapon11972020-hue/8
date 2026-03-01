@@ -471,7 +471,7 @@
             box-shadow: 0 0 0 4px rgba(151, 154, 170, 0.3);
         }
 
-        button[type="submit"], .search-btn, .approve-btn, .delete-btn, .edit-btn, .save-btn, .cancel-btn, .logout-btn, .load-more, .like-btn, .share-btn, .pin-btn, .admin-like-btn {
+        button[type="submit"], .search-btn, .approve-btn, .delete-btn, .edit-btn, .save-btn, .cancel-btn, .logout-btn, .load-more, .like-btn, .share-btn {
             border: none;
             padding: 14px 28px;
             font-size: 16px;
@@ -491,19 +491,12 @@
             animation: buttonPop 0.4s ease;
         }
 
-        .pin-btn {
-            background: #ffb347; /* оранжевый */
-        }
-        .admin-like-btn {
-            background: #9370db; /* фиолетовый */
-        }
-
         @keyframes buttonPop {
             from { transform: scale(0.95); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
         }
 
-        button[type="submit"]::after, .search-btn::after, .approve-btn::after, .delete-btn::after, .edit-btn::after, .save-btn::after, .cancel-btn::after, .logout-btn::after, .load-more::after, .like-btn::after, .share-btn::after, .pin-btn::after, .admin-like-btn::after {
+        button[type="submit"]::after, .search-btn::after, .approve-btn::after, .delete-btn::after, .edit-btn::after, .save-btn::after, .cancel-btn::after, .logout-btn::after, .load-more::after, .like-btn::after, .share-btn::after {
             content: '';
             position: absolute;
             top: 50%;
@@ -516,7 +509,7 @@
             transition: width 0.4s, height 0.4s;
         }
 
-        button[type="submit"]:hover::after, .search-btn:hover::after, .approve-btn:hover::after, .delete-btn:hover::after, .edit-btn:hover::after, .save-btn:hover::after, .cancel-btn:hover::after, .logout-btn:hover::after, .load-more:hover::after, .like-btn:hover::after, .share-btn:hover::after, .pin-btn:hover::after, .admin-like-btn:hover::after {
+        button[type="submit"]:hover::after, .search-btn:hover::after, .approve-btn:hover::after, .delete-btn:hover::after, .edit-btn:hover::after, .save-btn:hover::after, .cancel-btn:hover::after, .logout-btn:hover::after, .load-more:hover::after, .like-btn:hover::after, .share-btn:hover::after {
             width: 300px;
             height: 300px;
         }
@@ -605,11 +598,6 @@
             animation-fill-mode: both;
         }
 
-        .result-item.pinned {
-            border-left-color: #ffb347;
-            background: rgba(255, 240, 220, 0.5);
-        }
-
         .result-item:nth-child(1) { animation-delay: 0.1s; }
         .result-item:nth-child(2) { animation-delay: 0.2s; }
         .result-item:nth-child(3) { animation-delay: 0.3s; }
@@ -638,9 +626,6 @@
             border-color: rgba(151, 154, 170, 0.3);
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
             border-left-color: #979aaa;
-        }
-        body.dark-theme .result-item.pinned {
-            border-left-color: #ffb347;
         }
 
         body.dark-theme .result-item:hover {
@@ -909,7 +894,7 @@
                 font-size: 18px;
             }
             button[type="submit"], .search-btn, .approve-btn, .delete-btn, .edit-btn,
-            .save-btn, .cancel-btn, .logout-btn, .load-more, .like-btn, .share-btn, .pin-btn, .admin-like-btn {
+            .save-btn, .cancel-btn, .logout-btn, .load-more {
                 padding: 18px 20px;
                 font-size: 18px;
                 width: 100%;
@@ -926,7 +911,7 @@
                 font-weight: 600;
                 letter-spacing: 0.5px;
             }
-            .like-btn, .share-btn, .pin-btn, .admin-like-btn {
+            .like-btn, .share-btn {
                 width: 100%;
                 margin-right: 0;
                 margin-bottom: 10px;
@@ -1243,40 +1228,6 @@
                 }
             }
 
-            // ========== ADMIN LIKE (НАКРУТКА) ==========
-            async function adminLike(postId) {
-                if (!isAdmin()) return;
-                try {
-                    await db.collection('congratulations').doc(postId).update({
-                        likes: firebase.firestore.FieldValue.increment(1)
-                    });
-                    await logModeratorAction('adminLike', `Admin like for ${postId}`, postId);
-                    return true;
-                } catch (error) {
-                    console.error("Ошибка admin like:", error);
-                    return false;
-                }
-            }
-
-            // ========== ПЕРЕКЛЮЧЕНИЕ ЗАКРЕПЛЕНИЯ ==========
-            async function togglePin(postId) {
-                if (!isAdmin()) return;
-                try {
-                    const docRef = db.collection('congratulations').doc(postId);
-                    await db.runTransaction(async (transaction) => {
-                        const doc = await transaction.get(docRef);
-                        if (!doc.exists) throw new Error('Документ не найден');
-                        const currentPinned = doc.data().pinned || false;
-                        transaction.update(docRef, { pinned: !currentPinned });
-                    });
-                    await logModeratorAction('togglePin', `Toggled pin for ${postId}`, postId);
-                    return true;
-                } catch (error) {
-                    console.error("Ошибка togglePin:", error);
-                    return false;
-                }
-            }
-
             // ========== ЗАГРУЗКА ЛАЙКОВ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ ДЛЯ СПИСКА ПОСТОВ ==========
             async function getUserLikesForPosts(postIds) {
                 if (!postIds || postIds.length === 0) return {};
@@ -1332,8 +1283,7 @@
                         from, to, category, message,
                         date: firebase.firestore.FieldValue.serverTimestamp(),
                         approved: false,
-                        likes: 0,
-                        pinned: false  // новое поле
+                        likes: 0
                     });
                     invalidateStatsCache();
                     return { success: true, id: docRef.id };
@@ -1343,27 +1293,10 @@
                 }
             }
 
-            // Функция загрузки одобренных записей с пагинацией (для главной) – теперь с учётом pinned
-            // Будем загружать сначала все pinned (без пагинации, их немного), затем unpinned с пагинацией
-            async function loadPinnedApproved() {
-                try {
-                    const snapshot = await db.collection('congratulations')
-                        .where('approved', '==', true)
-                        .where('pinned', '==', true)
-                        .orderBy('date', 'desc')
-                        .get();
-                    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                } catch (error) {
-                    console.error("Ошибка загрузки закреплённых: ", error);
-                    return [];
-                }
-            }
-
-            async function loadUnpinnedApproved(lastDoc = null, limit = 3) {
+            async function loadRecentApproved(lastDoc = null, limit = 3) {
                 try {
                     let query = db.collection('congratulations')
                         .where('approved', '==', true)
-                        .where('pinned', '==', false)
                         .orderBy('date', 'desc')
                         .limit(limit);
                     if (lastDoc) query = query.startAfter(lastDoc);
@@ -1372,7 +1305,7 @@
                     const results = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                     return { results, last };
                 } catch (error) {
-                    console.error("Ошибка загрузки обычных: ", error);
+                    console.error("Ошибка загрузки последних: ", error);
                     return { results: [], last: null };
                 }
             }
@@ -1463,22 +1396,15 @@
                 btnModeration.classList.remove('active');
             }
 
-            // ==================== ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ ДЛЯ ОТРИСОВКИ КАРТОЧЕК С ЛАЙКАМИ (и admin like) ====================
-            async function renderCards(container, items, userLikesMap = {}, showAdminControls = false) {
+            // ==================== ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ ДЛЯ ОТРИСОВКИ КАРТОЧЕК С ЛАЙКАМИ ====================
+            async function renderCards(container, items, userLikesMap = {}) {
                 container.innerHTML = '';
                 for (let i = 0; i < items.length; i++) {
                     const item = items[i];
                     const d = item.date ? new Date(item.date.seconds * 1000).toLocaleString() : '';
                     const liked = !!userLikesMap[item.id];
-                    const pinnedClass = item.pinned ? 'pinned' : '';
-                    let adminButtons = '';
-                    if (showAdminControls) {
-                        adminButtons = `
-                            <button class="admin-like-btn" data-id="${item.id}">➕ Admin like</button>
-                        `;
-                    }
                     const cardHtml = `
-                        <div class="result-item ${pinnedClass}" style="animation-delay: ${i * 0.1}s">
+                        <div class="result-item" style="animation-delay: ${i * 0.1}s">
                             <p><strong>От кого:</strong> ${item.from}</p>
                             <p><strong>Кому:</strong> ${item.to} (${item.category === 'teacher' ? '👩‍🏫' : '👥'})</p>
                             <p><strong>Текст:</strong> ${item.message}</p>
@@ -1486,13 +1412,11 @@
                             <br>
                             <button class="like-btn" data-id="${item.id}" ${liked ? 'disabled' : ''}>${liked ? '❤️ Вы лайкнули' : '❤️ Нравится'}</button>
                             <button class="share-btn" data-id="${item.id}" data-to="${item.to}">🔗 Поделиться</button>
-                            ${adminButtons}
                         </div>
                     `;
                     container.insertAdjacentHTML('beforeend', cardHtml);
                 }
 
-                // Обработчики для обычных лайков
                 container.querySelectorAll('.like-btn').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
                         const id = e.target.dataset.id;
@@ -1516,31 +1440,6 @@
                             btn.disabled = false;
                             btn.textContent = originalText;
                             alert('Не удалось поставить лайк. Попробуйте позже.');
-                        }
-                    });
-                });
-
-                // Обработчики для admin like
-                container.querySelectorAll('.admin-like-btn').forEach(btn => {
-                    btn.addEventListener('click', async (e) => {
-                        const id = e.target.dataset.id;
-                        const originalText = btn.textContent;
-                        btn.disabled = true;
-                        btn.textContent = '⏳...';
-                        try {
-                            await adminLike(id);
-                            // обновить счётчик на карточке
-                            const likeSpan = btn.closest('.result-item').querySelector('small');
-                            if (likeSpan) {
-                                const currentLikes = parseInt(likeSpan.textContent.match(/❤️ (\d+)/)?.[1] || '0');
-                                likeSpan.innerHTML = likeSpan.innerHTML.replace(/❤️ \d+/, `❤️ ${currentLikes + 1}`);
-                            }
-                            btn.textContent = '➕ Admin like';
-                            btn.disabled = false;
-                        } catch (error) {
-                            console.error('Ошибка admin like:', error);
-                            btn.disabled = false;
-                            btn.textContent = originalText;
                         }
                     });
                 });
@@ -1581,9 +1480,9 @@
                     <button id="loadMoreRecentBtn" class="load-more" style="display:none;">Загрузить ещё 3</button>
                 `;
 
-                const [stats, pinnedItems] = await Promise.all([
+                const [stats, recentData] = await Promise.all([
                     getStats(),
-                    loadPinnedApproved()
+                    loadRecentApproved(null, 3)
                 ]);
 
                 document.getElementById('totalStat').textContent = stats.total;
@@ -1591,40 +1490,29 @@
 
                 const recentDiv = document.getElementById('recentResults');
                 const loadMoreBtn = document.getElementById('loadMoreRecentBtn');
-                let unpinnedLastDoc = null;
-                let allUnpinnedLoaded = false;
-                let allItems = [...pinnedItems]; // сначала закреплённые
-                let unpinnedItems = [];
+                let lastDoc = recentData.last;
+                let allLoaded = recentData.results.length < 3;
+                let currentItems = recentData.results;
 
-                // Функция для отображения всех загруженных (pinned + unpinned)
-                async function displayAll() {
-                    const allPostIds = allItems.map(item => item.id);
-                    const userLikes = await getUserLikesForPosts(allPostIds);
-                    await renderCards(recentDiv, allItems, userLikes, isAdmin());
-                }
+                const postIds = currentItems.map(item => item.id);
+                const userLikes = await getUserLikesForPosts(postIds);
+                await renderCards(recentDiv, currentItems, userLikes);
 
-                // Загружаем первые 3 обычных
-                const firstUnpinned = await loadUnpinnedApproved(null, 3);
-                unpinnedItems = firstUnpinned.results;
-                unpinnedLastDoc = firstUnpinned.last;
-                allUnpinnedLoaded = firstUnpinned.results.length < 3;
-                allItems = [...pinnedItems, ...unpinnedItems];
-                await displayAll();
-
-                loadMoreBtn.style.display = allUnpinnedLoaded ? 'none' : 'block';
+                loadMoreBtn.style.display = allLoaded ? 'none' : 'block';
 
                 loadMoreBtn.addEventListener('click', async () => {
-                    if (allUnpinnedLoaded) return;
-                    const data = await loadUnpinnedApproved(unpinnedLastDoc, 3);
+                    if (allLoaded) return;
+                    const data = await loadRecentApproved(lastDoc, 3);
                     if (data.results.length > 0) {
-                        unpinnedItems = [...unpinnedItems, ...data.results];
-                        unpinnedLastDoc = data.last;
-                        allUnpinnedLoaded = data.results.length < 3;
-                        allItems = [...pinnedItems, ...unpinnedItems];
-                        await displayAll();
-                        loadMoreBtn.style.display = allUnpinnedLoaded ? 'none' : 'block';
+                        currentItems = [...currentItems, ...data.results];
+                        const allPostIds = currentItems.map(item => item.id);
+                        const allLikes = await getUserLikesForPosts(allPostIds);
+                        await renderCards(recentDiv, currentItems, allLikes);
+                        lastDoc = data.last;
+                        allLoaded = data.results.length < 3;
+                        loadMoreBtn.style.display = allLoaded ? 'none' : 'block';
                     } else {
-                        allUnpinnedLoaded = true;
+                        allLoaded = true;
                         loadMoreBtn.style.display = 'none';
                     }
                 });
@@ -1793,7 +1681,7 @@
                     const toShow = sorted.slice(0, displayedCount);
                     const postIds = toShow.map(item => item.id);
                     const userLikes = await getUserLikesForPosts(postIds);
-                    await renderCards(results, toShow, userLikes, isAdmin());
+                    await renderCards(results, toShow, userLikes);
 
                     if (displayedCount >= totalFiltered) {
                         loadMore.style.display = 'none';
@@ -1873,7 +1761,7 @@
                     return;
                 }
 
-                // Код для авторизованных модераторов
+                // Код для авторизованных модераторов (без изменений)
                 let html = `
                     <div class="moderation-header">
                         <h2>🛡️ Панель модератора</h2>
@@ -1939,19 +1827,17 @@
                     items.forEach((item, index) => {
                         const dateStr = item.date ? new Date(item.date.seconds * 1000).toLocaleString() : '';
                         const approvedStatus = item.approved ? '✅ Одобрено' : '⏳ На модерации';
-                        const pinnedStatus = item.pinned ? '📌 Закреплено' : '';
 
                         out += `
-                            <div class="result-item ${item.pinned ? 'pinned' : ''}" data-id="${item.id}" style="animation-delay: ${index * 0.1}s">
+                            <div class="result-item" data-id="${item.id}" style="animation-delay: ${index * 0.1}s">
                                 <div class="item-view">
                                     <p><strong>От:</strong> <span class="from-text">${item.from}</span></p>
                                     <p><strong>Кому:</strong> <span class="to-text">${item.to} (${item.category === 'teacher' ? '👩‍🏫' : '👥'})</span></p>
                                     <p><strong>Текст:</strong> <span class="msg-text">${item.message}</span></p>
-                                    <p><small>${dateStr} | ${approvedStatus} | ❤️ ${item.likes || 0} ${pinnedStatus}</small></p>
+                                    <p><small>${dateStr} | ${approvedStatus} | ❤️ ${item.likes || 0}</small></p>
                                     <button class="edit-btn" data-id="${item.id}">✏️ Редактировать</button>
                                     <button class="delete-btn" data-id="${item.id}">🗑️ Удалить</button>
                                     ${!item.approved ? `<button class="approve-btn" data-id="${item.id}">✅ Одобрить</button>` : ''}
-                                    <button class="pin-btn" data-id="${item.id}">${item.pinned ? '📌 Открепить' : '📌 Закрепить'}</button>
                                 </div>
                                 <div class="item-edit" style="display:none;">
                                     <input class="inline-edit-input edit-from" value="${item.from.replace(/"/g, '&quot;')}">
@@ -2034,24 +1920,6 @@
                                 if (type === 'new') loadNew(); else loadAll();
                             } catch (error) {
                                 alert('Ошибка одобрения: ' + error.message);
-                            }
-                        });
-                    });
-
-                    document.querySelectorAll('.pin-btn').forEach(btn => {
-                        btn.addEventListener('click', async (e) => {
-                            const id = e.target.dataset.id;
-                            const originalText = btn.textContent;
-                            btn.disabled = true;
-                            btn.textContent = '⏳...';
-                            try {
-                                await togglePin(id);
-                                // После переключения перезагружаем список
-                                if (type === 'new') loadNew(); else loadAll();
-                            } catch (error) {
-                                btn.disabled = false;
-                                btn.textContent = originalText;
-                                alert('Ошибка при закреплении');
                             }
                         });
                     });
