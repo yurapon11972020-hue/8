@@ -1193,23 +1193,8 @@
                 return sessionId;
             }
 
-            // ========== ЛАЙКИ: для модераторов без ограничений, для обычных - один раз ==========
+            // ========== ЛАЙКИ: ОДИН ЛАЙК НА ПОЛЬЗОВАТЕЛЯ ДЛЯ ВСЕХ (ВКЛЮЧАЯ МОДЕРАТОРОВ) ==========
             async function likeCongratulation(postId) {
-                // Если модератор – лайкаем без проверок
-                if (isAdmin()) {
-                    try {
-                        const postRef = db.collection('congratulations').doc(postId);
-                        await postRef.update({
-                            likes: firebase.firestore.FieldValue.increment(1)
-                        });
-                        return true;
-                    } catch (error) {
-                        console.error("Ошибка при лайке (админ): ", error);
-                        throw error;
-                    }
-                }
-
-                // Для обычных пользователей оставляем старую логику (один лайк)
                 const userId = getUserId();
                 const likeId = `${postId}_${userId}`;
 
@@ -1232,7 +1217,7 @@
                             likes: firebase.firestore.FieldValue.increment(1)
                         });
                     });
-                    return true;
+                    return true; // лайк поставлен
                 } catch (error) {
                     if (error.message === 'already liked') {
                         console.log('Пользователь уже лайкал это поздравление');
@@ -1245,9 +1230,6 @@
 
             // ========== ЗАГРУЗКА ЛАЙКОВ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ ДЛЯ СПИСКА ПОСТОВ ==========
             async function getUserLikesForPosts(postIds) {
-                // Для модератора не показываем, что он лайкал (он может лайкать много раз)
-                if (isAdmin()) return {};
-
                 if (!postIds || postIds.length === 0) return {};
                 const userId = getUserId();
                 const chunks = [];
@@ -1425,7 +1407,6 @@
                     const item = items[i];
                     const d = item.date ? new Date(item.date.seconds * 1000).toLocaleString() : '';
                     const liked = !!userLikesMap[item.id];
-                    const isAdminUser = isAdmin();
                     const cardHtml = `
                         <div class="result-item" style="animation-delay: ${i * 0.1}s">
                             <p><strong>От кого:</strong> ${item.from}</p>
@@ -1433,7 +1414,7 @@
                             <p><strong>Текст:</strong> ${item.message}</p>
                             <small>${d} | ❤️ ${item.likes || 0}</small>
                             <br>
-                            <button class="like-btn" data-id="${item.id}" ${!isAdminUser && liked ? 'disabled' : ''}>${!isAdminUser && liked ? '❤️ Вы лайкнули' : '❤️ Нравится'}</button>
+                            <button class="like-btn" data-id="${item.id}" ${liked ? 'disabled' : ''}>${liked ? '❤️ Вы лайкнули' : '❤️ Нравится'}</button>
                             <button class="share-btn" data-id="${item.id}" data-to="${item.to}">🔗 Поделиться</button>
                         </div>
                     `;
@@ -1443,35 +1424,24 @@
                 container.querySelectorAll('.like-btn').forEach(btn => {
                     btn.addEventListener('click', async (e) => {
                         const id = e.target.dataset.id;
-                        const isAdminUser = isAdmin();
-
-                        if (!isAdminUser) {
-                            btn.disabled = true;
-                        }
+                        btn.disabled = true;
                         const originalText = btn.textContent;
                         btn.textContent = '⏳ Обработка...';
                         try {
                             const success = await likeCongratulation(id);
                             if (success) {
-                                if (!isAdminUser) {
-                                    btn.textContent = '❤️ Вы лайкнули';
-                                } else {
-                                    btn.textContent = '❤️ Нравится';
-                                    btn.disabled = false; // для админа кнопка остаётся активной
-                                }
+                                btn.textContent = '❤️ Вы лайкнули';
                                 const likeSpan = btn.closest('.result-item').querySelector('small');
                                 if (likeSpan) {
                                     const currentLikes = parseInt(likeSpan.textContent.match(/❤️ (\d+)/)?.[1] || '0');
                                     likeSpan.innerHTML = likeSpan.innerHTML.replace(/❤️ \d+/, `❤️ ${currentLikes + 1}`);
                                 }
                             } else {
-                                // Обычный пользователь уже лайкал
                                 btn.textContent = '❤️ Вы уже лайкнули';
-                                if (!isAdminUser) btn.disabled = true;
                             }
                         } catch (error) {
                             console.error('Ошибка лайка:', error);
-                            if (!isAdminUser) btn.disabled = false;
+                            btn.disabled = false;
                             btn.textContent = originalText;
                             alert('Не удалось поставить лайк. Попробуйте позже.');
                         }
