@@ -829,7 +829,7 @@
             100% { transform: translateY(-250px) scale(1.8) rotate(20deg); opacity: 0; }
         }
 
-        /* ===== Пасхалка с изображениями ===== */
+        /* ===== Пасхалка с изображениями (мгновенное появление, плавное исчезновение) ===== */
         .easter-egg-img {
             position: fixed;
             top: 50%;
@@ -841,7 +841,7 @@
             display: none;
             pointer-events: none;
             opacity: 0;
-            transition: none;
+            transition: none; /* Убираем общий переход */
         }
 
         .easter-egg-img.show {
@@ -851,7 +851,7 @@
 
         .easter-egg-img.hide {
             opacity: 0;
-            transition: opacity 1.5s ease-in-out;
+            transition: opacity 1.5s ease-in-out; /* Плавное исчезновение */
         }
 
         /* ========== МОБИЛЬНАЯ АДАПТАЦИЯ ========== */
@@ -902,14 +902,11 @@
                 margin-top: 10px;
             }
             .load-more {
-                width: 100%;
-                padding: 18px 20px;
+                width: auto;
+                min-width: 220px;
+                padding: 16px 24px;
                 font-size: 18px;
-                margin: 20px 0 10px;
-                background: linear-gradient(145deg, #ffb3c6, #ff8da1);
-                border-radius: 50px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
+                margin: 15px auto 0;
             }
             .like-btn, .share-btn {
                 width: 100%;
@@ -926,7 +923,6 @@
             }
             .result-item { padding: 24px; margin-bottom: 20px; }
             .result-item p { font-size: 17px; line-height: 1.5; }
-            .result-item small { font-size: 14px; }
             .sort-container {
                 flex-direction: column;
                 align-items: stretch;
@@ -957,22 +953,6 @@
                 font-size: 26px;
                 bottom: 12px;
                 right: 12px;
-            }
-
-            /* Упрощаем анимации для слабых устройств */
-            body::before {
-                filter: blur(30px);
-                animation: none;
-            }
-            .stats, .rules, .result-item {
-                backdrop-filter: blur(5px);
-            }
-            .container {
-                backdrop-filter: blur(5px);
-            }
-            @keyframes titleGlow {
-                from { text-shadow: 0 2px 5px rgba(255, 120, 160, 0.3); }
-                to { text-shadow: 0 4px 10px rgba(255, 120, 160, 0.4); }
             }
         }
 
@@ -1012,8 +992,8 @@
     </div>
 
     <!-- Изображения для пасхалки -->
-    <img src="19.jpg" id="egg1" class="easter-egg-img" alt="Easter egg 1">
-    <img src="20.jpg" id="egg2" class="easter-egg-img" alt="Easter egg 2">
+    <img src="19.png" id="egg1" class="easter-egg-img" alt="Easter egg 1">
+    <img src="20.png" id="egg2" class="easter-egg-img" alt="Easter egg 2">
 
     <!-- Аудио для пасхалки -->
     <audio id="easterAudio" src="machomen.mp3" preload="auto"></audio>
@@ -1048,14 +1028,13 @@
             const btnModeration = document.getElementById('btnModeration');
             const themeToggle = document.getElementById('themeToggle');
 
-            // Точные email модераторов из Authentication
+            // Массив email-адресов модераторов
             const MODERATOR_EMAILS = [
                 'yurapon11972020@gmail.com',
                 'yraslavskibididobi@mail.ru',
                 'iluhamoder@mail.ru',
                 'danilsupervpn@mail.ru',
-                'skvizzymedium@mail.ru',
-                'dlaprepodov@mail.ru'
+                'skvizzymedium@mail.ru'
             ].map(email => email.toLowerCase());
 
             const POST_COOLDOWN = 5 * 60 * 1000;
@@ -1064,7 +1043,7 @@
             let clickCount = 0;
             let firstClickTime = 0;
             let easterEggActive = false;
-            let currentEggIndex = 1;
+            let currentEggIndex = 1; // 1 или 2 для чередования
 
             const audio = document.getElementById('easterAudio');
             const egg1 = document.getElementById('egg1');
@@ -1073,33 +1052,49 @@
             function showEasterEgg() {
                 if (easterEggActive) return;
                 easterEggActive = true;
+
+                // Выбираем текущее фото
                 const currentEgg = currentEggIndex === 1 ? egg1 : egg2;
                 const nextIndex = currentEggIndex === 1 ? 2 : 1;
+
+                // Убираем предыдущие классы
                 currentEgg.classList.remove('hide', 'show');
+                // Показываем фото (мгновенно)
                 currentEgg.style.display = 'block';
+                // Принудительный reflow для применения display
                 void currentEgg.offsetWidth;
+                // Добавляем класс show (opacity 1) — появляется резко, без анимации
                 currentEgg.classList.add('show');
+
+                // Воспроизводим музыку
                 audio.currentTime = 0;
                 audio.play().catch(e => console.log("Ошибка воспроизведения аудио:", e));
+
+                // Через 4.5 секунды начинаем исчезновение
                 setTimeout(() => {
                     currentEgg.classList.remove('show');
-                    currentEgg.classList.add('hide');
+                    currentEgg.classList.add('hide'); // запускает transition на opacity
                 }, 4500);
+
+                // Через 6 секунд (4.5 + 1.5) полностью скрываем и разрешаем следующее фото
                 setTimeout(() => {
                     currentEgg.style.display = 'none';
                     currentEgg.classList.remove('hide');
                     easterEggActive = false;
-                    currentEggIndex = nextIndex;
+                    currentEggIndex = nextIndex; // переключаем на следующее фото
                 }, 6000);
             }
 
+            // Модифицируем обработчик клика на кнопку темы
             themeToggle.addEventListener('click', (e) => {
+                // Стандартное действие (смена темы)
                 let darkTheme = localStorage.getItem('theme') === 'dark';
                 darkTheme = !darkTheme;
                 document.body.classList.toggle('dark-theme', darkTheme);
                 localStorage.setItem('theme', darkTheme ? 'dark' : 'light');
                 themeToggle.textContent = darkTheme ? '☀️' : '🌙';
 
+                // Пасхалка: считаем клики
                 const now = Date.now();
                 if (firstClickTime === 0 || now - firstClickTime > 2000) {
                     clickCount = 1;
@@ -1112,10 +1107,13 @@
                         firstClickTime = 0;
                     }
                 }
+
+                // Вращение иконки
                 themeToggle.style.transform = 'rotate(360deg)';
                 setTimeout(() => themeToggle.style.transform = '', 300);
             });
 
+            // Инициализация темы
             let darkTheme = localStorage.getItem('theme') === 'dark';
             if (darkTheme) {
                 document.body.classList.add('dark-theme');
@@ -1180,114 +1178,20 @@
                 }
             }
 
-            // ========== УНИКАЛЬНЫЙ ИДЕНТИФИКАТОР ПОЛЬЗОВАТЕЛЯ ДЛЯ ЛАЙКОВ ==========
-            function getUserId() {
-                const user = auth.currentUser;
-                if (user) return 'user_' + user.uid;
-
-                let sessionId = localStorage.getItem('session_id');
-                if (!sessionId) {
-                    sessionId = 'session_' + Math.random().toString(36).substring(2) + Date.now();
-                    localStorage.setItem('session_id', sessionId);
-                }
-                return sessionId;
-            }
-
-            // ========== ЛАЙКИ: ОДИН ЛАЙК НА ПОЛЬЗОВАТЕЛЯ ДЛЯ ВСЕХ (ВКЛЮЧАЯ МОДЕРАТОРОВ) ==========
-            async function likeCongratulation(postId) {
-                const userId = getUserId();
-                const likeId = `${postId}_${userId}`;
-
-                try {
-                    await db.runTransaction(async (transaction) => {
-                        const likeRef = db.collection('likes').doc(likeId);
-                        const likeDoc = await transaction.get(likeRef);
-                        if (likeDoc.exists) {
-                            throw new Error('already liked');
-                        }
-
-                        transaction.set(likeRef, {
-                            postId: postId,
-                            userId: userId,
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-
-                        const postRef = db.collection('congratulations').doc(postId);
-                        transaction.update(postRef, {
-                            likes: firebase.firestore.FieldValue.increment(1)
-                        });
-                    });
-                    return true; // лайк поставлен
-                } catch (error) {
-                    if (error.message === 'already liked') {
-                        console.log('Пользователь уже лайкал это поздравление');
-                        return false;
-                    }
-                    console.error("Ошибка при лайке: ", error);
-                    throw error;
-                }
-            }
-
-            // ========== ЗАГРУЗКА ЛАЙКОВ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ ДЛЯ СПИСКА ПОСТОВ ==========
-            async function getUserLikesForPosts(postIds) {
-                if (!postIds || postIds.length === 0) return {};
-                const userId = getUserId();
-                const chunks = [];
-                for (let i = 0; i < postIds.length; i += 10) {
-                    chunks.push(postIds.slice(i, i + 10));
-                }
-                let likesMap = {};
-                for (const chunk of chunks) {
-                    const snapshot = await db.collection('likes')
-                        .where('userId', '==', userId)
-                        .where('postId', 'in', chunk)
-                        .get();
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        likesMap[data.postId] = true;
-                    });
-                }
-                return likesMap;
-            }
-
-            // ========== СТАТИСТИКА С КЭШЕМ ==========
-            const STATS_CACHE_KEY = 'stats_cache';
-            const STATS_CACHE_TTL = 5 * 60 * 1000;
-
             async function getStats() {
-                const cached = localStorage.getItem(STATS_CACHE_KEY);
-                if (cached) {
-                    const { stats, timestamp } = JSON.parse(cached);
-                    if (Date.now() - timestamp < STATS_CACHE_TTL) {
-                        return stats;
-                    }
-                }
-
-                const [totalSnap, approvedSnap] = await Promise.all([
-                    db.collection('congratulations').get(),
-                    db.collection('congratulations').where('approved', '==', true).get()
-                ]);
-                const stats = { total: totalSnap.size, approved: approvedSnap.size };
-
-                localStorage.setItem(STATS_CACHE_KEY, JSON.stringify({ stats, timestamp: Date.now() }));
-                return stats;
+                const totalSnap = await db.collection('congratulations').get();
+                const approvedSnap = await db.collection('congratulations').where('approved', '==', true).get();
+                return { total: totalSnap.size, approved: approvedSnap.size };
             }
 
-            function invalidateStatsCache() {
-                localStorage.removeItem(STATS_CACHE_KEY);
-            }
-
-            // ========== ДОБАВЛЕНИЕ ПОЗДРАВЛЕНИЯ (с полем pinned = false) ==========
             async function addCongratulation(from, to, category, message) {
                 try {
                     const docRef = await db.collection('congratulations').add({
                         from, to, category, message,
                         date: firebase.firestore.FieldValue.serverTimestamp(),
                         approved: false,
-                        likes: 0,
-                        pinned: false
+                        likes: 0
                     });
-                    invalidateStatsCache();
                     return { success: true, id: docRef.id };
                 } catch (error) {
                     console.error("Ошибка добавления: ", error);
@@ -1295,14 +1199,12 @@
                 }
             }
 
-            // ========== ЗАГРУЗКА ПОСЛЕДНИХ ОДОБРЕННЫХ (с сортировкой по pinned и date) ==========
-            async function loadRecentApproved(lastDoc = null, limit = 3) {
+            async function loadRecentApproved(lastDoc = null) {
                 try {
                     let query = db.collection('congratulations')
                         .where('approved', '==', true)
-                        .orderBy('pinned', 'desc')
                         .orderBy('date', 'desc')
-                        .limit(limit);
+                        .limit(10);
                     if (lastDoc) query = query.startAfter(lastDoc);
                     const snapshot = await query.get();
                     const last = snapshot.docs[snapshot.docs.length - 1];
@@ -1359,6 +1261,12 @@
                 await db.collection('congratulations').doc(id).delete();
             }
 
+            async function likeCongratulation(id) {
+                await db.collection('congratulations').doc(id).update({
+                    likes: firebase.firestore.FieldValue.increment(1)
+                });
+            }
+
             function sortCongrats(items, sortBy) {
                 const sorted = [...items];
                 switch (sortBy) {
@@ -1400,75 +1308,14 @@
                 btnModeration.classList.remove('active');
             }
 
-            // ==================== ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ ДЛЯ ОТРИСОВКИ КАРТОЧЕК С ЛАЙКАМИ ====================
-            async function renderCards(container, items, userLikesMap = {}) {
-                container.innerHTML = '';
-                for (let i = 0; i < items.length; i++) {
-                    const item = items[i];
-                    const d = item.date ? new Date(item.date.seconds * 1000).toLocaleString() : '';
-                    const liked = !!userLikesMap[item.id];
-                    const cardHtml = `
-                        <div class="result-item" style="animation-delay: ${i * 0.1}s">
-                            <p><strong>От кого:</strong> ${item.from}</p>
-                            <p><strong>Кому:</strong> ${item.to} (${item.category === 'teacher' ? '👩‍🏫' : '👥'})</p>
-                            <p><strong>Текст:</strong> ${item.message}</p>
-                            <small>${d} | ❤️ ${item.likes || 0}</small>
-                            <br>
-                            <button class="like-btn" data-id="${item.id}" ${liked ? 'disabled' : ''}>${liked ? '❤️ Вы лайкнули' : '❤️ Нравится'}</button>
-                            <button class="share-btn" data-id="${item.id}" data-to="${item.to}">🔗 Поделиться</button>
-                        </div>
-                    `;
-                    container.insertAdjacentHTML('beforeend', cardHtml);
-                }
-
-                container.querySelectorAll('.like-btn').forEach(btn => {
-                    btn.addEventListener('click', async (e) => {
-                        const id = e.target.dataset.id;
-                        btn.disabled = true;
-                        const originalText = btn.textContent;
-                        btn.textContent = '⏳ Обработка...';
-                        try {
-                            const success = await likeCongratulation(id);
-                            if (success) {
-                                btn.textContent = '❤️ Вы лайкнули';
-                                const likeSpan = btn.closest('.result-item').querySelector('small');
-                                if (likeSpan) {
-                                    const currentLikes = parseInt(likeSpan.textContent.match(/❤️ (\d+)/)?.[1] || '0');
-                                    likeSpan.innerHTML = likeSpan.innerHTML.replace(/❤️ \d+/, `❤️ ${currentLikes + 1}`);
-                                }
-                            } else {
-                                btn.textContent = '❤️ Вы уже лайкнули';
-                            }
-                        } catch (error) {
-                            console.error('Ошибка лайка:', error);
-                            btn.disabled = false;
-                            btn.textContent = originalText;
-                            alert('Не удалось поставить лайк. Попробуйте позже.');
-                        }
-                    });
-                });
-
-                container.querySelectorAll('.share-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const id = e.target.dataset.id;
-                        const to = e.target.dataset.to;
-                        const url = window.location.href.split('#')[0] + '#congratulation=' + id;
-                        const text = `Напиши ${to} чтобы увидеть поздравления ${url}`;
-                        navigator.clipboard.writeText(text);
-                        alert('Ссылка с именем скопирована!');
-                    });
-                });
-            }
-
-            // ==================== ГЛАВНАЯ ====================
             async function renderHome() {
                 setActiveButton('btnHome');
-
+                const stats = await getStats();
                 contentDiv.innerHTML = `
                     <h1>🌸 Поздравления с 8 марта</h1>
                     <div class="stats">
-                        <span>📨 Всего отправлено: <span id="totalStat">...</span></span>
-                        <span>✅ Одобрено: <span id="approvedStat">...</span></span>
+                        <span>📨 Всего отправлено: ${stats.total}</span>
+                        <span>✅ Одобрено: ${stats.approved}</span>
                     </div>
                     <div class="rules">
                         <strong>Правила:</strong>
@@ -1481,48 +1328,66 @@
                     </div>
                     <h2>📬 Последние поздравления</h2>
                     <div id="recentResults" class="search-hint">Загрузка...</div>
-                    <button id="loadMoreRecentBtn" class="load-more" style="display:none;">Загрузить ещё 3</button>
+                    <button id="loadMoreRecentBtn" class="load-more" style="display:none;">Загрузить ещё</button>
                 `;
-
-                const [stats, recentData] = await Promise.all([
-                    getStats(),
-                    loadRecentApproved(null, 3)
-                ]);
-
-                document.getElementById('totalStat').textContent = stats.total;
-                document.getElementById('approvedStat').textContent = stats.approved;
 
                 const recentDiv = document.getElementById('recentResults');
                 const loadMoreBtn = document.getElementById('loadMoreRecentBtn');
-                let lastDoc = recentData.last;
-                let allLoaded = recentData.results.length < 3;
-                let currentItems = recentData.results;
+                let lastDoc = null;
 
-                const postIds = currentItems.map(item => item.id);
-                const userLikes = await getUserLikesForPosts(postIds);
-                await renderCards(recentDiv, currentItems, userLikes);
-
-                loadMoreBtn.style.display = allLoaded ? 'none' : 'block';
-
-                loadMoreBtn.addEventListener('click', async () => {
-                    if (allLoaded) return;
-                    const data = await loadRecentApproved(lastDoc, 3);
-                    if (data.results.length > 0) {
-                        currentItems = [...currentItems, ...data.results];
-                        const allPostIds = currentItems.map(item => item.id);
-                        const allLikes = await getUserLikesForPosts(allPostIds);
-                        await renderCards(recentDiv, currentItems, allLikes);
-                        lastDoc = data.last;
-                        allLoaded = data.results.length < 3;
-                        loadMoreBtn.style.display = allLoaded ? 'none' : 'block';
-                    } else {
-                        allLoaded = true;
-                        loadMoreBtn.style.display = 'none';
+                async function loadRecent(reset = true) {
+                    if (reset) {
+                        lastDoc = null;
+                        recentDiv.innerHTML = '<div class="search-hint">Загрузка...</div>';
                     }
-                });
+                    const data = await loadRecentApproved(lastDoc);
+                    if (data.results.length === 0 && reset) {
+                        recentDiv.innerHTML = '<div class="no-results">😔 Пока нет одобренных поздравлений.</div>';
+                        loadMoreBtn.style.display = 'none';
+                    } else {
+                        if (reset) recentDiv.innerHTML = '';
+                        data.results.forEach((item, index) => {
+                            const d = item.date ? new Date(item.date.seconds * 1000).toLocaleString() : '';
+                            recentDiv.innerHTML += `
+                                <div class="result-item" style="animation-delay: ${index * 0.1}s">
+                                    <p><strong>От кого:</strong> ${item.from}</p>
+                                    <p><strong>Кому:</strong> ${item.to} (${item.category === 'teacher' ? '👩‍🏫' : '👥'})</p>
+                                    <p><strong>Текст:</strong> ${item.message}</p>
+                                    <small>${d} | ❤️ ${item.likes || 0}</small>
+                                    <br>
+                                    <button class="like-btn" data-id="${item.id}">❤️ Нравится</button>
+                                    <button class="share-btn" data-id="${item.id}" data-to="${item.to}">🔗 Поделиться</button>
+                                </div>
+                            `;
+                        });
+                        lastDoc = data.last;
+                        loadMoreBtn.style.display = data.last ? 'block' : 'none';
+
+                        document.querySelectorAll('#recentResults .like-btn').forEach(btn => {
+                            btn.addEventListener('click', async (e) => {
+                                const id = e.target.dataset.id;
+                                await likeCongratulation(id);
+                                e.target.disabled = true;
+                                e.target.textContent = '❤️ Спасибо!';
+                            });
+                        });
+                        document.querySelectorAll('#recentResults .share-btn').forEach(btn => {
+                            btn.addEventListener('click', (e) => {
+                                const id = e.target.dataset.id;
+                                const to = e.target.dataset.to;
+                                const url = window.location.href.split('#')[0] + '#congratulation=' + id;
+                                const text = `Напиши ${to} чтобы увидеть поздравления ${url}`;
+                                navigator.clipboard.writeText(text);
+                                alert('Ссылка с именем скопирована!');
+                            });
+                        });
+                    }
+                }
+
+                loadMoreBtn.addEventListener('click', () => loadRecent(false));
+                await loadRecent(true);
             }
 
-            // ==================== ОТПРАВКА ====================
             function renderSend() {
                 setActiveButton('btnSend');
                 contentDiv.innerHTML = `
@@ -1611,8 +1476,7 @@
                 });
             }
 
-            // ==================== ПОИСК ====================
-            async function renderSearch() {
+            function renderSearch() {
                 setActiveButton('btnSearch');
                 contentDiv.innerHTML = `
                     <h1>🔎 Все поздравления</h1>
@@ -1640,7 +1504,7 @@
                         </select>
                     </div>
                     <div id="searchResults" class="search-hint">Загрузка...</div>
-                    <button id="loadMoreBtn" class="load-more" style="display:none;">Загрузить ещё 10</button>
+                    <button id="loadMoreBtn" class="load-more" style="display:none;">Загрузить ещё</button>
                 `;
 
                 const input = document.getElementById('searchInput');
@@ -1667,38 +1531,69 @@
                 }
                 updateLastUpdateLabel();
 
-                async function displayItems() {
+                function displayItems() {
                     let filtered = allItems;
                     if (currentQuery.trim() !== '') {
                         const lower = currentQuery.toLowerCase();
                         filtered = allItems.filter(item => item.to.toLowerCase().includes(lower));
                     }
                     const sorted = sortCongrats(filtered, currentSort);
-                    const totalFiltered = sorted.length;
 
-                    if (totalFiltered === 0) {
+                    if (sorted.length === 0) {
                         results.innerHTML = `<div class="no-results">😔 По запросу «${currentQuery || 'все'}» ничего не найдено.</div>`;
                         loadMore.style.display = 'none';
                         return;
                     }
 
                     const toShow = sorted.slice(0, displayedCount);
-                    const postIds = toShow.map(item => item.id);
-                    const userLikes = await getUserLikesForPosts(postIds);
-                    await renderCards(results, toShow, userLikes);
+                    let html = '';
+                    toShow.forEach((item, index) => {
+                        const d = item.date ? new Date(item.date.seconds * 1000).toLocaleString() : '';
+                        html += `
+                            <div class="result-item" style="animation-delay: ${index * 0.1}s">
+                                <p><strong>От кого:</strong> ${item.from}</p>
+                                <p><strong>Кому:</strong> ${item.to} (${item.category === 'teacher' ? '👩‍🏫' : '👥'})</p>
+                                <p><strong>Текст:</strong> ${item.message}</p>
+                                <small>${d} | ❤️ ${item.likes || 0}</small>
+                                <br>
+                                <button class="like-btn" data-id="${item.id}">❤️ Нравится</button>
+                                <button class="share-btn" data-id="${item.id}" data-to="${item.to}">🔗 Поделиться</button>
+                            </div>
+                        `;
+                    });
+                    results.innerHTML = html;
 
-                    if (displayedCount >= totalFiltered) {
-                        loadMore.style.display = 'none';
-                    } else {
+                    if (displayedCount < sorted.length) {
                         loadMore.style.display = 'block';
+                    } else {
+                        loadMore.style.display = 'none';
                     }
+
+                    document.querySelectorAll('.like-btn').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            const id = e.target.dataset.id;
+                            await likeCongratulation(id);
+                            e.target.disabled = true;
+                            e.target.textContent = '❤️ Спасибо!';
+                        });
+                    });
+                    document.querySelectorAll('.share-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const id = e.target.dataset.id;
+                            const to = e.target.dataset.to;
+                            const url = window.location.href.split('#')[0] + '#congratulation=' + id;
+                            const text = `Напиши ${to} чтобы увидеть поздравления ${url}`;
+                            navigator.clipboard.writeText(text);
+                            alert('Ссылка с именем скопирована!');
+                        });
+                    });
                 }
 
                 async function loadAllData(forceRefresh = false) {
                     results.innerHTML = '<div class="search-hint">Загрузка...</div>';
                     allItems = await loadAllApproved(forceRefresh);
                     displayedCount = 10;
-                    await displayItems();
+                    displayItems();
                     updateLastUpdateLabel();
                 }
 
@@ -1729,19 +1624,12 @@
                     loadAllData(true);
                 });
 
-                await loadAllData(false);
+                loadAllData(false);
             }
 
-            // ==================== МОДЕРАЦИЯ (с кнопкой закрепления) ====================
             async function renderModeration() {
                 if (!isAdmin()) {
-                    // Отображаем информацию о модераторах и форму входа
                     contentDiv.innerHTML = `
-                        <div class="moderator-info" style="background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(12px); border-radius: 60px; padding: 20px 28px; margin-bottom: 30px; border: 1px solid rgba(255, 255, 255, 0.6); color: #4a2a35;">
-                            <p><strong>🌷 Вот наши модераторы:</strong></p>
-                            <p>Усатов Тимофей, Илья Говтва, Ярослав Носков, Вадим Муллаголиев, Данила Сарычев.</p>
-                            <p><em>Все мы будем одобрять ваши анкеты в период работы сайта.</em></p>
-                        </div>
                         <div class="admin-login">
                             <h2>🔐 Вход для модератора</h2>
                             <input type="email" id="adminEmail" placeholder="Email" value="">
@@ -1765,7 +1653,6 @@
                     return;
                 }
 
-                // Код для авторизованных модераторов
                 let html = `
                     <div class="moderation-header">
                         <h2>🛡️ Панель модератора</h2>
@@ -1801,37 +1688,25 @@
                 }
 
                 async function loadNew() {
-                    try {
-                        const items = await getUnapprovedCongrats();
-                        if (items.length === 0) {
-                            modContent.innerHTML = '<p class="no-results">✨ Нет новых записей</p>';
-                        } else {
-                            renderItems(items, 'new');
-                        }
-                    } catch (error) {
-                        modContent.innerHTML = `<p class="message error">❌ Ошибка загрузки: ${error.message}</p>`;
-                    }
+                    const items = await getUnapprovedCongrats();
+                    renderItems(items, 'new');
                 }
 
                 async function loadAll() {
-                    try {
-                        const items = await getAllCongrats();
-                        if (items.length === 0) {
-                            modContent.innerHTML = '<p class="no-results">✨ Нет записей</p>';
-                        } else {
-                            renderItems(items, 'all');
-                        }
-                    } catch (error) {
-                        modContent.innerHTML = `<p class="message error">❌ Ошибка загрузки: ${error.message}</p>`;
-                    }
+                    const items = await getAllCongrats();
+                    renderItems(items, 'all');
                 }
 
                 function renderItems(items, type) {
+                    if (items.length === 0) {
+                        modContent.innerHTML = '<p class="no-results">✨ Нет записей</p>';
+                        return;
+                    }
+
                     let out = '';
                     items.forEach((item, index) => {
                         const dateStr = item.date ? new Date(item.date.seconds * 1000).toLocaleString() : '';
                         const approvedStatus = item.approved ? '✅ Одобрено' : '⏳ На модерации';
-                        const pinnedStatus = item.pinned ? '📌 Закреплено' : '📍 Не закреплено';
 
                         out += `
                             <div class="result-item" data-id="${item.id}" style="animation-delay: ${index * 0.1}s">
@@ -1839,11 +1714,10 @@
                                     <p><strong>От:</strong> <span class="from-text">${item.from}</span></p>
                                     <p><strong>Кому:</strong> <span class="to-text">${item.to} (${item.category === 'teacher' ? '👩‍🏫' : '👥'})</span></p>
                                     <p><strong>Текст:</strong> <span class="msg-text">${item.message}</span></p>
-                                    <p><small>${dateStr} | ${approvedStatus} | ❤️ ${item.likes || 0} | ${pinnedStatus}</small></p>
+                                    <p><small>${dateStr} | ${approvedStatus} | ❤️ ${item.likes || 0}</small></p>
                                     <button class="edit-btn" data-id="${item.id}">✏️ Редактировать</button>
                                     <button class="delete-btn" data-id="${item.id}">🗑️ Удалить</button>
                                     ${!item.approved ? `<button class="approve-btn" data-id="${item.id}">✅ Одобрить</button>` : ''}
-                                    <button class="pin-btn" data-id="${item.id}" data-pinned="${item.pinned}">${item.pinned ? '📌 Открепить' : '📌 Закрепить'}</button>
                                 </div>
                                 <div class="item-edit" style="display:none;">
                                     <input class="inline-edit-input edit-from" value="${item.from.replace(/"/g, '&quot;')}">
@@ -1889,14 +1763,9 @@
                                 return;
                             }
 
-                            try {
-                                await updateCongratulation(id, { from, to, category, message: msg });
-                                await logModeratorAction('edit', `Изменил запись ${id}`, id);
-                                invalidateStatsCache();
-                                if (type === 'new') loadNew(); else loadAll();
-                            } catch (error) {
-                                alert('Ошибка сохранения: ' + error.message);
-                            }
+                            await updateCongratulation(id, { from, to, category, message: msg });
+                            await logModeratorAction('edit', `Изменил запись ${id}`, id);
+                            if (type === 'new') loadNew(); else loadAll();
                         });
                     });
 
@@ -1904,14 +1773,9 @@
                         btn.addEventListener('click', async (e) => {
                             const id = e.target.dataset.id;
                             if (confirm('Вы уверены, что хотите удалить это поздравление?')) {
-                                try {
-                                    await deleteCongratulation(id);
-                                    await logModeratorAction('delete', `Удалил запись ${id}`, id);
-                                    invalidateStatsCache();
-                                    if (type === 'new') loadNew(); else loadAll();
-                                } catch (error) {
-                                    alert('Ошибка удаления: ' + error.message);
-                                }
+                                await deleteCongratulation(id);
+                                await logModeratorAction('delete', `Удалил запись ${id}`, id);
+                                if (type === 'new') loadNew(); else loadAll();
                             }
                         });
                     });
@@ -1919,28 +1783,9 @@
                     document.querySelectorAll('.approve-btn').forEach(btn => {
                         btn.addEventListener('click', async (e) => {
                             const id = e.target.dataset.id;
-                            try {
-                                await updateCongratulation(id, { approved: true });
-                                await logModeratorAction('approve', `Одобрил запись ${id}`, id);
-                                invalidateStatsCache();
-                                if (type === 'new') loadNew(); else loadAll();
-                            } catch (error) {
-                                alert('Ошибка одобрения: ' + error.message);
-                            }
-                        });
-                    });
-
-                    document.querySelectorAll('.pin-btn').forEach(btn => {
-                        btn.addEventListener('click', async (e) => {
-                            const id = e.target.dataset.id;
-                            const currentPinned = e.target.dataset.pinned === 'true';
-                            try {
-                                await updateCongratulation(id, { pinned: !currentPinned });
-                                await logModeratorAction('pin', `Переключил закрепление для ${id} на ${!currentPinned}`, id);
-                                if (type === 'new') loadNew(); else loadAll();
-                            } catch (error) {
-                                alert('Ошибка изменения закрепления: ' + error.message);
-                            }
+                            await updateCongratulation(id, { approved: true });
+                            await logModeratorAction('approve', `Одобрил запись ${id}`, id);
+                            if (type === 'new') loadNew(); else loadAll();
                         });
                     });
                 }
