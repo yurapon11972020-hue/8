@@ -829,7 +829,25 @@
             100% { transform: translateY(-250px) scale(1.8) rotate(20deg); opacity: 0; }
         }
 
-        /* ===== Пасхалка с изображениями ===== */
+        /* Скелетоны для загрузки */
+        .skeleton-card {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 40px;
+            height: 120px;
+            margin-bottom: 20px;
+        }
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        body.dark-theme .skeleton-card {
+            background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+            background-size: 200% 100%;
+        }
+
+        /* Пасхалка с изображениями */
         .easter-egg-img {
             position: fixed;
             top: 50%;
@@ -964,11 +982,12 @@
                 filter: blur(30px);
                 animation: none;
             }
-            .stats, .rules, .result-item {
-                backdrop-filter: blur(5px);
+            .container, .sidebar, .content, .stats, .rules, .result-item {
+                backdrop-filter: none !important;
+                -webkit-backdrop-filter: none !important;
             }
-            .container {
-                backdrop-filter: blur(5px);
+            body::before {
+                display: none;
             }
             @keyframes titleGlow {
                 from { text-shadow: 0 2px 5px rgba(255, 120, 160, 0.3); }
@@ -1018,10 +1037,10 @@
     <!-- Аудио для пасхалки -->
     <audio id="easterAudio" src="machomen.mp3" preload="auto"></audio>
 
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <!-- Firebase SDK (обновлено до 10.13.0) -->
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 
     <script>
         // Конфиг Firebase
@@ -1069,6 +1088,17 @@
             const audio = document.getElementById('easterAudio');
             const egg1 = document.getElementById('egg1');
             const egg2 = document.getElementById('egg2');
+
+            // Функция экранирования HTML (защита от XSS)
+            function escapeHtml(unsafe) {
+                if (!unsafe) return '';
+                return unsafe
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#039;");
+            }
 
             function showEasterEgg() {
                 if (easterEggActive) return;
@@ -1193,7 +1223,7 @@
                 return sessionId;
             }
 
-            // ========== ЛАЙКИ (ТОЛЬКО ОДИН РАЗ) ==========
+            // ========== ЛАЙКИ С КЭШИРОВАНИЕМ В LOCALSTORAGE ==========
             async function likeCongratulation(postId) {
                 const userId = getUserId();
                 const likeId = `${postId}_${userId}`;
@@ -1217,7 +1247,9 @@
                             likes: firebase.firestore.FieldValue.increment(1)
                         });
                     });
-                    return true; // лайк поставлен
+                    // Сохраняем в localStorage
+                    localStorage.setItem(`liked_${postId}_${userId}`, 'true');
+                    return true;
                 } catch (error) {
                     if (error.message === 'already liked') {
                         console.log('Пользователь уже лайкал это поздравление');
@@ -1228,15 +1260,27 @@
                 }
             }
 
-            // ========== ЗАГРУЗКА ЛАЙКОВ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ ДЛЯ СПИСКА ПОСТОВ ==========
+            // ========== ЗАГРУЗКА ЛАЙКОВ С ПРОВЕРКОЙ LOCALSTORAGE ==========
             async function getUserLikesForPosts(postIds) {
                 if (!postIds || postIds.length === 0) return {};
                 const userId = getUserId();
+                const likesMap = {};
+
+                // Сначала проверяем localStorage
+                postIds.forEach(id => {
+                    if (localStorage.getItem(`liked_${id}_${userId}`) === 'true') {
+                        likesMap[id] = true;
+                    }
+                });
+
+                // Для тех, что не в кэше, запрашиваем с сервера
+                const uncachedIds = postIds.filter(id => !likesMap[id]);
+                if (uncachedIds.length === 0) return likesMap;
+
                 const chunks = [];
-                for (let i = 0; i < postIds.length; i += 10) {
-                    chunks.push(postIds.slice(i, i + 10));
+                for (let i = 0; i < uncachedIds.length; i += 10) {
+                    chunks.push(uncachedIds.slice(i, i + 10));
                 }
-                let likesMap = {};
                 for (const chunk of chunks) {
                     const snapshot = await db.collection('likes')
                         .where('userId', '==', userId)
@@ -1245,6 +1289,7 @@
                     snapshot.forEach(doc => {
                         const data = doc.data();
                         likesMap[data.postId] = true;
+                        localStorage.setItem(`liked_${data.postId}_${userId}`, 'true');
                     });
                 }
                 return likesMap;
@@ -1405,13 +1450,13 @@
                     const liked = !!userLikesMap[item.id];
                     const cardHtml = `
                         <div class="result-item" style="animation-delay: ${i * 0.1}s">
-                            <p><strong>От кого:</strong> ${item.from}</p>
-                            <p><strong>Кому:</strong> ${item.to} (${item.category === 'teacher' ? '👩‍🏫' : '👥'})</p>
-                            <p><strong>Текст:</strong> ${item.message}</p>
-                            <small>${d} | ❤️ ${item.likes || 0}</small>
+                            <p><strong>От кого:</strong> ${escapeHtml(item.from)}</p>
+                            <p><strong>Кому:</strong> ${escapeHtml(item.to)} (${item.category === 'teacher' ? '👩‍🏫' : '👥'})</p>
+                            <p><strong>Текст:</strong> ${escapeHtml(item.message)}</p>
+                            <small>${escapeHtml(d)} | ❤️ ${item.likes || 0}</small>
                             <br>
                             <button class="like-btn" data-id="${item.id}" ${liked ? 'disabled' : ''}>${liked ? '❤️ Вы лайкнули' : '❤️ Нравится'}</button>
-                            <button class="share-btn" data-id="${item.id}" data-to="${item.to}">🔗 Поделиться</button>
+                            <button class="share-btn" data-id="${item.id}" data-to="${escapeHtml(item.to)}">🔗 Поделиться</button>
                         </div>
                     `;
                     container.insertAdjacentHTML('beforeend', cardHtml);
@@ -1456,9 +1501,16 @@
                 });
             }
 
-            // ==================== ГЛАВНАЯ ====================
+            // ==================== ГЛАВНАЯ (оптимизированная) ====================
             async function renderHome() {
                 setActiveButton('btnHome');
+
+                // Скелетоны для быстрого отображения
+                const skeletonHTML = `
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                    <div class="skeleton-card"></div>
+                `;
 
                 contentDiv.innerHTML = `
                     <h1>🌸 Поздравления с 8 марта</h1>
@@ -1476,51 +1528,62 @@
                         </ul>
                     </div>
                     <h2>📬 Последние поздравления</h2>
-                    <div id="recentResults" class="search-hint">Загрузка...</div>
+                    <div id="recentResults" class="search-hint">${skeletonHTML}</div>
                     <button id="loadMoreRecentBtn" class="load-more" style="display:none;">Загрузить ещё 3</button>
                 `;
 
-                const [stats, recentData] = await Promise.all([
-                    getStats(),
-                    loadRecentApproved(null, 3)
-                ]);
+                // Загружаем статистику параллельно с постами
+                const statsPromise = getStats().then(stats => {
+                    document.getElementById('totalStat').textContent = stats.total;
+                    document.getElementById('approvedStat').textContent = stats.approved;
+                });
 
-                document.getElementById('totalStat').textContent = stats.total;
-                document.getElementById('approvedStat').textContent = stats.approved;
+                let allPosts = [];
+                let likesMap = {};
+                let lastDoc = null;
+                let allLoaded = false;
 
                 const recentDiv = document.getElementById('recentResults');
                 const loadMoreBtn = document.getElementById('loadMoreRecentBtn');
-                let lastDoc = recentData.last;
-                let allLoaded = recentData.results.length < 3;
-                let currentItems = recentData.results;
 
-                const postIds = currentItems.map(item => item.id);
-                const userLikes = await getUserLikesForPosts(postIds);
-                await renderCards(recentDiv, currentItems, userLikes);
-
-                loadMoreBtn.style.display = allLoaded ? 'none' : 'block';
-
-                loadMoreBtn.addEventListener('click', async () => {
+                async function loadMore(initial = true) {
+                    if (initial) lastDoc = null;
                     if (allLoaded) return;
+
                     const data = await loadRecentApproved(lastDoc, 3);
-                    if (data.results.length > 0) {
-                        currentItems = [...currentItems, ...data.results];
-                        const allPostIds = currentItems.map(item => item.id);
-                        const allLikes = await getUserLikesForPosts(allPostIds);
-                        await renderCards(recentDiv, currentItems, allLikes);
-                        lastDoc = data.last;
-                        allLoaded = data.results.length < 3;
-                        loadMoreBtn.style.display = allLoaded ? 'none' : 'block';
-                    } else {
+                    if (data.results.length === 0) {
                         allLoaded = true;
                         loadMoreBtn.style.display = 'none';
+                        if (initial) recentDiv.innerHTML = '<div class="no-results">😔 Пока нет одобренных поздравлений.</div>';
+                        return;
                     }
-                });
+
+                    const newPosts = data.results;
+                    lastDoc = data.last;
+                    allPosts = initial ? newPosts : [...allPosts, ...newPosts];
+
+                    // Запрашиваем лайки только для новых постов
+                    const newIds = newPosts.map(p => p.id);
+                    const newLikes = await getUserLikesForPosts(newIds);
+                    likesMap = { ...likesMap, ...newLikes };
+
+                    await renderCards(recentDiv, allPosts, likesMap);
+
+                    allLoaded = newPosts.length < 3;
+                    loadMoreBtn.style.display = allLoaded ? 'none' : 'block';
+                }
+
+                await loadMore(true);
+                loadMoreBtn.addEventListener('click', () => loadMore(false));
             }
 
             // ==================== ОТПРАВКА ====================
+            let sendTimerInterval = null; // для очистки интервала
+
             function renderSend() {
                 setActiveButton('btnSend');
+                if (sendTimerInterval) clearInterval(sendTimerInterval);
+
                 contentDiv.innerHTML = `
                     <h2>✍️ Отправить поздравление</h2>
                     <form id="greetingForm">
@@ -1565,7 +1628,7 @@
                     }
                 }
 
-                const timerInterval = setInterval(updateButtonState, 1000);
+                sendTimerInterval = setInterval(updateButtonState, 1000);
                 updateButtonState();
 
                 form.addEventListener('submit', async (e) => {
@@ -1673,7 +1736,7 @@
                     const totalFiltered = sorted.length;
 
                     if (totalFiltered === 0) {
-                        results.innerHTML = `<div class="no-results">😔 По запросу «${currentQuery || 'все'}» ничего не найдено.</div>`;
+                        results.innerHTML = `<div class="no-results">😔 По запросу «${escapeHtml(currentQuery || 'все')}» ничего не найдено.</div>`;
                         loadMore.style.display = 'none';
                         return;
                     }
@@ -1728,10 +1791,9 @@
                 await loadAllData(false);
             }
 
-            // ==================== МОДЕРАЦИЯ (С БЛОКОМ ИНФОРМАЦИИ О МОДЕРАТОРАХ) ====================
+            // ==================== МОДЕРАЦИЯ (без изменений, но можно добавить) ====================
             async function renderModeration() {
                 if (!isAdmin()) {
-                    // Отображаем информацию о модераторах и форму входа
                     contentDiv.innerHTML = `
                         <div class="moderator-info" style="background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(12px); border-radius: 60px; padding: 20px 28px; margin-bottom: 30px; border: 1px solid rgba(255, 255, 255, 0.6); color: #4a2a35;">
                             <p><strong>🌷 Вот наши модераторы:</strong></p>
@@ -1761,7 +1823,6 @@
                     return;
                 }
 
-                // Код для авторизованных модераторов (без изменений)
                 let html = `
                     <div class="moderation-header">
                         <h2>🛡️ Панель модератора</h2>
@@ -1805,7 +1866,7 @@
                             renderItems(items, 'new');
                         }
                     } catch (error) {
-                        modContent.innerHTML = `<p class="message error">❌ Ошибка загрузки: ${error.message}</p>`;
+                        modContent.innerHTML = `<p class="message error">❌ Ошибка загрузки: ${escapeHtml(error.message)}</p>`;
                     }
                 }
 
@@ -1818,7 +1879,7 @@
                             renderItems(items, 'all');
                         }
                     } catch (error) {
-                        modContent.innerHTML = `<p class="message error">❌ Ошибка загрузки: ${error.message}</p>`;
+                        modContent.innerHTML = `<p class="message error">❌ Ошибка загрузки: ${escapeHtml(error.message)}</p>`;
                     }
                 }
 
@@ -1831,19 +1892,19 @@
                         out += `
                             <div class="result-item" data-id="${item.id}" style="animation-delay: ${index * 0.1}s">
                                 <div class="item-view">
-                                    <p><strong>От:</strong> <span class="from-text">${item.from}</span></p>
-                                    <p><strong>Кому:</strong> <span class="to-text">${item.to} (${item.category === 'teacher' ? '👩‍🏫' : '👥'})</span></p>
-                                    <p><strong>Текст:</strong> <span class="msg-text">${item.message}</span></p>
-                                    <p><small>${dateStr} | ${approvedStatus} | ❤️ ${item.likes || 0}</small></p>
+                                    <p><strong>От:</strong> <span class="from-text">${escapeHtml(item.from)}</span></p>
+                                    <p><strong>Кому:</strong> <span class="to-text">${escapeHtml(item.to)} (${item.category === 'teacher' ? '👩‍🏫' : '👥'})</span></p>
+                                    <p><strong>Текст:</strong> <span class="msg-text">${escapeHtml(item.message)}</span></p>
+                                    <p><small>${escapeHtml(dateStr)} | ${approvedStatus} | ❤️ ${item.likes || 0}</small></p>
                                     <button class="edit-btn" data-id="${item.id}">✏️ Редактировать</button>
                                     <button class="delete-btn" data-id="${item.id}">🗑️ Удалить</button>
                                     ${!item.approved ? `<button class="approve-btn" data-id="${item.id}">✅ Одобрить</button>` : ''}
                                 </div>
                                 <div class="item-edit" style="display:none;">
-                                    <input class="inline-edit-input edit-from" value="${item.from.replace(/"/g, '&quot;')}">
-                                    <input class="inline-edit-input edit-to" value="${item.to.replace(/"/g, '&quot;')}">
-                                    <input class="inline-edit-input edit-category" value="${item.category || 'teacher'}">
-                                    <textarea class="inline-edit-input edit-msg">${item.message.replace(/"/g, '&quot;')}</textarea>
+                                    <input class="inline-edit-input edit-from" value="${escapeHtml(item.from)}">
+                                    <input class="inline-edit-input edit-to" value="${escapeHtml(item.to)}">
+                                    <input class="inline-edit-input edit-category" value="${escapeHtml(item.category || 'teacher')}">
+                                    <textarea class="inline-edit-input edit-msg">${escapeHtml(item.message)}</textarea>
                                     <button class="save-btn" data-id="${item.id}">💾 Сохранить</button>
                                     <button class="cancel-btn">❌ Отмена</button>
                                 </div>
