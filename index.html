@@ -1,2006 +1,1715 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Поздравления с 8 марта | Колледж</title>
-    <style>
-        /* ========== СОВРЕМЕННЫЙ ЖЕНСТВЕННЫЙ ДИЗАЙН ========== */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        @import url('https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&family=Playfair+Display:wght@400;600;700&display=swap');
-
-        body {
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 16px;
-            font-family: 'Inter', sans-serif;
-            background: #fce7f0;
-            position: relative;
-            overflow-x: hidden;
-            transition: background-color 0.5s, color 0.3s;
-            animation: bodyFadeIn 1s ease;
-        }
-
-        @keyframes bodyFadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        body::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at 20% 30%, rgba(255, 200, 220, 0.4) 0%, transparent 30%),
-                        radial-gradient(circle at 80% 70%, rgba(255, 180, 200, 0.4) 0%, transparent 35%),
-                        radial-gradient(circle at 40% 80%, #ffd9e5 0%, transparent 40%);
-            filter: blur(60px);
-            z-index: 0;
-            animation: floatBg 20s ease-in-out infinite alternate;
-        }
-
-        @keyframes floatBg {
-            0% { transform: scale(1) translate(0, 0); opacity: 0.7; }
-            100% { transform: scale(1.2) translate(-2%, -2%); opacity: 1; }
-        }
-
-        body.dark-theme {
-            background: #0a0a0a;
-        }
-        body.dark-theme::before {
-            display: none;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 1300px;
-            border-radius: 48px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: row;
-            min-height: 600px;
-            background: rgba(255, 250, 250, 0.3);
-            backdrop-filter: blur(16px) saturate(180%);
-            -webkit-backdrop-filter: blur(16px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 255, 255, 0.3) inset;
-            z-index: 10;
-            position: relative;
-            transition: background 0.4s, border-color 0.3s, transform 0.3s;
-            animation: containerScaleIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes containerScaleIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        body.dark-theme .container {
-            background: rgba(20, 20, 20, 0.8);
-            backdrop-filter: blur(20px) saturate(150%);
-            border-color: rgba(151, 154, 170, 0.3);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7);
-        }
-
-        .sidebar {
-            width: 220px;
-            padding: 30px 0 80px 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 16px;
-            border-right: 1px solid rgba(255, 182, 193, 0.4);
-            background: rgba(255, 240, 245, 0.2);
-            backdrop-filter: blur(10px);
-            position: relative;
-        }
-
-        body.dark-theme .sidebar {
-            background: rgba(30, 30, 30, 0.5);
-            border-right-color: rgba(151, 154, 170, 0.3);
-        }
-
-        .sidebar button {
-            width: 160px;
-            padding: 14px 12px;
-            border: none;
-            font-size: 16px;
-            font-weight: 500;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(10px);
-            color: #b3435e;
-            box-shadow: 0 8px 20px rgba(255, 160, 180, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .sidebar button::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.5);
-            transform: translate(-50%, -50%);
-            transition: width 0.4s, height 0.4s;
-        }
-
-        .sidebar button:hover::after {
-            width: 200px;
-            height: 200px;
-        }
-
-        .sidebar button:hover {
-            transform: translateY(-3px) scale(1.02);
-            background: #ffb6c9;
-            color: white;
-            box-shadow: 0 15px 25px rgba(255, 120, 160, 0.4);
-            border-color: #ffb6c9;
-        }
-
-        .sidebar button.active {
-            background: linear-gradient(135deg, #ff8da1, #ffb3c6);
-            color: white;
-            border-color: white;
-            box-shadow: 0 10px 20px rgba(255, 80, 140, 0.3);
-        }
-
-        .sidebar button.active::after {
-            display: none;
-        }
-
-        body.dark-theme .sidebar button {
-            background: #979aaa;
-            color: #ffffff;
-            border-color: #b0b5c5;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
-        }
-
-        body.dark-theme .sidebar button::after {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        body.dark-theme .sidebar button:hover {
-            background: #aab0c0;
-            color: white;
-            border-color: #c0c5d5;
-        }
-
-        body.dark-theme .sidebar button.active {
-            background: #7e8494;
-            color: white;
-            border-color: #979aaa;
-        }
-
-        .moderation-circle {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            background: linear-gradient(145deg, #ffb3c6, #ff8da1);
-            border: 3px solid white;
-            box-shadow: 0 10px 25px rgba(255, 80, 140, 0.4);
-            font-size: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: 0.3s;
-            z-index: 30;
-            color: white;
-            animation: pulseModeration 2s infinite;
-        }
-
-        @keyframes pulseModeration {
-            0% { box-shadow: 0 0 0 0 rgba(255, 141, 161, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(255, 141, 161, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 141, 161, 0); }
-        }
-
-        .moderation-circle:hover {
-            transform: translateX(-50%) scale(1.1) rotate(5deg);
-            background: linear-gradient(145deg, #ffc0d0, #ff7088);
-            box-shadow: 0 15px 30px rgba(255, 0, 100, 0.5);
-            animation: none;
-        }
-
-        body.dark-theme .moderation-circle {
-            background: #979aaa;
-            border-color: #ffffff;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
-            animation: pulseModerationDark 2s infinite;
-        }
-
-        @keyframes pulseModerationDark {
-            0% { box-shadow: 0 0 0 0 #979aaa; }
-            70% { box-shadow: 0 0 0 15px rgba(151, 154, 170, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(151, 154, 170, 0); }
-        }
-
-        body.dark-theme .moderation-circle:hover {
-            background: #aab0c0;
-            animation: none;
-        }
-
-        .content {
-            flex: 1;
-            padding: 40px;
-            overflow-y: auto;
-            position: relative;
-            z-index: 11;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            scrollbar-width: thin;
-            scrollbar-color: #ffb3c6 #ffe4e9;
-            animation: contentFadeIn 0.8s ease;
-        }
-
-        @keyframes contentFadeIn {
-            from { opacity: 0; transform: translateX(10px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .content::-webkit-scrollbar {
-            width: 8px;
-        }
-        .content::-webkit-scrollbar-track {
-            background: #ffe4e9;
-            border-radius: 20px;
-        }
-        .content::-webkit-scrollbar-thumb {
-            background: #ffb3c6;
-            border-radius: 20px;
-            border: 2px solid #ffe4e9;
-        }
-
-        body.dark-theme .content {
-            scrollbar-color: #979aaa #2a2a2a;
-        }
-        body.dark-theme .content::-webkit-scrollbar-track {
-            background: #2a2a2a;
-        }
-        body.dark-theme .content::-webkit-scrollbar-thumb {
-            background: #979aaa;
-            border-color: #2a2a2a;
-        }
-
-        .theme-toggle {
-            position: absolute;
-            bottom: 20px;
-            right: 20px;
-            z-index: 20;
-            border: none;
-            border-radius: 50%;
-            width: 54px;
-            height: 54px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            font-size: 28px;
-            transition: 0.4s;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255,255,255,0.8);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-            animation: themePulse 3s infinite;
-        }
-
-        @keyframes themePulse {
-            0% { box-shadow: 0 0 0 0 rgba(255, 141, 161, 0.5); }
-            50% { box-shadow: 0 0 0 10px rgba(255, 141, 161, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(255, 141, 161, 0); }
-        }
-
-        .theme-toggle:hover {
-            transform: rotate(30deg) scale(1.15);
-            background: white;
-            box-shadow: 0 12px 28px rgba(255, 150, 200, 0.6);
-            animation: none;
-        }
-
-        body.dark-theme .theme-toggle {
-            background: #979aaa;
-            border-color: #b0b5c5;
-            color: #ffffff;
-        }
-
-        body.dark-theme .theme-toggle:hover {
-            background: #aab0c0;
-        }
-
-        h1, h2 {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #c1506a, #ff8da1, #c1506a);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.02em;
-            font-size: 2.4rem;
-            text-shadow: 0 2px 10px rgba(255, 120, 160, 0.3);
-            animation: titleGlow 3s infinite alternate;
-        }
-
-        @keyframes titleGlow {
-            from { text-shadow: 0 2px 10px rgba(255, 120, 160, 0.3); }
-            to { text-shadow: 0 4px 20px rgba(255, 120, 160, 0.6); }
-        }
-
-        h2 {
-            font-size: 1.9rem;
-        }
-
-        body.dark-theme h1, body.dark-theme h2 {
-            background: none;
-            -webkit-text-fill-color: #f0f0f0;
-            color: #f0f0f0;
-            text-shadow: none;
-            animation: none;
-        }
-
-        .stats, .rules {
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(12px);
-            border-radius: 60px;
-            padding: 20px 28px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 15px 30px rgba(255, 150, 180, 0.15);
-            color: #4a2a35;
-            transition: 0.3s;
-            animation: slideInUp 0.6s ease;
-        }
-
-        .stats {
-            display: flex;
-            gap: 32px;
-            font-weight: 600;
-        }
-
-        .rules {
-            border-left: 6px solid #ff8da1;
-        }
-
-        @keyframes slideInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .stats:hover, .rules:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 20px 40px rgba(255, 130, 160, 0.25);
-        }
-
-        body.dark-theme .stats, body.dark-theme .rules {
-            background: rgba(30, 30, 30, 0.8);
-            border-color: rgba(151, 154, 170, 0.3);
-            color: #e0e0e0;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5);
-        }
-        body.dark-theme .rules {
-            border-left-color: #979aaa;
-        }
-
-        .form-group {
-            margin-bottom: 24px;
-            animation: formAppear 0.5s ease backwards;
-        }
-
-        .form-group:nth-child(1) { animation-delay: 0.1s; }
-        .form-group:nth-child(2) { animation-delay: 0.2s; }
-        .form-group:nth-child(3) { animation-delay: 0.3s; }
-        .form-group:nth-child(4) { animation-delay: 0.4s; }
-
-        @keyframes formAppear {
-            from { opacity: 0; transform: translateX(-10px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            color: #a0475e;
-            letter-spacing: 0.3px;
-            transition: color 0.3s;
-        }
-
-        input, textarea, select {
-            width: 100%;
-            padding: 16px 24px;
-            border: none;
-            border-radius: 60px;
-            font-size: 16px;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            transition: 0.3s;
-            color: #3a2a30;
-            font-weight: 500;
-        }
-
-        textarea {
-            border-radius: 30px;
-            min-height: 130px;
-        }
-
-        input:focus, textarea:focus, select:focus {
-            outline: none;
-            background: white;
-            border-color: #ff8da1;
-            box-shadow: 0 0 0 4px rgba(255, 141, 161, 0.3);
-            transform: scale(1.01);
-        }
-
-        body.dark-theme label {
-            color: #ccc;
-        }
-
-        body.dark-theme input, body.dark-theme textarea, body.dark-theme select {
-            background: #979aaa;
-            border-color: #b0b5c5;
-            color: #ffffff;
-        }
-
-        body.dark-theme input:focus, body.dark-theme textarea:focus, body.dark-theme select:focus {
-            background: #aab0c0;
-            border-color: #ffffff;
-            box-shadow: 0 0 0 4px rgba(151, 154, 170, 0.3);
-        }
-
-        button[type="submit"], .search-btn, .approve-btn, .delete-btn, .edit-btn, .save-btn, .cancel-btn, .logout-btn, .load-more, .like-btn, .share-btn {
-            border: none;
-            padding: 14px 28px;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 60px;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-right: 8px;
-            margin-top: 8px;
-            background: linear-gradient(145deg, #ffb3c6, #ff8da1);
-            color: white;
-            box-shadow: 0 8px 18px rgba(255, 100, 150, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            letter-spacing: 0.5px;
-            position: relative;
-            overflow: hidden;
-            animation: buttonPop 0.4s ease;
-        }
-
-        @keyframes buttonPop {
-            from { transform: scale(0.95); opacity: 0; }
-            to { transform: scale(1); opacity: 1; }
-        }
-
-        button[type="submit"]::after, .search-btn::after, .approve-btn::after, .delete-btn::after, .edit-btn::after, .save-btn::after, .cancel-btn::after, .logout-btn::after, .load-more::after, .like-btn::after, .share-btn::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.4);
-            transform: translate(-50%, -50%);
-            transition: width 0.4s, height 0.4s;
-        }
-
-        button[type="submit"]:hover::after, .search-btn:hover::after, .approve-btn:hover::after, .delete-btn:hover::after, .edit-btn:hover::after, .save-btn:hover::after, .cancel-btn:hover::after, .logout-btn:hover::after, .load-more:hover::after, .like-btn:hover::after, .share-btn:hover::after {
-            width: 300px;
-            height: 300px;
-        }
-
-        button:hover {
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 15px 25px rgba(255, 80, 140, 0.5);
-            background: linear-gradient(145deg, #ffc0d0, #ff7088);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            transform: none;
-            box-shadow: none;
-            background: #cccccc;
-        }
-
-        body.dark-theme button:not(.theme-toggle):not(.moderation-circle) {
-            background: #979aaa;
-            color: #ffffff;
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
-            border-color: #b0b5c5;
-        }
-        body.dark-theme button:hover:not(.theme-toggle):not(.moderation-circle) {
-            background: #aab0c0;
-        }
-
-        .delete-btn { background: #e5738c; }
-        .edit-btn { background: #a5b8e0; }
-        .save-btn { background: #c8a2c8; }
-        .cancel-btn { background: #cfa5b4; }
-        .load-more { background: #d8a7b0; }
-
-        body.dark-theme .delete-btn { background: #b38f8f; }
-        body.dark-theme .edit-btn { background: #8f9fb0; }
-        body.dark-theme .save-btn { background: #9f8fb0; }
-        body.dark-theme .cancel-btn { background: #b08f9f; }
-        body.dark-theme .load-more { background: #8f9fb0; }
-
-        .message {
-            margin-top: 20px;
-            padding: 16px 24px;
-            border-radius: 60px;
-            display: none;
-            font-weight: 600;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid white;
-            animation: messageSlide 0.3s ease;
-        }
-
-        @keyframes messageSlide {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .message.success {
-            background: rgba(212, 237, 218, 0.8);
-            color: #0e4e1f;
-        }
-        .message.error {
-            background: rgba(248, 215, 218, 0.8);
-            color: #711c24;
-        }
-        body.dark-theme .message.success {
-            background: #2a3a2a;
-            color: #a0d0a0;
-        }
-        body.dark-theme .message.error {
-            background: #3a2a2a;
-            color: #ffa0a0;
-        }
-
-        .result-item {
-            border-radius: 40px;
-            padding: 28px;
-            margin-bottom: 24px;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 15px 35px rgba(255, 130, 160, 0.2);
-            transition: 0.4s;
-            border-left: 8px solid #ff8da1;
-            animation: fadeInUp 0.5s ease;
-            animation-fill-mode: both;
-        }
-
-        .result-item:nth-child(1) { animation-delay: 0.1s; }
-        .result-item:nth-child(2) { animation-delay: 0.2s; }
-        .result-item:nth-child(3) { animation-delay: 0.3s; }
-        .result-item:nth-child(4) { animation-delay: 0.4s; }
-        .result-item:nth-child(5) { animation-delay: 0.5s; }
-        .result-item:nth-child(6) { animation-delay: 0.6s; }
-        .result-item:nth-child(7) { animation-delay: 0.7s; }
-        .result-item:nth-child(8) { animation-delay: 0.8s; }
-        .result-item:nth-child(9) { animation-delay: 0.9s; }
-        .result-item:nth-child(10) { animation-delay: 1s; }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .result-item:hover {
-            transform: translateY(-5px) scale(1.01);
-            background: rgba(255, 240, 245, 0.7);
-            border-color: white;
-            box-shadow: 0 25px 45px rgba(255, 80, 130, 0.25);
-        }
-
-        body.dark-theme .result-item {
-            background: rgba(40, 40, 40, 0.8);
-            border-color: rgba(151, 154, 170, 0.3);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.7);
-            border-left-color: #979aaa;
-        }
-
-        body.dark-theme .result-item:hover {
-            background: rgba(60, 60, 60, 0.8);
-            border-color: #aab0c0;
-        }
-
-        .result-item p {
-            margin: 8px 0;
-            font-size: 16px;
-            color: #3a2a30;
-            font-weight: 500;
-        }
-
-        body.dark-theme .result-item p {
-            color: #e0e0e0;
-        }
-
-        .result-item strong {
-            color: #b3435e;
-        }
-
-        body.dark-theme .result-item strong {
-            color: #ffffff;
-        }
-
-        .no-results, .search-hint {
-            text-align: center;
-            font-style: italic;
-            padding: 40px;
-            background: rgba(255, 240, 245, 0.6);
-            backdrop-filter: blur(12px);
-            border-radius: 60px;
-            color: #a76e7c;
-            animation: fadeIn 0.5s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        body.dark-theme .no-results, body.dark-theme .search-hint {
-            background: rgba(40, 40, 40, 0.8);
-            color: #ccc;
-        }
-
-        .search-container {
-            margin-bottom: 30px;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            animation: slideInRight 0.5s ease;
-        }
-
-        @keyframes slideInRight {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .search-container input {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .sort-container {
-            margin-bottom: 25px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            padding: 12px 24px;
-            border-radius: 60px;
-            animation: zoomIn 0.5s ease;
-        }
-
-        @keyframes zoomIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .sort-container label {
-            margin-bottom: 0;
-            color: #a0475e;
-        }
-        .sort-container select {
-            width: auto;
-            min-width: 220px;
-        }
-        body.dark-theme .sort-container {
-            background: rgba(40, 40, 40, 0.5);
-        }
-        body.dark-theme .sort-container label {
-            color: #ccc;
-        }
-
-        .moderation-tabs {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-bottom: 25px;
-            animation: tabsFade 0.5s ease;
-        }
-
-        @keyframes tabsFade {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .moderation-tabs button {
-            padding: 14px 28px;
-            border-radius: 40px;
-            font-weight: 600;
-            cursor: pointer;
-            background: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(10px);
-            border: 1px solid white;
-            color: #b3435e;
-            transition: 0.3s;
-        }
-
-        .moderation-tabs button.active-tab {
-            background: linear-gradient(145deg, #ff8da1, #ffb3c6);
-            color: white;
-            border-color: white;
-        }
-
-        .moderation-tabs button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(255, 141, 161, 0.3);
-        }
-
-        body.dark-theme .moderation-tabs button {
-            background: #979aaa;
-            color: #ffffff;
-            border-color: #b0b5c5;
-        }
-        body.dark-theme .moderation-tabs button.active-tab {
-            background: #7e8494;
-            color: white;
-            border-color: #979aaa;
-        }
-
-        .inline-edit-input {
-            width: 100%;
-            margin: 8px 0;
-            padding: 14px 18px;
-            border-radius: 40px;
-            border: 1px solid #ffb6c1;
-            background: white;
-            transition: 0.3s;
-        }
-
-        .inline-edit-input:focus {
-            outline: none;
-            border-color: #ff8da1;
-            box-shadow: 0 0 0 3px rgba(255, 141, 161, 0.2);
-            transform: scale(1.01);
-        }
-
-        body.dark-theme .inline-edit-input {
-            background: #979aaa;
-            color: white;
-            border-color: #b0b5c5;
-        }
-
-        .timer-message {
-            margin-top: 10px;
-            font-weight: 600;
-            color: #a0475e;
-            animation: blink 1s infinite;
-        }
-
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0.6; }
-            100% { opacity: 1; }
-        }
-
-        body.dark-theme .timer-message {
-            color: #ccc;
-        }
-
-        .heart-animation {
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-            font-size: 28px;
-            animation: floatUp 2s cubic-bezier(0.5, 0, 0.5, 1) forwards;
-            filter: drop-shadow(0 0 10px #ff8da1);
-        }
-
-        body.dark-theme .heart-animation {
-            filter: drop-shadow(0 0 10px #979aaa);
-        }
-
-        @keyframes floatUp {
-            0% { transform: translateY(0) scale(0.8) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(-250px) scale(1.8) rotate(20deg); opacity: 0; }
-        }
-
-        /* Скелетоны для загрузки */
-        .skeleton-card {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: skeleton-loading 1.5s infinite;
-            border-radius: 40px;
-            height: 120px;
-            margin-bottom: 20px;
-        }
-        @keyframes skeleton-loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-        body.dark-theme .skeleton-card {
-            background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
-            background-size: 200% 100%;
-        }
-
-        /* Пасхалка с изображениями */
-        .easter-egg-img {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            max-width: 70vw;
-            max-height: 70vh;
-            z-index: 10000;
-            display: none;
-            pointer-events: none;
-            opacity: 0;
-            transition: none;
-        }
-
-        .easter-egg-img.show {
-            display: block;
-            opacity: 1;
-        }
-
-        .easter-egg-img.hide {
-            opacity: 0;
-            transition: opacity 1.5s ease-in-out;
-        }
-
-        /* ========== МОБИЛЬНАЯ АДАПТАЦИЯ ========== */
-        @media (max-width: 768px) {
-            body { padding: 8px; }
-            .container { flex-direction: column; border-radius: 36px; }
-            .sidebar {
-                width: 100%;
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: center;
-                padding: 20px 8px 90px 8px;
-                gap: 10px;
-                border-right: none;
-                border-bottom: 1px solid rgba(255,182,193,0.5);
-            }
-            .sidebar button {
-                width: auto;
-                min-width: 110px;
-                padding: 16px 10px;
-                font-size: 16px;
-                flex: 1 1 auto;
-                margin: 0 4px;
-            }
-            .moderation-circle {
-                bottom: 16px;
-                width: 60px;
-                height: 60px;
-                font-size: 32px;
-            }
-            .content { padding: 28px; }
-            h1 { font-size: 32px; }
-            h2 { font-size: 26px; }
-            .stats { flex-direction: column; gap: 10px; padding: 20px; font-size: 18px; }
-            .rules { padding: 20px; font-size: 16px; }
-            .form-group input,
-            .form-group textarea,
-            .form-group select {
-                padding: 18px 24px;
-                font-size: 18px;
-            }
-            button[type="submit"], .search-btn, .approve-btn, .delete-btn, .edit-btn,
-            .save-btn, .cancel-btn, .logout-btn, .load-more {
-                padding: 18px 20px;
-                font-size: 18px;
-                width: 100%;
-                margin-right: 0;
-                margin-top: 10px;
-            }
-            .load-more {
-                width: 100%;
-                padding: 18px 20px;
-                font-size: 18px;
-                margin: 20px 0 10px;
-                background: linear-gradient(145deg, #ffb3c6, #ff8da1);
-                border-radius: 50px;
-                font-weight: 600;
-                letter-spacing: 0.5px;
-            }
-            .like-btn, .share-btn {
-                width: 100%;
-                margin-right: 0;
-                margin-bottom: 10px;
-                font-size: 18px;
-                padding: 16px 12px;
-            }
-            .search-container { flex-direction: column; gap: 12px; }
-            .search-container input {
-                width: 100%;
-                font-size: 18px;
-                padding: 18px;
-            }
-            .result-item { padding: 24px; margin-bottom: 20px; }
-            .result-item p { font-size: 17px; line-height: 1.5; }
-            .result-item small { font-size: 14px; }
-            .sort-container {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 10px;
-                padding: 16px 20px;
-            }
-            .sort-container label { font-size: 18px; }
-            .sort-container select {
-                width: 100%;
-                padding: 16px;
-                font-size: 18px;
-            }
-            .moderation-tabs {
-                flex-direction: row;
-                width: 100%;
-                justify-content: center;
-                gap: 6px;
-            }
-            .moderation-tabs button {
-                flex: 1;
-                text-align: center;
-                padding: 16px 6px;
-                font-size: 16px;
-            }
-            .theme-toggle {
-                width: 52px;
-                height: 52px;
-                font-size: 26px;
-                bottom: 12px;
-                right: 12px;
-            }
-
-            /* Упрощаем анимации для слабых устройств */
-            body::before {
-                filter: blur(30px);
-                animation: none;
-            }
-            .container, .sidebar, .content, .stats, .rules, .result-item {
-                backdrop-filter: none !important;
-                -webkit-backdrop-filter: none !important;
-            }
-            body::before {
-                display: none;
-            }
-            @keyframes titleGlow {
-                from { text-shadow: 0 2px 5px rgba(255, 120, 160, 0.3); }
-                to { text-shadow: 0 4px 10px rgba(255, 120, 160, 0.4); }
-            }
-        }
-
-        @media (max-width: 480px) {
-            .sidebar button {
-                min-width: 90px;
-                font-size: 15px;
-                padding: 14px 6px;
-            }
-            h1 { font-size: 28px; }
-            h2 { font-size: 22px; }
-            .stats { font-size: 16px; }
-            .content { padding: 20px; }
-            .result-item { padding: 20px; }
-        }
-
-        @media (max-width: 360px) {
-            .sidebar button {
-                min-width: 75px;
-                font-size: 13px;
-                padding: 12px 4px;
-            }
-            h1 { font-size: 24px; }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Поздравления с 8 марта | Колледж</title>
+  <meta name="description" content="Современный сайт поздравлений с модерацией, поиском, лайками и Firebase.">
+  <style>
+    :root {
+      --bg: #fff8fb;
+      --bg-soft: #fff1f6;
+      --panel: rgba(255,255,255,.82);
+      --panel-strong: rgba(255,255,255,.92);
+      --text: #2f2430;
+      --muted: #7f6374;
+      --line: rgba(195, 97, 135, 0.14);
+      --accent: #d84d87;
+      --accent-2: #ff8db6;
+      --accent-3: #ffe1ee;
+      --danger: #d6455d;
+      --success: #177245;
+      --shadow: 0 12px 30px rgba(216,77,135,.14);
+      --radius: 24px;
+      --radius-sm: 16px;
+      --radius-pill: 999px;
+    }
+
+    body.dark-theme {
+      --bg: #16131a;
+      --bg-soft: #1f1823;
+      --panel: rgba(31,24,35,.88);
+      --panel-strong: rgba(35,28,40,.95);
+      --text: #f7edf3;
+      --muted: #c9b5c2;
+      --line: rgba(255,255,255,.08);
+      --accent: #f48ab7;
+      --accent-2: #c5a0ff;
+      --accent-3: #2a1f2f;
+      --danger: #ff8398;
+      --success: #6ad6a1;
+      --shadow: 0 12px 30px rgba(0,0,0,.28);
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(255,170,205,.35), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(255,210,232,.4), transparent 34%),
+        linear-gradient(180deg, var(--bg), var(--bg-soft));
+      transition: background .25s ease, color .25s ease;
+    }
+
+    .page {
+      width: min(1320px, calc(100% - 24px));
+      margin: 12px auto;
+      min-height: calc(100vh - 24px);
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 18px;
+    }
+
+    .sidebar, .content-shell {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+    }
+
+    .sidebar {
+      padding: 22px;
+      position: sticky;
+      top: 12px;
+      height: fit-content;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 10px 12px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      font-size: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 18px;
+      line-height: 1.15;
+    }
+
+    .brand p {
+      margin: 4px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .nav {
+      display: grid;
+      gap: 10px;
+    }
+
+    .nav button,
+    .icon-btn,
+    .btn,
+    button[type="submit"] {
+      border: 0;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      font: inherit;
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease, opacity .18s ease;
+    }
+
+    .nav button {
+      text-align: left;
+      padding: 14px 16px;
+      background: transparent;
+      color: var(--text);
+      border: 1px solid transparent;
+      font-weight: 600;
+    }
+
+    .nav button.active,
+    .nav button:hover {
+      background: linear-gradient(135deg, rgba(216,77,135,.12), rgba(255,141,182,.18));
+      border-color: var(--line);
+      transform: translateY(-1px);
+    }
+
+    .sidebar-footer {
+      margin-top: auto;
+      display: grid;
+      gap: 10px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .theme-toggle,
+    .mod-button {
+      padding: 12px 14px;
+      background: var(--panel-strong);
+      color: var(--text);
+      border: 1px solid var(--line);
+      font-weight: 700;
+    }
+
+    .content-shell {
+      min-height: calc(100vh - 24px);
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 22px 26px 18px;
+      border-bottom: 1px solid var(--line);
+      background: var(--panel-strong);
+      position: sticky;
+      top: 0;
+      z-index: 3;
+    }
+
+    .topbar .meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      border-radius: var(--radius-pill);
+      background: rgba(216,77,135,.1);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    #content {
+      padding: 26px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.3fr .9fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .card {
+      background: var(--panel-strong);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .card h2, .card h3, .section-title {
+      margin: 0 0 14px;
+      font-size: 28px;
+      line-height: 1.1;
+    }
+
+    .card h3 { font-size: 20px; }
+    .subtle { color: var(--muted); }
+
+    .cta-row, .filters, .toolbar, .split-actions, .inline-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn,
+    button[type="submit"] {
+      padding: 12px 18px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      font-weight: 700;
+      box-shadow: var(--shadow);
+    }
+
+    .btn.secondary {
+      background: var(--panel-strong);
+      color: var(--text);
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .btn.danger {
+      background: linear-gradient(135deg, var(--danger), #ff8a9e);
+    }
+
+    .btn.success {
+      background: linear-gradient(135deg, var(--success), #7ddab2);
+    }
+
+    .btn:disabled,
+    button:disabled {
+      opacity: .55;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none;
+    }
+
+    .btn:hover,
+    .icon-btn:hover,
+    .nav button:hover,
+    button[type="submit"]:hover {
+      transform: translateY(-2px);
+    }
+
+    .stats-grid,
+    .grid-2,
+    .grid-3 {
+      display: grid;
+      gap: 16px;
+    }
+
+    .stats-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      margin-bottom: 18px;
+    }
+
+    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+
+    .stat {
+      padding: 18px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.56));
+      border: 1px solid var(--line);
+    }
+
+    body.dark-theme .stat {
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    }
+
+    .stat .label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .stat .value {
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .section {
+      display: grid;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .cards-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .post-card {
+      display: grid;
+      gap: 12px;
+      padding: 18px;
+      border-radius: 22px;
+      background: var(--panel-strong);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      scroll-margin-top: 96px;
+    }
+
+    .post-card.highlight {
+      outline: 2px solid rgba(216,77,135,.35);
+      background: linear-gradient(180deg, rgba(255,141,182,.15), transparent), var(--panel-strong);
+    }
+
+    .post-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 11px;
+      border-radius: var(--radius-pill);
+      background: rgba(216,77,135,.09);
+      border: 1px solid var(--line);
+      color: var(--text);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .post-message {
+      font-size: 16px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+    }
+
+    .meta-line {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .empty,
+    .skeletons {
+      padding: 24px;
+      border-radius: 20px;
+      border: 1px dashed var(--line);
+      text-align: center;
+      color: var(--muted);
+      background: rgba(255,255,255,.35);
+    }
+
+    .skeleton {
+      height: 108px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      background: linear-gradient(90deg, rgba(255,255,255,.5), rgba(255,255,255,.85), rgba(255,255,255,.5));
+      background-size: 200% 100%;
+      animation: shimmer 1.1s linear infinite;
+    }
+
+    @keyframes shimmer {
+      from { background-position: 200% 0; }
+      to { background-position: -200% 0; }
+    }
+
+    form { display: grid; gap: 16px; }
+    .field { display: grid; gap: 8px; }
+    .field label { font-weight: 700; }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--panel-strong);
+      color: var(--text);
+      font: inherit;
+      outline: none;
+      transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+
+    textarea { min-height: 144px; resize: vertical; }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: rgba(216,77,135,.45);
+      box-shadow: 0 0 0 4px rgba(216,77,135,.12);
+    }
+
+    .hint, .small {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .helper-box {
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: rgba(216,77,135,.08);
+      border: 1px solid var(--line);
+      color: var(--text);
+    }
+
+    .search-box {
+      display: grid;
+      gap: 14px;
+    }
+
+    .search-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.3fr) repeat(3, minmax(0, .55fr));
+      gap: 12px;
+      align-items: end;
+    }
+
+    .toast-wrap {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      display: grid;
+      gap: 10px;
+      z-index: 9999;
+    }
+
+    .toast {
+      min-width: 240px;
+      max-width: 360px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      color: white;
+      box-shadow: 0 12px 30px rgba(0,0,0,.22);
+      animation: slideUp .2s ease;
+    }
+
+    .toast.success { background: linear-gradient(135deg, #1f8f59, #55c48c); }
+    .toast.error { background: linear-gradient(135deg, #c33f58, #ff8398); }
+    .toast.info { background: linear-gradient(135deg, #7a57d1, #d182ff); }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .heart {
+      position: fixed;
+      pointer-events: none;
+      z-index: 9998;
+      font-size: 26px;
+      animation: floatHeart 1.8s ease forwards;
+      filter: drop-shadow(0 10px 10px rgba(216,77,135,.35));
+    }
+
+    @keyframes floatHeart {
+      from { opacity: 1; transform: translateY(0) scale(.8); }
+      to { opacity: 0; transform: translateY(-180px) scale(1.4) rotate(18deg); }
+    }
+
+    .easter-egg-img {
+      position: fixed;
+      inset: 50% auto auto 50%;
+      transform: translate(-50%, -50%);
+      max-width: min(80vw, 720px);
+      max-height: 72vh;
+      z-index: 9000;
+      display: none;
+      border-radius: 24px;
+      box-shadow: 0 20px 80px rgba(0,0,0,.45);
+    }
+
+    .easter-egg-img.show { display: block; }
+
+    .auth-box, .moderation-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .moderation-item {
+      display: grid;
+      gap: 12px;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      background: var(--panel-strong);
+    }
+
+    .moderation-tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .moderation-tabs button.active-tab {
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+    }
+
+    .inline-edit {
+      display: grid;
+      gap: 10px;
+      margin-top: 6px;
+    }
+
+    .pin-link {
+      color: inherit;
+      text-decoration: none;
+      border-bottom: 1px dashed currentColor;
+    }
+
+    .footer-note {
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 980px) {
+      .page { grid-template-columns: 1fr; }
+      .sidebar { position: static; }
+      .hero, .search-grid, .stats-grid, .grid-2, .grid-3 { grid-template-columns: 1fr; }
+      .topbar { padding: 18px; }
+      #content { padding: 18px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="theme-toggle" id="themeToggle">🌙</div>
-    <div class="container">
-        <div class="sidebar">
-            <button id="btnHome" class="active">🏠 Главная</button>
-            <button id="btnSend">📝 Отправить</button>
-            <button id="btnSearch">🔍 Поиск</button>
-            <div class="moderation-circle" id="btnModeration" title="Панель модератора">👮</div>
+  <div class="page">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">🌸</div>
+        <div>
+          <h1>8 Марта</h1>
+          <p>Поздравления колледжа</p>
         </div>
-        <div class="content" id="content"></div>
-    </div>
+      </div>
 
-    <!-- Изображения для пасхалки -->
-    <img src="19.jpg" id="egg1" class="easter-egg-img" alt="Easter egg 1">
-    <img src="20.jpg" id="egg2" class="easter-egg-img" alt="Easter egg 2">
+      <nav class="nav">
+        <button id="btnHome" class="active">🏠 Главная</button>
+        <button id="btnSend">✍️ Отправить</button>
+        <button id="btnSearch">🔎 Поиск</button>
+      </nav>
 
-    <!-- Аудио для пасхалки -->
-    <audio id="easterAudio" src="machomen.mp3" preload="auto"></audio>
+      <div class="sidebar-footer">
+        <button id="themeToggle" class="theme-toggle">🌙 Тема</button>
+        <button id="btnModeration" class="mod-button">🛡️ Модерация</button>
+      </div>
+    </aside>
 
-    <!-- Firebase SDK (обновлено до 10.13.0) -->
-    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+    <main class="content-shell">
+      <div class="topbar">
+        <div>
+          <strong>Сайт поздравлений</strong>
+          <div class="meta">
+            <span id="topStatus">Готов к работе</span>
+            <span id="clockBadge" class="badge">⏱️ --:--</span>
+          </div>
+        </div>
+        <div class="cta-row">
+          <span class="badge" id="authBadge">👤 Гость</span>
+        </div>
+      </div>
+      <div id="content"></div>
+    </main>
+  </div>
 
-    <script>
-        // Конфиг Firebase
-        const firebaseConfig = {
-            apiKey: "AIzaSyBw8OCvgXEqj0ZVPuFMMg3DTR5BfpYnNKk",
-            authDomain: "marta-ebc25.firebaseapp.com",
-            projectId: "marta-ebc25",
-            storageBucket: "marta-ebc25.firebasestorage.app",
-            messagingSenderId: "659204675048",
-            appId: "1:659204675048:web:b9e6b6f414439e5aa3005d"
+  <div id="toastWrap" class="toast-wrap"></div>
+
+  <img src="19.jpg" id="egg1" class="easter-egg-img" alt="Easter egg 1">
+  <img src="20.jpg" id="egg2" class="easter-egg-img" alt="Easter egg 2">
+  <audio id="easterAudio" src="machomen.mp3" preload="auto"></audio>
+
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyD9s6IQpLLYFUztsZOTc-arHQ0zTIobwOA",
+      authDomain: "marta-test-8b57d.firebaseapp.com",
+      projectId: "marta-test-8b57d",
+      storageBucket: "marta-test-8b57d.firebasestorage.app",
+      messagingSenderId: "531675844111",
+      appId: "1:531675844111:web:9cdfd959072b145b251d7a"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const auth = firebase.auth();
+    db.enablePersistence().catch(err => console.log('Persistence:', err.message));
+
+    (function () {
+      const contentDiv = document.getElementById('content');
+      const btnHome = document.getElementById('btnHome');
+      const btnSend = document.getElementById('btnSend');
+      const btnSearch = document.getElementById('btnSearch');
+      const btnModeration = document.getElementById('btnModeration');
+      const themeToggle = document.getElementById('themeToggle');
+      const topStatus = document.getElementById('topStatus');
+      const authBadge = document.getElementById('authBadge');
+      const clockBadge = document.getElementById('clockBadge');
+      const audio = document.getElementById('easterAudio');
+      const egg1 = document.getElementById('egg1');
+      const egg2 = document.getElementById('egg2');
+      const toastWrap = document.getElementById('toastWrap');
+
+      const MODERATOR_EMAILS = [
+        'yurapon11972020@gmail.com',
+        'yraslavskibididobi@mail.ru',
+        'iluhamoder@mail.ru',
+        'danilsupervpn@mail.ru',
+        'skvizzymedium@mail.ru',
+        'dlaprepodov@mail.ru'
+      ].map(email => email.toLowerCase());
+
+      const POST_COOLDOWN = 5 * 60 * 1000;
+      const DRAFT_KEY = 'greeting_draft_v2';
+      const LAST_TAB_KEY = 'last_tab_v2';
+      const STATS_CACHE_KEY = 'stats_cache_v2';
+      const STATS_CACHE_TTL = 5 * 60 * 1000;
+      const LAST_UPDATE_KEY = 'last_update_v2';
+
+      let clickCount = 0;
+      let firstClickTime = 0;
+      let easterEggActive = false;
+      let currentEggIndex = 1;
+
+      function escapeHtml(value) {
+        if (!value) return '';
+        return String(value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+
+      function setTopStatus(text) {
+        topStatus.textContent = text;
+      }
+
+      function toast(message, type = 'info', timeout = 2600) {
+        const el = document.createElement('div');
+        el.className = `toast ${type}`;
+        el.textContent = message;
+        toastWrap.appendChild(el);
+        setTimeout(() => {
+          el.remove();
+        }, timeout);
+      }
+
+      function pulseHearts() {
+        for (let i = 0; i < 8; i++) {
+          setTimeout(() => {
+            const heart = document.createElement('div');
+            heart.className = 'heart';
+            heart.textContent = '💖';
+            heart.style.left = Math.round(Math.random() * 80 + 10) + 'vw';
+            heart.style.top = Math.round(Math.random() * 40 + 40) + 'vh';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 1800);
+          }, i * 80);
+        }
+      }
+
+      function updateClock() {
+        const now = new Date();
+        clockBadge.textContent = '⏱️ ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      }
+      updateClock();
+      setInterval(updateClock, 1000 * 30);
+
+      function applyTheme(theme) {
+        const dark = theme === 'dark';
+        document.body.classList.toggle('dark-theme', dark);
+        localStorage.setItem('theme', dark ? 'dark' : 'light');
+        themeToggle.textContent = dark ? '☀️ Светлая тема' : '🌙 Тёмная тема';
+      }
+
+      applyTheme(localStorage.getItem('theme') === 'dark' ? 'dark' : 'light');
+
+      themeToggle.addEventListener('click', () => {
+        const next = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
+        applyTheme(next);
+
+        const now = Date.now();
+        if (!firstClickTime || now - firstClickTime > 2000) {
+          firstClickTime = now;
+          clickCount = 1;
+        } else {
+          clickCount += 1;
+        }
+
+        if (clickCount >= 5 && !easterEggActive) {
+          showEasterEgg();
+          clickCount = 0;
+          firstClickTime = 0;
+        }
+      });
+
+      function showEasterEgg() {
+        if (easterEggActive) return;
+        easterEggActive = true;
+        const currentEgg = currentEggIndex === 1 ? egg1 : egg2;
+        currentEgg.style.display = 'block';
+        currentEgg.classList.add('show');
+        audio.currentTime = 0;
+        audio.play().catch(() => {});
+        setTimeout(() => {
+          currentEgg.classList.remove('show');
+          currentEgg.style.display = 'none';
+          easterEggActive = false;
+          currentEggIndex = currentEggIndex === 1 ? 2 : 1;
+        }, 4200);
+      }
+
+      function setActiveButton(activeId) {
+        [btnHome, btnSend, btnSearch].forEach(btn => btn.classList.remove('active'));
+        if (activeId === 'btnHome') btnHome.classList.add('active');
+        if (activeId === 'btnSend') btnSend.classList.add('active');
+        if (activeId === 'btnSearch') btnSearch.classList.add('active');
+        localStorage.setItem(LAST_TAB_KEY, activeId);
+      }
+
+      function isAdmin() {
+        const user = auth.currentUser;
+        return !!(user && user.email && MODERATOR_EMAILS.includes(user.email.toLowerCase()));
+      }
+
+      function getLastPostTime() {
+        return parseInt(localStorage.getItem('lastPostTime') || '0', 10);
+      }
+
+      function setLastPostTime() {
+        localStorage.setItem('lastPostTime', Date.now().toString());
+      }
+
+      function canPost() {
+        if (isAdmin()) return true;
+        return (Date.now() - getLastPostTime()) >= POST_COOLDOWN;
+      }
+
+      function getRemainingSeconds() {
+        if (isAdmin()) return 0;
+        return Math.max(0, Math.ceil((POST_COOLDOWN - (Date.now() - getLastPostTime())) / 1000));
+      }
+
+      function getUserId() {
+        if (auth.currentUser) return 'user_' + auth.currentUser.uid;
+        let sessionId = localStorage.getItem('session_id');
+        if (!sessionId) {
+          sessionId = 'session_' + Math.random().toString(36).slice(2) + Date.now();
+          localStorage.setItem('session_id', sessionId);
+        }
+        return sessionId;
+      }
+
+      async function logModeratorAction(action, details, docId = null) {
+        if (!isAdmin()) return;
+        try {
+          await db.collection('logs').add({
+            moderator: auth.currentUser.email,
+            action,
+            details,
+            documentId: docId,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        } catch (error) {
+          console.error('log error', error);
+        }
+      }
+
+      function invalidateStatsCache() {
+        localStorage.removeItem(STATS_CACHE_KEY);
+      }
+
+      async function getStats() {
+        const cached = localStorage.getItem(STATS_CACHE_KEY);
+        if (cached) {
+          try {
+            const parsed = JSON.parse(cached);
+            if (Date.now() - parsed.timestamp < STATS_CACHE_TTL) return parsed.data;
+          } catch {}
+        }
+
+        const [totalSnap, approvedSnap, pendingSnap, topSnap] = await Promise.all([
+          db.collection('congratulations').get(),
+          db.collection('congratulations').where('approved', '==', true).get(),
+          db.collection('congratulations').where('approved', '==', false).get(),
+          db.collection('congratulations').where('approved', '==', true).orderBy('likes', 'desc').limit(1).get().catch(() => ({ docs: [] }))
+        ]);
+
+        const data = {
+          total: totalSnap.size,
+          approved: approvedSnap.size,
+          pending: pendingSnap.size,
+          bestLikes: topSnap.docs?.[0]?.data()?.likes || 0
         };
 
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const auth = firebase.auth();
+        localStorage.setItem(STATS_CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data }));
+        return data;
+      }
 
-        db.enablePersistence().catch(err => console.log("Ошибка persistence:", err));
+      async function addCongratulation(from, to, category, message) {
+        const docRef = await db.collection('congratulations').add({
+          from,
+          to,
+          category,
+          message,
+          date: firebase.firestore.FieldValue.serverTimestamp(),
+          approved: false,
+          likes: 0
+        });
+        invalidateStatsCache();
+        return docRef.id;
+      }
 
-        (function() {
-            const contentDiv = document.getElementById('content');
-            const btnHome = document.getElementById('btnHome');
-            const btnSend = document.getElementById('btnSend');
-            const btnSearch = document.getElementById('btnSearch');
-            const btnModeration = document.getElementById('btnModeration');
-            const themeToggle = document.getElementById('themeToggle');
+      async function updateCongratulation(id, data) {
+        await db.collection('congratulations').doc(id).update(data);
+        invalidateStatsCache();
+      }
 
-            // Точные email модераторов из Authentication
-            const MODERATOR_EMAILS = [
-                'yurapon11972020@gmail.com',
-                'yraslavskibididobi@mail.ru',
-                'iluhamoder@mail.ru',
-                'danilsupervpn@mail.ru',
-                'skvizzymedium@mail.ru',
-                'dlaprepodov@mail.ru'
-            ].map(email => email.toLowerCase());
+      async function deleteCongratulation(id) {
+        await db.collection('congratulations').doc(id).delete();
+        invalidateStatsCache();
+      }
 
-            const POST_COOLDOWN = 5 * 60 * 1000;
+      async function likeCongratulation(postId) {
+        const userId = getUserId();
+        const likeId = `${postId}_${userId}`;
 
-            // Пасхалка
-            let clickCount = 0;
-            let firstClickTime = 0;
-            let easterEggActive = false;
-            let currentEggIndex = 1;
+        await db.runTransaction(async transaction => {
+          const likeRef = db.collection('likes').doc(likeId);
+          const existing = await transaction.get(likeRef);
+          if (existing.exists) {
+            throw new Error('already liked');
+          }
+          transaction.set(likeRef, {
+            postId,
+            userId,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          transaction.update(db.collection('congratulations').doc(postId), {
+            likes: firebase.firestore.FieldValue.increment(1)
+          });
+        });
 
-            const audio = document.getElementById('easterAudio');
-            const egg1 = document.getElementById('egg1');
-            const egg2 = document.getElementById('egg2');
+        localStorage.setItem(`liked_${postId}_${userId}`, 'true');
+      }
 
-            // Функция экранирования HTML (защита от XSS)
-            function escapeHtml(unsafe) {
-                if (!unsafe) return '';
-                return unsafe
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;")
-                    .replace(/"/g, "&quot;")
-                    .replace(/'/g, "&#039;");
+      async function getUserLikesForPosts(postIds) {
+        if (!postIds.length) return {};
+        const userId = getUserId();
+        const result = {};
+        const uncached = [];
+        for (const id of postIds) {
+          if (localStorage.getItem(`liked_${id}_${userId}`) === 'true') result[id] = true;
+          else uncached.push(id);
+        }
+        for (let i = 0; i < uncached.length; i += 10) {
+          const chunk = uncached.slice(i, i + 10);
+          const snap = await db.collection('likes')
+            .where('userId', '==', userId)
+            .where('postId', 'in', chunk)
+            .get();
+          snap.forEach(doc => {
+            const data = doc.data();
+            result[data.postId] = true;
+            localStorage.setItem(`liked_${data.postId}_${userId}`, 'true');
+          });
+        }
+        return result;
+      }
+
+      function normalizePost(doc) {
+        return { id: doc.id, ...doc.data() };
+      }
+
+      async function loadRecentApproved(limit = 4, startAfterDoc = null) {
+        let query = db.collection('congratulations')
+          .where('approved', '==', true)
+          .orderBy('date', 'desc')
+          .limit(limit);
+        if (startAfterDoc) query = query.startAfter(startAfterDoc);
+        const snap = await query.get();
+        return {
+          items: snap.docs.map(normalizePost),
+          lastDoc: snap.docs[snap.docs.length - 1] || null
+        };
+      }
+
+      async function loadAllApproved(forceServer = false) {
+        const query = db.collection('congratulations')
+          .where('approved', '==', true)
+          .orderBy('date', 'desc');
+        const snap = forceServer ? await query.get({ source: 'server' }) : await query.get();
+        localStorage.setItem(LAST_UPDATE_KEY, Date.now().toString());
+        return snap.docs.map(normalizePost);
+      }
+
+      async function loadTopApproved(limit = 3) {
+        const snap = await db.collection('congratulations')
+          .where('approved', '==', true)
+          .orderBy('likes', 'desc')
+          .orderBy('date', 'desc')
+          .limit(limit)
+          .get()
+          .catch(() => ({ docs: [] }));
+        return snap.docs.map(normalizePost);
+      }
+
+      async function getUnapprovedCongrats() {
+        const snap = await db.collection('congratulations')
+          .where('approved', '==', false)
+          .orderBy('date', 'desc')
+          .get()
+          .catch(() => db.collection('congratulations').where('approved', '==', false).get());
+        return snap.docs.map(normalizePost);
+      }
+
+      async function getAllCongrats() {
+        const snap = await db.collection('congratulations')
+          .orderBy('date', 'desc')
+          .limit(100)
+          .get();
+        return snap.docs.map(normalizePost);
+      }
+
+      function formatDate(timestamp) {
+        if (!timestamp?.seconds) return 'Дата скоро появится';
+        return new Date(timestamp.seconds * 1000).toLocaleString();
+      }
+
+      function categoryLabel(value) {
+        return value === 'teacher' ? '👩‍🏫 Преподаватель' : '👥 Одногруппник';
+      }
+
+      function saveDraft(draft) {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      }
+
+      function getDraft() {
+        try {
+          return JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
+        } catch {
+          return {};
+        }
+      }
+
+      function clearDraft() {
+        localStorage.removeItem(DRAFT_KEY);
+      }
+
+      function getShareUrl(id) {
+        const url = new URL(window.location.href);
+        url.hash = 'congratulation=' + id;
+        return url.toString();
+      }
+
+      async function copyText(value) {
+        try {
+          await navigator.clipboard.writeText(value);
+          return true;
+        } catch {
+          const area = document.createElement('textarea');
+          area.value = value;
+          document.body.appendChild(area);
+          area.select();
+          const ok = document.execCommand('copy');
+          area.remove();
+          return ok;
+        }
+      }
+
+      function debounce(fn, delay = 260) {
+        let timer = null;
+        return (...args) => {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn(...args), delay);
+        };
+      }
+
+      function sortCongrats(items, sortBy) {
+        const sorted = [...items];
+        switch (sortBy) {
+          case 'date_asc': sorted.sort((a,b) => (a.date?.seconds || 0) - (b.date?.seconds || 0)); break;
+          case 'likes_desc': sorted.sort((a,b) => (b.likes || 0) - (a.likes || 0)); break;
+          case 'likes_asc': sorted.sort((a,b) => (a.likes || 0) - (b.likes || 0)); break;
+          case 'from_asc': sorted.sort((a,b) => (a.from || '').localeCompare(b.from || '', 'ru')); break;
+          case 'to_asc': sorted.sort((a,b) => (a.to || '').localeCompare(b.to || '', 'ru')); break;
+          default: sorted.sort((a,b) => (b.date?.seconds || 0) - (a.date?.seconds || 0));
+        }
+        return sorted;
+      }
+
+      async function renderPostCards(container, items) {
+        if (!items.length) {
+          container.innerHTML = '<div class="empty">Пока здесь пусто.</div>';
+          return;
+        }
+
+        const likesMap = await getUserLikesForPosts(items.map(item => item.id));
+        container.innerHTML = items.map(item => {
+          const liked = !!likesMap[item.id];
+          return `
+            <article class="post-card" id="post-${item.id}" data-post-id="${item.id}">
+              <div class="post-top">
+                <div class="chips">
+                  <span class="chip">📨 От: ${escapeHtml(item.from)}</span>
+                  <span class="chip">🎯 Кому: ${escapeHtml(item.to)}</span>
+                  <span class="chip">${categoryLabel(item.category)}</span>
+                </div>
+                <a class="pin-link" href="#congratulation=${item.id}">#ссылка</a>
+              </div>
+              <div class="post-message">${escapeHtml(item.message)}</div>
+              <div class="meta-line">
+                <span>🕒 ${escapeHtml(formatDate(item.date))}</span>
+                <span>❤️ <span class="like-count">${item.likes || 0}</span></span>
+              </div>
+              <div class="inline-actions">
+                <button class="btn secondary like-btn" data-id="${item.id}" ${liked ? 'disabled' : ''}>${liked ? '❤️ Уже лайкнуто' : '❤️ Нравится'}</button>
+                <button class="btn secondary share-btn" data-id="${item.id}" data-to="${escapeHtml(item.to)}">🔗 Поделиться</button>
+              </div>
+            </article>
+          `;
+        }).join('');
+
+        container.querySelectorAll('.like-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const id = btn.dataset.id;
+            const card = btn.closest('.post-card');
+            const countEl = card.querySelector('.like-count');
+            const original = btn.textContent;
+            btn.disabled = true;
+            btn.textContent = '⏳ Обработка...';
+            try {
+              await likeCongratulation(id);
+              const current = parseInt(countEl.textContent || '0', 10) || 0;
+              countEl.textContent = current + 1;
+              btn.textContent = '❤️ Уже лайкнуто';
+              toast('Лайк поставлен 💖', 'success');
+            } catch (error) {
+              if (error.message === 'already liked') {
+                btn.textContent = '❤️ Уже лайкнуто';
+                toast('Ты уже лайкал это поздравление', 'info');
+              } else {
+                btn.disabled = false;
+                btn.textContent = original;
+                toast('Не удалось поставить лайк', 'error');
+              }
             }
+          });
+        });
 
-            function showEasterEgg() {
-                if (easterEggActive) return;
-                easterEggActive = true;
-                const currentEgg = currentEggIndex === 1 ? egg1 : egg2;
-                const nextIndex = currentEggIndex === 1 ? 2 : 1;
-                currentEgg.classList.remove('hide', 'show');
-                currentEgg.style.display = 'block';
-                void currentEgg.offsetWidth;
-                currentEgg.classList.add('show');
-                audio.currentTime = 0;
-                audio.play().catch(e => console.log("Ошибка воспроизведения аудио:", e));
-                setTimeout(() => {
-                    currentEgg.classList.remove('show');
-                    currentEgg.classList.add('hide');
-                }, 4500);
-                setTimeout(() => {
-                    currentEgg.style.display = 'none';
-                    currentEgg.classList.remove('hide');
-                    easterEggActive = false;
-                    currentEggIndex = nextIndex;
-                }, 6000);
+        container.querySelectorAll('.share-btn').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            const id = btn.dataset.id;
+            const to = btn.dataset.to;
+            const text = `Напиши ${to}, чтобы посмотреть поздравление: ${getShareUrl(id)}`;
+            const ok = await copyText(text);
+            toast(ok ? 'Ссылка скопирована' : 'Не удалось скопировать ссылку', ok ? 'success' : 'error');
+          });
+        });
+      }
+
+      async function renderHome() {
+        setActiveButton('btnHome');
+        setTopStatus('Загружаю главную…');
+        contentDiv.innerHTML = `
+          <section class="hero">
+            <div class="card">
+              <h2>🌸 Поздравления с 8 марта</h2>
+              <p class="subtle">Обновлённая версия сайта: быстрее, чище и удобнее. Все существующие записи, лайки и модерация остаются в тех же коллекциях Firebase.</p>
+              <div class="cta-row" style="margin-top:16px;">
+                <button class="btn" id="heroSendBtn">Отправить поздравление</button>
+                <button class="btn secondary" id="heroSearchBtn">Посмотреть все</button>
+              </div>
+              <div class="footer-note">Подсказка: 5 быстрых кликов по кнопке темы всё ещё запускают мемную пасхалку 😎</div>
+            </div>
+            <div class="card">
+              <h3>📌 Что улучшено</h3>
+              <div class="chips">
+                <span class="chip">⚡ меньше тяжёлых эффектов</span>
+                <span class="chip">🔎 поиск по имени и тексту</span>
+                <span class="chip">💾 автосохранение черновика</span>
+                <span class="chip">🔗 удобные ссылки на посты</span>
+                <span class="chip">🛡️ аккуратная модерация</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="stats-grid" id="statsGrid">
+            <div class="stat"><div class="label">Всего отправлено</div><div class="value">…</div></div>
+            <div class="stat"><div class="label">Опубликовано</div><div class="value">…</div></div>
+            <div class="stat"><div class="label">Ожидает модерации</div><div class="value">…</div></div>
+            <div class="stat"><div class="label">Рекорд лайков</div><div class="value">…</div></div>
+          </section>
+
+          <section class="grid-2">
+            <div class="card section">
+              <div class="section-header">
+                <div>
+                  <div class="section-title">📬 Последние поздравления</div>
+                  <div class="subtle">Самые свежие одобренные записи</div>
+                </div>
+                <button class="btn secondary" id="loadMoreHomeBtn" style="display:none;">Показать ещё</button>
+              </div>
+              <div id="recentList" class="cards-list"><div class="skeletons"><div class="skeleton"></div><div class="skeleton"></div></div></div>
+            </div>
+
+            <div class="card section">
+              <div class="section-header">
+                <div>
+                  <div class="section-title">🏆 Топ по лайкам</div>
+                  <div class="subtle">Самые популярные поздравления</div>
+                </div>
+              </div>
+              <div id="topList" class="cards-list"><div class="skeletons"><div class="skeleton"></div></div></div>
+            </div>
+          </section>
+        `;
+
+        document.getElementById('heroSendBtn').addEventListener('click', renderSend);
+        document.getElementById('heroSearchBtn').addEventListener('click', renderSearch);
+
+        let lastDoc = null;
+        let allLoaded = false;
+        let recentPosts = [];
+
+        const statsGrid = document.getElementById('statsGrid');
+        const recentList = document.getElementById('recentList');
+        const topList = document.getElementById('topList');
+        const loadMoreHomeBtn = document.getElementById('loadMoreHomeBtn');
+
+        async function loadHomePage(initial = false) {
+          const data = await loadRecentApproved(4, initial ? null : lastDoc);
+          if (initial) recentPosts = data.items;
+          else recentPosts = recentPosts.concat(data.items);
+          lastDoc = data.lastDoc;
+          allLoaded = data.items.length < 4;
+          await renderPostCards(recentList, recentPosts);
+          loadMoreHomeBtn.style.display = allLoaded || !recentPosts.length ? 'none' : 'inline-flex';
+        }
+
+        loadMoreHomeBtn.addEventListener('click', () => loadHomePage(false));
+
+        try {
+          const [stats, topItems] = await Promise.all([getStats(), loadTopApproved(3)]);
+          statsGrid.innerHTML = `
+            <div class="stat"><div class="label">Всего отправлено</div><div class="value">${stats.total}</div></div>
+            <div class="stat"><div class="label">Опубликовано</div><div class="value">${stats.approved}</div></div>
+            <div class="stat"><div class="label">Ожидает модерации</div><div class="value">${stats.pending}</div></div>
+            <div class="stat"><div class="label">Рекорд лайков</div><div class="value">${stats.bestLikes}</div></div>
+          `;
+          await renderPostCards(topList, topItems);
+          await loadHomePage(true);
+          highlightFromHash();
+          setTopStatus('Главная загружена');
+        } catch (error) {
+          console.error(error);
+          recentList.innerHTML = '<div class="empty">Не удалось загрузить главную страницу.</div>';
+          topList.innerHTML = '<div class="empty">Не удалось загрузить топ поздравлений.</div>';
+          setTopStatus('Ошибка загрузки');
+          toast('Ошибка загрузки главной страницы', 'error');
+        }
+      }
+
+      function renderSend() {
+        setActiveButton('btnSend');
+        setTopStatus('Открыта форма отправки');
+        const draft = getDraft();
+
+        contentDiv.innerHTML = `
+          <section class="grid-2">
+            <div class="card">
+              <div class="section-header">
+                <div>
+                  <div class="section-title">✍️ Отправить поздравление</div>
+                  <div class="subtle">Записи по-прежнему уходят в коллекцию <strong>congratulations</strong> и проходят модерацию перед публикацией.</div>
+                </div>
+              </div>
+              <form id="greetingForm">
+                <div class="field">
+                  <label for="from">От кого</label>
+                  <input id="from" type="text" maxlength="80" placeholder="Иван Иванов" value="${escapeHtml(draft.from || '')}" required>
+                </div>
+                <div class="field">
+                  <label for="to">Кому</label>
+                  <input id="to" type="text" maxlength="80" placeholder="Мария Петрова" value="${escapeHtml(draft.to || '')}" required>
+                </div>
+                <div class="field">
+                  <label for="category">Категория получателя</label>
+                  <select id="category">
+                    <option value="teacher" ${(draft.category || 'teacher') === 'teacher' ? 'selected' : ''}>👩‍🏫 Преподаватель</option>
+                    <option value="classmate" ${(draft.category || 'teacher') === 'classmate' ? 'selected' : ''}>👥 Одногруппник</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="message">Текст поздравления</label>
+                  <textarea id="message" maxlength="1000" placeholder="С 8 марта! Желаю счастья, здоровья и весеннего настроения..." required>${escapeHtml(draft.message || '')}</textarea>
+                  <div class="small"><span id="messageCounter">0</span>/1000 символов</div>
+                </div>
+                <div class="split-actions">
+                  <button type="submit" id="submitBtn">Отправить на модерацию 💐</button>
+                  <button type="button" class="btn secondary" id="clearDraftBtn">Очистить черновик</button>
+                </div>
+                <div class="helper-box" id="cooldownBox">Проверяю лимит отправки…</div>
+              </form>
+            </div>
+            <div class="card section">
+              <div class="section-title">💡 Полезно знать</div>
+              <div class="helper-box">Черновик сохраняется автоматически. Даже если случайно закрыть вкладку, текст останется.</div>
+              <div class="helper-box">Отправка ограничена одним поздравлением раз в 5 минут для обычных пользователей.</div>
+              <div class="helper-box">После отправки все текущие данные сохраняются в уже существующем Firebase-проекте, без потери старых записей.</div>
+            </div>
+          </section>
+        `;
+
+        const form = document.getElementById('greetingForm');
+        const fromEl = document.getElementById('from');
+        const toEl = document.getElementById('to');
+        const categoryEl = document.getElementById('category');
+        const messageEl = document.getElementById('message');
+        const counter = document.getElementById('messageCounter');
+        const submitBtn = document.getElementById('submitBtn');
+        const cooldownBox = document.getElementById('cooldownBox');
+        const clearDraftBtn = document.getElementById('clearDraftBtn');
+
+        function syncDraft() {
+          saveDraft({
+            from: fromEl.value.trim(),
+            to: toEl.value.trim(),
+            category: categoryEl.value,
+            message: messageEl.value
+          });
+        }
+
+        function updateCounter() {
+          counter.textContent = String(messageEl.value.length);
+        }
+
+        function updateCooldown() {
+          if (canPost()) {
+            submitBtn.disabled = false;
+            cooldownBox.textContent = 'Можно отправлять прямо сейчас.';
+          } else {
+            submitBtn.disabled = true;
+            cooldownBox.textContent = `Новая отправка будет доступна через ${getRemainingSeconds()} сек.`;
+          }
+        }
+
+        [fromEl, toEl, categoryEl, messageEl].forEach(el => {
+          el.addEventListener('input', () => {
+            syncDraft();
+            updateCounter();
+          });
+          el.addEventListener('change', syncDraft);
+        });
+
+        clearDraftBtn.addEventListener('click', () => {
+          clearDraft();
+          fromEl.value = '';
+          toEl.value = '';
+          categoryEl.value = 'teacher';
+          messageEl.value = '';
+          updateCounter();
+          toast('Черновик очищен', 'info');
+        });
+
+        const cooldownTimer = setInterval(() => {
+          if (!document.body.contains(form)) return clearInterval(cooldownTimer);
+          updateCooldown();
+        }, 1000);
+
+        updateCounter();
+        updateCooldown();
+
+        form.addEventListener('submit', async event => {
+          event.preventDefault();
+          const from = fromEl.value.trim();
+          const to = toEl.value.trim();
+          const message = messageEl.value.trim();
+          const category = categoryEl.value;
+
+          if (!from || !to || !message) {
+            toast('Заполни все поля', 'error');
+            return;
+          }
+
+          if (message.length < 8) {
+            toast('Сделай поздравление чуть длиннее', 'error');
+            return;
+          }
+
+          if (!canPost()) {
+            toast('Нужно немного подождать перед следующей отправкой', 'error');
+            return;
+          }
+
+          submitBtn.disabled = true;
+          submitBtn.textContent = '⏳ Отправляю...';
+          try {
+            await addCongratulation(from, to, category, message);
+            setLastPostTime();
+            clearDraft();
+            form.reset();
+            categoryEl.value = 'teacher';
+            updateCounter();
+            updateCooldown();
+            pulseHearts();
+            toast('Поздравление отправлено на модерацию 💖', 'success');
+            submitBtn.textContent = 'Отправить на модерацию 💐';
+          } catch (error) {
+            console.error(error);
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Отправить на модерацию 💐';
+            toast('Ошибка отправки. Попробуй позже.', 'error');
+          }
+        });
+      }
+
+      async function renderSearch() {
+        setActiveButton('btnSearch');
+        setTopStatus('Открыт поиск');
+
+        contentDiv.innerHTML = `
+          <section class="card search-box">
+            <div class="section-header">
+              <div>
+                <div class="section-title">🔎 Все поздравления</div>
+                <div class="subtle">Поиск теперь ищет по получателю, отправителю и тексту.</div>
+              </div>
+              <div class="toolbar">
+                <span class="badge" id="lastUpdateBadge">📅 Обновление: —</span>
+                <button class="btn secondary" id="refreshBtn">Обновить</button>
+              </div>
+            </div>
+
+            <div class="search-grid">
+              <div class="field">
+                <label for="searchInput">Поисковый запрос</label>
+                <input id="searchInput" type="text" placeholder="Например: Мария, Иван, счастья, преподаватель...">
+              </div>
+              <div class="field">
+                <label for="searchCategory">Категория</label>
+                <select id="searchCategory">
+                  <option value="all">Все</option>
+                  <option value="teacher">Только преподаватели</option>
+                  <option value="classmate">Только одногруппники</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="searchSort">Сортировка</label>
+                <select id="searchSort">
+                  <option value="date_desc">Сначала новые</option>
+                  <option value="date_asc">Сначала старые</option>
+                  <option value="likes_desc">По лайкам ↓</option>
+                  <option value="likes_asc">По лайкам ↑</option>
+                  <option value="from_asc">По отправителю</option>
+                  <option value="to_asc">По получателю</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="searchLimit">Показывать</label>
+                <select id="searchLimit">
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="helper-box">Поддерживаются прямые ссылки вида <strong>#congratulation=ID</strong>. Если открыть такую ссылку, карточка подсветится.</div>
+            <div id="searchResults" class="cards-list"><div class="skeletons"><div class="skeleton"></div><div class="skeleton"></div></div></div>
+          </section>
+        `;
+
+        const input = document.getElementById('searchInput');
+        const category = document.getElementById('searchCategory');
+        const sort = document.getElementById('searchSort');
+        const limit = document.getElementById('searchLimit');
+        const results = document.getElementById('searchResults');
+        const refreshBtn = document.getElementById('refreshBtn');
+        const lastUpdateBadge = document.getElementById('lastUpdateBadge');
+
+        let allItems = [];
+
+        function updateLastUpdateLabel() {
+          const raw = localStorage.getItem(LAST_UPDATE_KEY);
+          if (!raw) {
+            lastUpdateBadge.textContent = '📅 Обновление: —';
+            return;
+          }
+          lastUpdateBadge.textContent = '📅 Обновление: ' + new Date(parseInt(raw, 10)).toLocaleString();
+        }
+
+        async function display() {
+          const q = input.value.trim().toLowerCase();
+          const selectedCategory = category.value;
+          const selectedSort = sort.value;
+          const selectedLimit = parseInt(limit.value, 10);
+
+          let filtered = allItems.filter(item => {
+            const haystack = `${item.from || ''} ${item.to || ''} ${item.message || ''}`.toLowerCase();
+            const categoryOk = selectedCategory === 'all' || item.category === selectedCategory;
+            const queryOk = !q || haystack.includes(q);
+            return categoryOk && queryOk;
+          });
+
+          filtered = sortCongrats(filtered, selectedSort).slice(0, selectedLimit);
+          await renderPostCards(results, filtered);
+          highlightFromHash();
+        }
+
+        const debouncedDisplay = debounce(display, 180);
+        [input, category, sort, limit].forEach(el => {
+          el.addEventListener('input', debouncedDisplay);
+          el.addEventListener('change', display);
+        });
+
+        refreshBtn.addEventListener('click', async () => {
+          try {
+            allItems = await loadAllApproved(true);
+            updateLastUpdateLabel();
+            await display();
+            toast('Данные обновлены с сервера', 'success');
+          } catch (error) {
+            toast('Не удалось обновить данные', 'error');
+          }
+        });
+
+        try {
+          allItems = await loadAllApproved(false);
+          updateLastUpdateLabel();
+          await display();
+          setTopStatus('Поиск готов');
+        } catch (error) {
+          console.error(error);
+          results.innerHTML = '<div class="empty">Не удалось загрузить поздравления.</div>';
+          setTopStatus('Ошибка загрузки поиска');
+        }
+      }
+
+      async function renderModeration() {
+        setTopStatus('Открыта панель модерации');
+
+        if (!isAdmin()) {
+          contentDiv.innerHTML = `
+            <section class="grid-2">
+              <div class="card">
+                <div class="section-title">🛡️ Вход для модератора</div>
+                <div class="subtle">Используй email модератора из Firebase Authentication.</div>
+                <div class="auth-box">
+                  <input id="adminEmail" type="email" placeholder="Email модератора">
+                  <input id="adminPass" type="password" placeholder="Пароль">
+                  <button class="btn" id="loginAdminBtn">Войти</button>
+                </div>
+              </div>
+              <div class="card">
+                <div class="section-title">🌷 Модераторы</div>
+                <div class="helper-box">Усатов Тимофей, Илья Говтва, Ярослав Носков, Вадим Муллаголиев, Данила Сарычев.</div>
+                <div class="helper-box">После входа здесь можно одобрять, редактировать и удалять записи без изменения старой базы данных.</div>
+              </div>
+            </section>
+          `;
+
+          document.getElementById('loginAdminBtn').addEventListener('click', async () => {
+            const email = document.getElementById('adminEmail').value.trim();
+            const pass = document.getElementById('adminPass').value;
+            if (!email || !pass) {
+              toast('Заполни email и пароль', 'error');
+              return;
             }
+            try {
+              await auth.signInWithEmailAndPassword(email, pass);
+              toast('Вход выполнен', 'success');
+              renderModeration();
+            } catch (error) {
+              toast('Ошибка входа: ' + error.message, 'error', 3600);
+            }
+          });
+          return;
+        }
 
-            themeToggle.addEventListener('click', (e) => {
-                let darkTheme = localStorage.getItem('theme') === 'dark';
-                darkTheme = !darkTheme;
-                document.body.classList.toggle('dark-theme', darkTheme);
-                localStorage.setItem('theme', darkTheme ? 'dark' : 'light');
-                themeToggle.textContent = darkTheme ? '☀️' : '🌙';
+        contentDiv.innerHTML = `
+          <section class="card section">
+            <div class="section-header">
+              <div>
+                <div class="section-title">🛡️ Панель модератора</div>
+                <div class="subtle">Редактирование, публикация и удаление записей в существующих коллекциях.</div>
+              </div>
+              <div class="toolbar">
+                <span class="badge">✅ ${escapeHtml(auth.currentUser.email || '')}</span>
+                <button class="btn secondary" id="logoutBtn">Выйти</button>
+              </div>
+            </div>
+            <div class="moderation-tabs">
+              <button class="btn secondary active-tab" id="tabNew">Новые</button>
+              <button class="btn secondary" id="tabAll">Все записи</button>
+            </div>
+            <div id="moderationContent" class="moderation-grid"></div>
+          </section>
+        `;
 
-                const now = Date.now();
-                if (firstClickTime === 0 || now - firstClickTime > 2000) {
-                    clickCount = 1;
-                    firstClickTime = now;
-                } else {
-                    clickCount++;
-                    if (clickCount >= 5 && !easterEggActive) {
-                        showEasterEgg();
-                        clickCount = 0;
-                        firstClickTime = 0;
-                    }
-                }
-                themeToggle.style.transform = 'rotate(360deg)';
-                setTimeout(() => themeToggle.style.transform = '', 300);
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+          await auth.signOut();
+          toast('Выход выполнен', 'info');
+          renderModeration();
+        });
+
+        const tabNew = document.getElementById('tabNew');
+        const tabAll = document.getElementById('tabAll');
+        const moderationContent = document.getElementById('moderationContent');
+
+        async function renderModerationItems(items, mode) {
+          if (!items.length) {
+            moderationContent.innerHTML = '<div class="empty">Здесь пока пусто.</div>';
+            return;
+          }
+
+          moderationContent.innerHTML = items.map(item => `
+            <div class="moderation-item" data-id="${item.id}">
+              <div class="meta-line">
+                <span>${escapeHtml(formatDate(item.date))}</span>
+                <span>${item.approved ? '✅ Одобрено' : '⏳ На модерации'}</span>
+                <span>❤️ ${item.likes || 0}</span>
+              </div>
+              <div class="inline-edit">
+                <input class="edit-from" value="${escapeHtml(item.from)}" placeholder="От кого">
+                <input class="edit-to" value="${escapeHtml(item.to)}" placeholder="Кому">
+                <select class="edit-category">
+                  <option value="teacher" ${item.category === 'teacher' ? 'selected' : ''}>👩‍🏫 Преподаватель</option>
+                  <option value="classmate" ${item.category === 'classmate' ? 'selected' : ''}>👥 Одногруппник</option>
+                </select>
+                <textarea class="edit-message" placeholder="Текст">${escapeHtml(item.message)}</textarea>
+              </div>
+              <div class="split-actions">
+                <button class="btn success save-btn">💾 Сохранить</button>
+                ${!item.approved ? '<button class="btn" data-role="approve">✅ Одобрить</button>' : ''}
+                <button class="btn danger delete-btn">🗑️ Удалить</button>
+              </div>
+            </div>
+          `).join('');
+
+          moderationContent.querySelectorAll('.save-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              const root = btn.closest('.moderation-item');
+              const id = root.dataset.id;
+              const from = root.querySelector('.edit-from').value.trim();
+              const to = root.querySelector('.edit-to').value.trim();
+              const category = root.querySelector('.edit-category').value;
+              const message = root.querySelector('.edit-message').value.trim();
+              if (!from || !to || !message) {
+                toast('Заполни все поля перед сохранением', 'error');
+                return;
+              }
+              try {
+                await updateCongratulation(id, { from, to, category, message });
+                await logModeratorAction('edit', 'Изменил запись', id);
+                toast('Запись сохранена', 'success');
+              } catch (error) {
+                toast('Ошибка сохранения', 'error');
+              }
             });
-
-            let darkTheme = localStorage.getItem('theme') === 'dark';
-            if (darkTheme) {
-                document.body.classList.add('dark-theme');
-                themeToggle.textContent = '☀️';
-            } else {
-                themeToggle.textContent = '🌙';
-            }
-
-            function showHeartAnimation() {
-                for (let i = 0; i < 10; i++) {
-                    setTimeout(() => {
-                        const heart = document.createElement('div');
-                        heart.className = 'heart-animation';
-                        heart.innerHTML = '❤️';
-                        heart.style.left = Math.random() * 100 + '%';
-                        heart.style.top = Math.random() * 100 + '%';
-                        document.body.appendChild(heart);
-                        setTimeout(() => heart.remove(), 2000);
-                    }, i * 100);
-                }
-            }
-
-            function isAdmin() {
-                const user = auth.currentUser;
-                return user && MODERATOR_EMAILS.includes(user.email.toLowerCase());
-            }
-
-            function getLastPostTime() {
-                const time = localStorage.getItem('lastPostTime');
-                return time ? parseInt(time, 10) : 0;
-            }
-
-            function setLastPostTime() {
-                localStorage.setItem('lastPostTime', Date.now().toString());
-            }
-
-            function canPost() {
-                if (isAdmin()) return true;
-                const last = getLastPostTime();
-                return (Date.now() - last) >= POST_COOLDOWN;
-            }
-
-            function getRemainingSeconds() {
-                if (isAdmin()) return 0;
-                const last = getLastPostTime();
-                const diff = POST_COOLDOWN - (Date.now() - last);
-                return diff > 0 ? Math.ceil(diff / 1000) : 0;
-            }
-
-            async function logModeratorAction(action, details, docId = null) {
-                if (!isAdmin()) return;
-                try {
-                    await db.collection('logs').add({
-                        moderator: auth.currentUser.email,
-                        action: action,
-                        details: details,
-                        documentId: docId,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                } catch (e) {
-                    console.error("Ошибка логирования:", e);
-                }
-            }
-
-            // ========== УНИКАЛЬНЫЙ ИДЕНТИФИКАТОР ПОЛЬЗОВАТЕЛЯ ДЛЯ ЛАЙКОВ ==========
-            function getUserId() {
-                const user = auth.currentUser;
-                if (user) return 'user_' + user.uid;
-
-                let sessionId = localStorage.getItem('session_id');
-                if (!sessionId) {
-                    sessionId = 'session_' + Math.random().toString(36).substring(2) + Date.now();
-                    localStorage.setItem('session_id', sessionId);
-                }
-                return sessionId;
-            }
-
-            // ========== ЛАЙКИ С КЭШИРОВАНИЕМ В LOCALSTORAGE ==========
-            async function likeCongratulation(postId) {
-                const userId = getUserId();
-                const likeId = `${postId}_${userId}`;
-
-                try {
-                    await db.runTransaction(async (transaction) => {
-                        const likeRef = db.collection('likes').doc(likeId);
-                        const likeDoc = await transaction.get(likeRef);
-                        if (likeDoc.exists) {
-                            throw new Error('already liked');
-                        }
-
-                        transaction.set(likeRef, {
-                            postId: postId,
-                            userId: userId,
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-
-                        const postRef = db.collection('congratulations').doc(postId);
-                        transaction.update(postRef, {
-                            likes: firebase.firestore.FieldValue.increment(1)
-                        });
-                    });
-                    // Сохраняем в localStorage
-                    localStorage.setItem(`liked_${postId}_${userId}`, 'true');
-                    return true;
-                } catch (error) {
-                    if (error.message === 'already liked') {
-                        console.log('Пользователь уже лайкал это поздравление');
-                        return false;
-                    }
-                    console.error("Ошибка при лайке: ", error);
-                    throw error;
-                }
-            }
-
-            // ========== ЗАГРУЗКА ЛАЙКОВ С ПРОВЕРКОЙ LOCALSTORAGE ==========
-            async function getUserLikesForPosts(postIds) {
-                if (!postIds || postIds.length === 0) return {};
-                const userId = getUserId();
-                const likesMap = {};
-
-                // Сначала проверяем localStorage
-                postIds.forEach(id => {
-                    if (localStorage.getItem(`liked_${id}_${userId}`) === 'true') {
-                        likesMap[id] = true;
-                    }
-                });
-
-                // Для тех, что не в кэше, запрашиваем с сервера
-                const uncachedIds = postIds.filter(id => !likesMap[id]);
-                if (uncachedIds.length === 0) return likesMap;
-
-                const chunks = [];
-                for (let i = 0; i < uncachedIds.length; i += 10) {
-                    chunks.push(uncachedIds.slice(i, i + 10));
-                }
-                for (const chunk of chunks) {
-                    const snapshot = await db.collection('likes')
-                        .where('userId', '==', userId)
-                        .where('postId', 'in', chunk)
-                        .get();
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        likesMap[data.postId] = true;
-                        localStorage.setItem(`liked_${data.postId}_${userId}`, 'true');
-                    });
-                }
-                return likesMap;
-            }
-
-            // ========== СТАТИСТИКА С КЭШЕМ ==========
-            const STATS_CACHE_KEY = 'stats_cache';
-            const STATS_CACHE_TTL = 5 * 60 * 1000;
-
-            async function getStats() {
-                const cached = localStorage.getItem(STATS_CACHE_KEY);
-                if (cached) {
-                    const { stats, timestamp } = JSON.parse(cached);
-                    if (Date.now() - timestamp < STATS_CACHE_TTL) {
-                        return stats;
-                    }
-                }
-
-                const [totalSnap, approvedSnap] = await Promise.all([
-                    db.collection('congratulations').get(),
-                    db.collection('congratulations').where('approved', '==', true).get()
-                ]);
-                const stats = { total: totalSnap.size, approved: approvedSnap.size };
-
-                localStorage.setItem(STATS_CACHE_KEY, JSON.stringify({ stats, timestamp: Date.now() }));
-                return stats;
-            }
-
-            function invalidateStatsCache() {
-                localStorage.removeItem(STATS_CACHE_KEY);
-            }
-
-            async function addCongratulation(from, to, category, message) {
-                try {
-                    const docRef = await db.collection('congratulations').add({
-                        from, to, category, message,
-                        date: firebase.firestore.FieldValue.serverTimestamp(),
-                        approved: false,
-                        likes: 0
-                    });
-                    invalidateStatsCache();
-                    return { success: true, id: docRef.id };
-                } catch (error) {
-                    console.error("Ошибка добавления: ", error);
-                    return { success: false };
-                }
-            }
-
-            async function loadRecentApproved(lastDoc = null, limit = 3) {
-                try {
-                    let query = db.collection('congratulations')
-                        .where('approved', '==', true)
-                        .orderBy('date', 'desc')
-                        .limit(limit);
-                    if (lastDoc) query = query.startAfter(lastDoc);
-                    const snapshot = await query.get();
-                    const last = snapshot.docs[snapshot.docs.length - 1];
-                    const results = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                    return { results, last };
-                } catch (error) {
-                    console.error("Ошибка загрузки последних: ", error);
-                    return { results: [], last: null };
-                }
-            }
-
-            async function loadAllApproved(forceRefresh = false) {
-                try {
-                    let query = db.collection('congratulations').where('approved', '==', true);
-                    let snapshot;
-                    if (forceRefresh) {
-                        snapshot = await query.get({ source: 'server' });
-                    } else {
-                        snapshot = await query.get();
-                    }
-                    localStorage.setItem('lastUpdate', Date.now().toString());
-                    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                } catch (error) {
-                    console.error("Ошибка загрузки всех записей: ", error);
-                    return [];
-                }
-            }
-
-            async function getUnapprovedCongrats() {
-                try {
-                    const snapshot = await db.collection('congratulations').where('approved', '==', false).get();
-                    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                } catch (error) {
-                    console.error("Ошибка получения неодобренных: ", error);
-                    return [];
-                }
-            }
-
-            async function getAllCongrats() {
-                try {
-                    const snapshot = await db.collection('congratulations').orderBy('date', 'desc').limit(50).get();
-                    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                } catch (error) {
-                    console.error("Ошибка получения всех записей: ", error);
-                    return [];
-                }
-            }
-
-            async function updateCongratulation(id, data) {
-                await db.collection('congratulations').doc(id).update(data);
-            }
-
-            async function deleteCongratulation(id) {
-                await db.collection('congratulations').doc(id).delete();
-            }
-
-            function sortCongrats(items, sortBy) {
-                const sorted = [...items];
-                switch (sortBy) {
-                    case 'date_desc':
-                        sorted.sort((a, b) => (b.date?.seconds || 0) - (a.date?.seconds || 0));
-                        break;
-                    case 'date_asc':
-                        sorted.sort((a, b) => (a.date?.seconds || 0) - (b.date?.seconds || 0));
-                        break;
-                    case 'likes_desc':
-                        sorted.sort((a, b) => (b.likes || 0) - (a.likes || 0));
-                        break;
-                    case 'likes_asc':
-                        sorted.sort((a, b) => (a.likes || 0) - (b.likes || 0));
-                        break;
-                    case 'from_asc':
-                        sorted.sort((a, b) => (a.from || '').localeCompare(b.from || ''));
-                        break;
-                    case 'from_desc':
-                        sorted.sort((a, b) => (b.from || '').localeCompare(a.from || ''));
-                        break;
-                    case 'to_asc':
-                        sorted.sort((a, b) => (a.to || '').localeCompare(b.to || ''));
-                        break;
-                    case 'to_desc':
-                        sorted.sort((a, b) => (b.to || '').localeCompare(a.to || ''));
-                        break;
-                    default:
-                        sorted.sort((a, b) => (b.date?.seconds || 0) - (a.date?.seconds || 0));
-                }
-                return sorted;
-            }
-
-            function setActiveButton(activeId) {
-                [btnHome, btnSend, btnSearch].forEach(btn => btn.classList.remove('active'));
-                if (activeId !== 'btnModeration') {
-                    document.getElementById(activeId).classList.add('active');
-                }
-                btnModeration.classList.remove('active');
-            }
-
-            // ==================== ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ ДЛЯ ОТРИСОВКИ КАРТОЧЕК С ЛАЙКАМИ ====================
-            async function renderCards(container, items, userLikesMap = {}) {
-                container.innerHTML = '';
-                for (let i = 0; i < items.length; i++) {
-                    const item = items[i];
-                    const d = item.date ? new Date(item.date.seconds * 1000).toLocaleString() : '';
-                    const liked = !!userLikesMap[item.id];
-                    const cardHtml = `
-                        <div class="result-item" style="animation-delay: ${i * 0.1}s">
-                            <p><strong>От кого:</strong> ${escapeHtml(item.from)}</p>
-                            <p><strong>Кому:</strong> ${escapeHtml(item.to)} (${item.category === 'teacher' ? '👩‍🏫' : '👥'})</p>
-                            <p><strong>Текст:</strong> ${escapeHtml(item.message)}</p>
-                            <small>${escapeHtml(d)} | ❤️ ${item.likes || 0}</small>
-                            <br>
-                            <button class="like-btn" data-id="${item.id}" ${liked ? 'disabled' : ''}>${liked ? '❤️ Вы лайкнули' : '❤️ Нравится'}</button>
-                            <button class="share-btn" data-id="${item.id}" data-to="${escapeHtml(item.to)}">🔗 Поделиться</button>
-                        </div>
-                    `;
-                    container.insertAdjacentHTML('beforeend', cardHtml);
-                }
-
-                container.querySelectorAll('.like-btn').forEach(btn => {
-                    btn.addEventListener('click', async (e) => {
-                        const id = e.target.dataset.id;
-                        btn.disabled = true;
-                        const originalText = btn.textContent;
-                        btn.textContent = '⏳ Обработка...';
-                        try {
-                            const success = await likeCongratulation(id);
-                            if (success) {
-                                btn.textContent = '❤️ Вы лайкнули';
-                                const likeSpan = btn.closest('.result-item').querySelector('small');
-                                if (likeSpan) {
-                                    const currentLikes = parseInt(likeSpan.textContent.match(/❤️ (\d+)/)?.[1] || '0');
-                                    likeSpan.innerHTML = likeSpan.innerHTML.replace(/❤️ \d+/, `❤️ ${currentLikes + 1}`);
-                                }
-                            } else {
-                                btn.textContent = '❤️ Вы уже лайкнули';
-                            }
-                        } catch (error) {
-                            console.error('Ошибка лайка:', error);
-                            btn.disabled = false;
-                            btn.textContent = originalText;
-                            alert('Не удалось поставить лайк. Попробуйте позже.');
-                        }
-                    });
-                });
-
-                container.querySelectorAll('.share-btn').forEach(btn => {
-                    btn.addEventListener('click', (e) => {
-                        const id = e.target.dataset.id;
-                        const to = e.target.dataset.to;
-                        const url = window.location.href.split('#')[0] + '#congratulation=' + id;
-                        const text = `Напиши ${to} чтобы увидеть поздравления ${url}`;
-                        navigator.clipboard.writeText(text);
-                        alert('Ссылка с именем скопирована!');
-                    });
-                });
-            }
-
-            // ==================== ГЛАВНАЯ (оптимизированная) ====================
-            async function renderHome() {
-                setActiveButton('btnHome');
-
-                // Скелетоны для быстрого отображения
-                const skeletonHTML = `
-                    <div class="skeleton-card"></div>
-                    <div class="skeleton-card"></div>
-                    <div class="skeleton-card"></div>
-                `;
-
-                contentDiv.innerHTML = `
-                    <h1>🌸 Поздравления с 8 марта</h1>
-                    <div class="stats">
-                        <span>📨 Всего отправлено: <span id="totalStat">...</span></span>
-                        <span>✅ Одобрено: <span id="approvedStat">...</span></span>
-                    </div>
-                    <div class="rules">
-                        <strong>Правила:</strong>
-                        <ul style="margin-top:10px; margin-left:20px;">
-                            <li>Заполните все поля, чтобы отправить поздравление.</li>
-                            <li>Укажите, от кого и кому (имя и фамилию).</li>
-                            <li>Все поздравления проходят модерацию перед публикацией.</li>
-                            <li>Одно поздравление можно отправлять не чаще, чем раз в 5 минут.</li>
-                        </ul>
-                    </div>
-                    <h2>📬 Последние поздравления</h2>
-                    <div id="recentResults" class="search-hint">${skeletonHTML}</div>
-                    <button id="loadMoreRecentBtn" class="load-more" style="display:none;">Загрузить ещё 3</button>
-                `;
-
-                // Загружаем статистику параллельно с постами
-                const statsPromise = getStats().then(stats => {
-                    document.getElementById('totalStat').textContent = stats.total;
-                    document.getElementById('approvedStat').textContent = stats.approved;
-                });
-
-                let allPosts = [];
-                let likesMap = {};
-                let lastDoc = null;
-                let allLoaded = false;
-
-                const recentDiv = document.getElementById('recentResults');
-                const loadMoreBtn = document.getElementById('loadMoreRecentBtn');
-
-                async function loadMore(initial = true) {
-                    if (initial) lastDoc = null;
-                    if (allLoaded) return;
-
-                    const data = await loadRecentApproved(lastDoc, 3);
-                    if (data.results.length === 0) {
-                        allLoaded = true;
-                        loadMoreBtn.style.display = 'none';
-                        if (initial) recentDiv.innerHTML = '<div class="no-results">😔 Пока нет одобренных поздравлений.</div>';
-                        return;
-                    }
-
-                    const newPosts = data.results;
-                    lastDoc = data.last;
-                    allPosts = initial ? newPosts : [...allPosts, ...newPosts];
-
-                    // Запрашиваем лайки только для новых постов
-                    const newIds = newPosts.map(p => p.id);
-                    const newLikes = await getUserLikesForPosts(newIds);
-                    likesMap = { ...likesMap, ...newLikes };
-
-                    await renderCards(recentDiv, allPosts, likesMap);
-
-                    allLoaded = newPosts.length < 3;
-                    loadMoreBtn.style.display = allLoaded ? 'none' : 'block';
-                }
-
-                await loadMore(true);
-                loadMoreBtn.addEventListener('click', () => loadMore(false));
-            }
-
-            // ==================== ОТПРАВКА ====================
-            let sendTimerInterval = null; // для очистки интервала
-
-            function renderSend() {
-                setActiveButton('btnSend');
-                if (sendTimerInterval) clearInterval(sendTimerInterval);
-
-                contentDiv.innerHTML = `
-                    <h2>✍️ Отправить поздравление</h2>
-                    <form id="greetingForm">
-                        <div class="form-group">
-                            <label for="from">От кого (ваше имя и фамилия):</label>
-                            <input type="text" id="from" required placeholder="Иван Иванов">
-                        </div>
-                        <div class="form-group">
-                            <label for="to">Кому (имя и фамилия получателя):</label>
-                            <input type="text" id="to" required placeholder="Мария Петрова">
-                        </div>
-                        <div class="form-group">
-                            <label for="category">Категория получателя:</label>
-                            <select id="category" required>
-                                <option value="teacher">👩‍🏫 Преподаватель</option>
-                                <option value="classmate">👥 Одногруппник</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="message">Текст поздравления:</label>
-                            <textarea id="message" required placeholder="С 8 марта! Желаю счастья..."></textarea>
-                        </div>
-                        <button type="submit" id="submitBtn">Отправить на модерацию 💐</button>
-                        <div id="formMessage" class="message"></div>
-                        <div id="timerMessage" class="timer-message"></div>
-                    </form>
-                `;
-
-                const form = document.getElementById('greetingForm');
-                const submitBtn = document.getElementById('submitBtn');
-                const msg = document.getElementById('formMessage');
-                const timerMsg = document.getElementById('timerMessage');
-
-                function updateButtonState() {
-                    if (canPost()) {
-                        submitBtn.disabled = false;
-                        timerMsg.textContent = '';
-                    } else {
-                        submitBtn.disabled = true;
-                        const sec = getRemainingSeconds();
-                        timerMsg.textContent = `⏳ Отправлять можно будет через ${sec} сек.`;
-                    }
-                }
-
-                sendTimerInterval = setInterval(updateButtonState, 1000);
-                updateButtonState();
-
-                form.addEventListener('submit', async (e) => {
-                    e.preventDefault();
-                    const from = document.getElementById('from').value.trim();
-                    const to = document.getElementById('to').value.trim();
-                    const category = document.getElementById('category').value;
-                    const message = document.getElementById('message').value.trim();
-
-                    if (!from || !to || !message) {
-                        msg.className = 'message error';
-                        msg.textContent = 'Все поля должны быть заполнены!';
-                        msg.style.display = 'block';
-                        return;
-                    }
-
-                    if (!canPost()) {
-                        msg.className = 'message error';
-                        msg.textContent = 'Подождите 5 минут перед следующей отправкой.';
-                        msg.style.display = 'block';
-                        return;
-                    }
-
-                    const result = await addCongratulation(from, to, category, message);
-                    if (result.success) {
-                        form.reset();
-                        setLastPostTime();
-                        updateButtonState();
-                        msg.className = 'message success';
-                        msg.textContent = 'Поздравление отправлено на модерацию! 💖';
-                        msg.style.display = 'block';
-                        showHeartAnimation();
-                        setTimeout(() => msg.style.display = 'none', 3000);
-                    } else {
-                        msg.className = 'message error';
-                        msg.textContent = 'Ошибка отправки. Попробуйте позже.';
-                        msg.style.display = 'block';
-                    }
-                });
-            }
-
-            // ==================== ПОИСК ====================
-            async function renderSearch() {
-                setActiveButton('btnSearch');
-                contentDiv.innerHTML = `
-                    <h1>🔎 Все поздравления</h1>
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 15px;">
-                        <div>
-                            <span id="lastUpdateLabel"></span>
-                            <button id="refreshDataBtn" class="load-more" style="width: auto; padding: 8px 15px; margin: 0;">🔄 Обновить</button>
-                        </div>
-                    </div>
-                    <div class="search-container">
-                        <input type="text" id="searchInput" placeholder="Введите имя получателя для поиска (оставьте пустым, чтобы показать все)">
-                        <button class="search-btn" id="searchBtn">Найти</button>
-                    </div>
-                    <div class="sort-container">
-                        <label for="searchSort">Сортировать:</label>
-                        <select id="searchSort">
-                            <option value="date_desc">Сначала новые</option>
-                            <option value="date_asc">Сначала старые</option>
-                            <option value="likes_desc">По лайкам (сначала больше)</option>
-                            <option value="likes_asc">По лайкам (сначала меньше)</option>
-                            <option value="from_asc">По отправителю (А-Я)</option>
-                            <option value="from_desc">По отправителю (Я-А)</option>
-                            <option value="to_asc">По получателю (А-Я)</option>
-                            <option value="to_desc">По получателю (Я-А)</option>
-                        </select>
-                    </div>
-                    <div id="searchResults" class="search-hint">Загрузка...</div>
-                    <button id="loadMoreBtn" class="load-more" style="display:none;">Загрузить ещё 10</button>
-                `;
-
-                const input = document.getElementById('searchInput');
-                const btn = document.getElementById('searchBtn');
-                const results = document.getElementById('searchResults');
-                const loadMore = document.getElementById('loadMoreBtn');
-                const sortSelect = document.getElementById('searchSort');
-                const refreshBtn = document.getElementById('refreshDataBtn');
-                const lastUpdateLabel = document.getElementById('lastUpdateLabel');
-
-                let allItems = [];
-                let displayedCount = 0;
-                let currentQuery = '';
-                let currentSort = sortSelect.value;
-
-                function updateLastUpdateLabel() {
-                    const lastUpdate = localStorage.getItem('lastUpdate');
-                    if (lastUpdate) {
-                        const date = new Date(parseInt(lastUpdate));
-                        lastUpdateLabel.textContent = `📅 Последнее обновление: ${date.toLocaleString()}`;
-                    } else {
-                        lastUpdateLabel.textContent = '';
-                    }
-                }
-                updateLastUpdateLabel();
-
-                async function displayItems() {
-                    let filtered = allItems;
-                    if (currentQuery.trim() !== '') {
-                        const lower = currentQuery.toLowerCase();
-                        filtered = allItems.filter(item => item.to.toLowerCase().includes(lower));
-                    }
-                    const sorted = sortCongrats(filtered, currentSort);
-                    const totalFiltered = sorted.length;
-
-                    if (totalFiltered === 0) {
-                        results.innerHTML = `<div class="no-results">😔 По запросу «${escapeHtml(currentQuery || 'все')}» ничего не найдено.</div>`;
-                        loadMore.style.display = 'none';
-                        return;
-                    }
-
-                    const toShow = sorted.slice(0, displayedCount);
-                    const postIds = toShow.map(item => item.id);
-                    const userLikes = await getUserLikesForPosts(postIds);
-                    await renderCards(results, toShow, userLikes);
-
-                    if (displayedCount >= totalFiltered) {
-                        loadMore.style.display = 'none';
-                    } else {
-                        loadMore.style.display = 'block';
-                    }
-                }
-
-                async function loadAllData(forceRefresh = false) {
-                    results.innerHTML = '<div class="search-hint">Загрузка...</div>';
-                    allItems = await loadAllApproved(forceRefresh);
-                    displayedCount = 10;
-                    await displayItems();
-                    updateLastUpdateLabel();
-                }
-
-                input.addEventListener('input', () => {
-                    currentQuery = input.value.trim();
-                    displayedCount = 10;
-                    displayItems();
-                });
-
-                btn.addEventListener('click', () => {
-                    currentQuery = input.value.trim();
-                    displayedCount = 10;
-                    displayItems();
-                });
-
-                sortSelect.addEventListener('change', () => {
-                    currentSort = sortSelect.value;
-                    displayedCount = 10;
-                    displayItems();
-                });
-
-                loadMore.addEventListener('click', () => {
-                    displayedCount += 10;
-                    displayItems();
-                });
-
-                refreshBtn.addEventListener('click', () => {
-                    loadAllData(true);
-                });
-
-                await loadAllData(false);
-            }
-
-            // ==================== МОДЕРАЦИЯ (без изменений, но можно добавить) ====================
-            async function renderModeration() {
-                if (!isAdmin()) {
-                    contentDiv.innerHTML = `
-                        <div class="moderator-info" style="background: rgba(255, 255, 255, 0.4); backdrop-filter: blur(12px); border-radius: 60px; padding: 20px 28px; margin-bottom: 30px; border: 1px solid rgba(255, 255, 255, 0.6); color: #4a2a35;">
-                            <p><strong>🌷 Вот наши модераторы:</strong></p>
-                            <p>Усатов Тимофей, Илья Говтва, Ярослав Носков, Вадим Муллаголиев, Данила Сарычев.</p>
-                            <p><em>Все мы будем одобрять ваши анкеты в период работы сайта.</em></p>
-                        </div>
-                        <div class="admin-login">
-                            <h2>🔐 Вход для модератора</h2>
-                            <input type="email" id="adminEmail" placeholder="Email" value="">
-                            <input type="password" id="adminPass" placeholder="Пароль">
-                            <button id="loginAdminBtn">Войти</button>
-                            <div id="loginMessage"></div>
-                        </div>
-                    `;
-
-                    document.getElementById('loginAdminBtn').addEventListener('click', () => {
-                        const email = document.getElementById('adminEmail').value;
-                        const pass = document.getElementById('adminPass').value;
-                        auth.signInWithEmailAndPassword(email, pass)
-                            .then(() => {
-                                renderModeration();
-                            })
-                            .catch(error => {
-                                document.getElementById('loginMessage').textContent = 'Ошибка входа: ' + error.message;
-                            });
-                    });
-                    return;
-                }
-
-                let html = `
-                    <div class="moderation-header">
-                        <h2>🛡️ Панель модератора</h2>
-                        <button class="logout-btn" id="logoutBtn">🚪 Выйти</button>
-                    </div>
-                    <div class="moderation-tabs">
-                        <button id="tabNew" class="active-tab">📬 Новые</button>
-                        <button id="tabAll">📋 Все записи</button>
-                    </div>
-                    <div id="moderationContent"></div>
-                `;
-                contentDiv.innerHTML = html;
-
-                document.getElementById('logoutBtn').addEventListener('click', () => {
-                    auth.signOut().then(() => {
-                        renderModeration();
-                    });
-                });
-
-                const modContent = document.getElementById('moderationContent');
-                const tabNew = document.getElementById('tabNew');
-                const tabAll = document.getElementById('tabAll');
-
-                function setActiveTab(tab) {
-                    [tabNew, tabAll].forEach(b => b.classList.remove('active-tab'));
-                    if (tab === 'new') {
-                        tabNew.classList.add('active-tab');
-                        loadNew();
-                    } else {
-                        tabAll.classList.add('active-tab');
-                        loadAll();
-                    }
-                }
-
-                async function loadNew() {
-                    try {
-                        const items = await getUnapprovedCongrats();
-                        if (items.length === 0) {
-                            modContent.innerHTML = '<p class="no-results">✨ Нет новых записей</p>';
-                        } else {
-                            renderItems(items, 'new');
-                        }
-                    } catch (error) {
-                        modContent.innerHTML = `<p class="message error">❌ Ошибка загрузки: ${escapeHtml(error.message)}</p>`;
-                    }
-                }
-
-                async function loadAll() {
-                    try {
-                        const items = await getAllCongrats();
-                        if (items.length === 0) {
-                            modContent.innerHTML = '<p class="no-results">✨ Нет записей</p>';
-                        } else {
-                            renderItems(items, 'all');
-                        }
-                    } catch (error) {
-                        modContent.innerHTML = `<p class="message error">❌ Ошибка загрузки: ${escapeHtml(error.message)}</p>`;
-                    }
-                }
-
-                function renderItems(items, type) {
-                    let out = '';
-                    items.forEach((item, index) => {
-                        const dateStr = item.date ? new Date(item.date.seconds * 1000).toLocaleString() : '';
-                        const approvedStatus = item.approved ? '✅ Одобрено' : '⏳ На модерации';
-
-                        out += `
-                            <div class="result-item" data-id="${item.id}" style="animation-delay: ${index * 0.1}s">
-                                <div class="item-view">
-                                    <p><strong>От:</strong> <span class="from-text">${escapeHtml(item.from)}</span></p>
-                                    <p><strong>Кому:</strong> <span class="to-text">${escapeHtml(item.to)} (${item.category === 'teacher' ? '👩‍🏫' : '👥'})</span></p>
-                                    <p><strong>Текст:</strong> <span class="msg-text">${escapeHtml(item.message)}</span></p>
-                                    <p><small>${escapeHtml(dateStr)} | ${approvedStatus} | ❤️ ${item.likes || 0}</small></p>
-                                    <button class="edit-btn" data-id="${item.id}">✏️ Редактировать</button>
-                                    <button class="delete-btn" data-id="${item.id}">🗑️ Удалить</button>
-                                    ${!item.approved ? `<button class="approve-btn" data-id="${item.id}">✅ Одобрить</button>` : ''}
-                                </div>
-                                <div class="item-edit" style="display:none;">
-                                    <input class="inline-edit-input edit-from" value="${escapeHtml(item.from)}">
-                                    <input class="inline-edit-input edit-to" value="${escapeHtml(item.to)}">
-                                    <input class="inline-edit-input edit-category" value="${escapeHtml(item.category || 'teacher')}">
-                                    <textarea class="inline-edit-input edit-msg">${escapeHtml(item.message)}</textarea>
-                                    <button class="save-btn" data-id="${item.id}">💾 Сохранить</button>
-                                    <button class="cancel-btn">❌ Отмена</button>
-                                </div>
-                            </div>
-                        `;
-                    });
-
-                    modContent.innerHTML = out;
-
-                    document.querySelectorAll('.edit-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            const card = e.target.closest('.result-item');
-                            card.querySelector('.item-view').style.display = 'none';
-                            card.querySelector('.item-edit').style.display = 'block';
-                        });
-                    });
-
-                    document.querySelectorAll('.cancel-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            const card = e.target.closest('.result-item');
-                            card.querySelector('.item-view').style.display = 'block';
-                            card.querySelector('.item-edit').style.display = 'none';
-                        });
-                    });
-
-                    document.querySelectorAll('.save-btn').forEach(btn => {
-                        btn.addEventListener('click', async (e) => {
-                            const card = e.target.closest('.result-item');
-                            const id = card.dataset.id;
-                            const from = card.querySelector('.edit-from').value.trim();
-                            const to = card.querySelector('.edit-to').value.trim();
-                            const category = card.querySelector('.edit-category').value.trim();
-                            const msg = card.querySelector('.edit-msg').value.trim();
-
-                            if (!from || !to || !msg) {
-                                alert('Заполните все поля!');
-                                return;
-                            }
-
-                            try {
-                                await updateCongratulation(id, { from, to, category, message: msg });
-                                await logModeratorAction('edit', `Изменил запись ${id}`, id);
-                                invalidateStatsCache();
-                                if (type === 'new') loadNew(); else loadAll();
-                            } catch (error) {
-                                alert('Ошибка сохранения: ' + error.message);
-                            }
-                        });
-                    });
-
-                    document.querySelectorAll('.delete-btn').forEach(btn => {
-                        btn.addEventListener('click', async (e) => {
-                            const id = e.target.dataset.id;
-                            if (confirm('Вы уверены, что хотите удалить это поздравление?')) {
-                                try {
-                                    await deleteCongratulation(id);
-                                    await logModeratorAction('delete', `Удалил запись ${id}`, id);
-                                    invalidateStatsCache();
-                                    if (type === 'new') loadNew(); else loadAll();
-                                } catch (error) {
-                                    alert('Ошибка удаления: ' + error.message);
-                                }
-                            }
-                        });
-                    });
-
-                    document.querySelectorAll('.approve-btn').forEach(btn => {
-                        btn.addEventListener('click', async (e) => {
-                            const id = e.target.dataset.id;
-                            try {
-                                await updateCongratulation(id, { approved: true });
-                                await logModeratorAction('approve', `Одобрил запись ${id}`, id);
-                                invalidateStatsCache();
-                                if (type === 'new') loadNew(); else loadAll();
-                            } catch (error) {
-                                alert('Ошибка одобрения: ' + error.message);
-                            }
-                        });
-                    });
-                }
-
-                tabNew.addEventListener('click', () => setActiveTab('new'));
-                tabAll.addEventListener('click', () => setActiveTab('all'));
-
-                setActiveTab('new');
-            }
-
-            auth.onAuthStateChanged(user => {});
-
-            btnHome.addEventListener('click', renderHome);
-            btnSend.addEventListener('click', renderSend);
-            btnSearch.addEventListener('click', renderSearch);
-            btnModeration.addEventListener('click', renderModeration);
-
-            renderHome();
-        })();
-    </script>
+          });
+
+          moderationContent.querySelectorAll('[data-role="approve"]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              const id = btn.closest('.moderation-item').dataset.id;
+              try {
+                await updateCongratulation(id, { approved: true });
+                await logModeratorAction('approve', 'Одобрил запись', id);
+                toast('Запись одобрена', 'success');
+                if (mode === 'new') loadNew();
+                else loadAll();
+              } catch (error) {
+                toast('Ошибка одобрения', 'error');
+              }
+            });
+          });
+
+          moderationContent.querySelectorAll('.delete-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              const id = btn.closest('.moderation-item').dataset.id;
+              if (!confirm('Точно удалить это поздравление?')) return;
+              try {
+                await deleteCongratulation(id);
+                await logModeratorAction('delete', 'Удалил запись', id);
+                toast('Запись удалена', 'success');
+                if (mode === 'new') loadNew();
+                else loadAll();
+              } catch (error) {
+                toast('Ошибка удаления', 'error');
+              }
+            });
+          });
+        }
+
+        async function loadNew() {
+          tabNew.classList.add('active-tab');
+          tabAll.classList.remove('active-tab');
+          moderationContent.innerHTML = '<div class="skeletons"><div class="skeleton"></div></div>';
+          try {
+            const items = await getUnapprovedCongrats();
+            await renderModerationItems(items, 'new');
+          } catch (error) {
+            moderationContent.innerHTML = '<div class="empty">Не удалось загрузить новые записи.</div>';
+          }
+        }
+
+        async function loadAll() {
+          tabAll.classList.add('active-tab');
+          tabNew.classList.remove('active-tab');
+          moderationContent.innerHTML = '<div class="skeletons"><div class="skeleton"></div></div>';
+          try {
+            const items = await getAllCongrats();
+            await renderModerationItems(items, 'all');
+          } catch (error) {
+            moderationContent.innerHTML = '<div class="empty">Не удалось загрузить список записей.</div>';
+          }
+        }
+
+        tabNew.addEventListener('click', loadNew);
+        tabAll.addEventListener('click', loadAll);
+        loadNew();
+      }
+
+      function highlightFromHash() {
+        const match = (window.location.hash || '').match(/congratulation=([^&]+)/);
+        if (!match) return;
+        const id = match[1];
+        document.querySelectorAll('.post-card.highlight').forEach(el => el.classList.remove('highlight'));
+        const target = document.getElementById('post-' + id);
+        if (target) {
+          target.classList.add('highlight');
+          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }
+
+      auth.onAuthStateChanged(user => {
+        authBadge.textContent = user ? `👤 ${user.email}` : '👤 Гость';
+        btnModeration.textContent = user && isAdmin() ? '🛡️ Модерация (admin)' : '🛡️ Модерация';
+      });
+
+      btnHome.addEventListener('click', renderHome);
+      btnSend.addEventListener('click', renderSend);
+      btnSearch.addEventListener('click', renderSearch);
+      btnModeration.addEventListener('click', renderModeration);
+      window.addEventListener('hashchange', highlightFromHash);
+
+      const initialTab = localStorage.getItem(LAST_TAB_KEY) || 'btnHome';
+      if (initialTab === 'btnSend') renderSend();
+      else if (initialTab === 'btnSearch') renderSearch();
+      else renderHome();
+    })();
+  </script>
 </body>
 </html>
