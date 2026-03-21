@@ -1,634 +1,242 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Поздравления с 8 марта | Колледж</title>
-  <meta name="description" content="Современный сайт поздравлений с модерацией, поиском, лайками и Firebase.">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Поздравления с 8 марта</title>
   <style>
     :root {
-      --bg: #fff8fb;
-      --bg-soft: #fff1f6;
-      --panel: rgba(255,255,255,.82);
-      --panel-strong: rgba(255,255,255,.92);
-      --text: #2f2430;
-      --muted: #7f6374;
-      --line: rgba(195, 97, 135, 0.14);
-      --accent: #d84d87;
-      --accent-2: #ff8db6;
-      --accent-3: #ffe1ee;
-      --danger: #d6455d;
-      --success: #177245;
-      --shadow: 0 12px 30px rgba(216,77,135,.14);
-      --radius: 24px;
-      --radius-sm: 16px;
-      --radius-pill: 999px;
-    }
-
-    body.dark-theme {
-      --bg: #16131a;
-      --bg-soft: #1f1823;
-      --panel: rgba(31,24,35,.88);
-      --panel-strong: rgba(35,28,40,.95);
-      --text: #f7edf3;
-      --muted: #c9b5c2;
-      --line: rgba(255,255,255,.08);
-      --accent: #f48ab7;
-      --accent-2: #c5a0ff;
-      --accent-3: #2a1f2f;
-      --danger: #ff8398;
-      --success: #6ad6a1;
-      --shadow: 0 12px 30px rgba(0,0,0,.28);
+      --bg: #f7f4f6;
+      --panel: #ffffff;
+      --panel-2: #fbf8fa;
+      --text: #1f1a1d;
+      --muted: #7b6d76;
+      --line: #e9dfe5;
+      --accent: #c76b8a;
+      --accent-soft: #f6e6ed;
+      --shadow: 0 10px 30px rgba(35, 20, 28, 0.06);
+      --radius: 22px;
     }
 
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
+    html, body { margin: 0; padding: 0; }
     body {
-      margin: 0;
-      min-height: 100vh;
       font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       color: var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(255,170,205,.35), transparent 28%),
-        radial-gradient(circle at bottom right, rgba(255,210,232,.4), transparent 34%),
-        linear-gradient(180deg, var(--bg), var(--bg-soft));
-      transition: background .25s ease, color .25s ease;
+      background: linear-gradient(180deg, #faf7f9 0%, #f4eff2 100%);
+      min-height: 100vh;
     }
 
-    .page {
-      width: min(1320px, calc(100% - 24px));
-      margin: 12px auto;
-      min-height: calc(100vh - 24px);
-      display: grid;
-      grid-template-columns: 240px minmax(0, 1fr);
-      gap: 18px;
+    .wrap {
+      width: min(100%, 980px);
+      margin: 0 auto;
+      padding: 28px 16px 56px;
     }
 
-    .sidebar, .content-shell {
+    .hero {
       background: var(--panel);
       border: 1px solid var(--line);
       border-radius: 28px;
       box-shadow: var(--shadow);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      padding: 28px;
+      margin-bottom: 18px;
     }
 
-    .sidebar {
-      padding: 22px;
+    .hero h1 {
+      margin: 0 0 8px;
+      font-size: clamp(28px, 5vw, 42px);
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.55;
+      max-width: 720px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.4fr .9fr auto;
+      gap: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+      margin-bottom: 18px;
       position: sticky;
       top: 12px;
-      height: fit-content;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
+      z-index: 10;
     }
 
-    .brand {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      padding: 10px 12px 18px;
-      border-bottom: 1px solid var(--line);
-    }
-
-    .brand-mark {
-      width: 48px;
-      height: 48px;
-      border-radius: 16px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: white;
-      font-size: 24px;
-      box-shadow: var(--shadow);
-    }
-
-    .brand h1 {
-      margin: 0;
-      font-size: 18px;
-      line-height: 1.15;
-    }
-
-    .brand p {
-      margin: 4px 0 0;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .nav {
-      display: grid;
-      gap: 10px;
-    }
-
-    .nav button,
-    .icon-btn,
-    .btn,
-    button[type="submit"] {
-      border: 0;
-      border-radius: var(--radius-pill);
-      cursor: pointer;
-      font: inherit;
-      transition: transform .18s ease, box-shadow .18s ease, background .18s ease, opacity .18s ease;
-    }
-
-    .nav button {
-      text-align: left;
-      padding: 14px 16px;
-      background: transparent;
-      color: var(--text);
-      border: 1px solid transparent;
-      font-weight: 600;
-    }
-
-    .nav button.active,
-    .nav button:hover {
-      background: linear-gradient(135deg, rgba(216,77,135,.12), rgba(255,141,182,.18));
-      border-color: var(--line);
-      transform: translateY(-1px);
-    }
-
-    .sidebar-footer {
-      margin-top: auto;
-      display: grid;
-      gap: 10px;
-      padding-top: 12px;
-      border-top: 1px solid var(--line);
-    }
-
-    .theme-toggle,
-    .mod-button {
-      padding: 12px 14px;
-      background: var(--panel-strong);
-      color: var(--text);
+    .field {
+      width: 100%;
       border: 1px solid var(--line);
-      font-weight: 700;
+      background: var(--panel-2);
+      color: var(--text);
+      border-radius: 16px;
+      padding: 14px 16px;
+      font-size: 15px;
+      outline: none;
+      transition: border-color .2s, background .2s;
     }
 
-    .content-shell {
-      min-height: calc(100vh - 24px);
-      overflow: hidden;
+    .field:focus {
+      border-color: var(--accent);
+      background: #fff;
     }
 
-    .topbar {
+    .button {
+      border: 0;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 16px;
+      padding: 0 18px;
+      min-height: 48px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform .15s ease, opacity .15s ease;
+    }
+
+    .button:hover { transform: translateY(-1px); }
+    .button:active { transform: translateY(0); }
+
+    .meta {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 16px;
-      padding: 22px 26px 18px;
-      border-bottom: 1px solid var(--line);
-      background: var(--panel-strong);
-      position: sticky;
-      top: 0;
-      z-index: 3;
-    }
-
-    .topbar .meta {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+      gap: 12px;
       color: var(--muted);
       font-size: 14px;
+      margin-bottom: 14px;
+      padding: 0 2px;
     }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 8px 12px;
-      border-radius: var(--radius-pill);
-      background: rgba(216,77,135,.1);
-      border: 1px solid var(--line);
-      color: var(--text);
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    #content {
-      padding: 26px;
-    }
-
-    .hero {
+    .list {
       display: grid;
-      grid-template-columns: 1.3fr .9fr;
-      gap: 18px;
-      margin-bottom: 18px;
+      gap: 14px;
     }
 
     .card {
-      background: var(--panel-strong);
+      background: var(--panel);
       border: 1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 22px;
+      padding: 18px 18px 16px;
+      transition: transform .15s ease, box-shadow .15s ease;
     }
 
-    .card h2, .card h3, .section-title {
-      margin: 0 0 14px;
-      font-size: 28px;
-      line-height: 1.1;
-    }
-
-    .card h3 { font-size: 20px; }
-    .subtle { color: var(--muted); }
-
-    .cta-row, .filters, .toolbar, .split-actions, .inline-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .btn,
-    button[type="submit"] {
-      padding: 12px 18px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: white;
-      font-weight: 700;
-      box-shadow: var(--shadow);
-    }
-
-    .btn.secondary {
-      background: var(--panel-strong);
-      color: var(--text);
-      border: 1px solid var(--line);
-      box-shadow: none;
-    }
-
-    .btn.danger {
-      background: linear-gradient(135deg, var(--danger), #ff8a9e);
-    }
-
-    .btn.success {
-      background: linear-gradient(135deg, var(--success), #7ddab2);
-    }
-
-    .btn:disabled,
-    button:disabled {
-      opacity: .55;
-      cursor: not-allowed;
-      transform: none !important;
-      box-shadow: none;
-    }
-
-    .btn:hover,
-    .icon-btn:hover,
-    .nav button:hover,
-    button[type="submit"]:hover {
+    .card:hover {
       transform: translateY(-2px);
+      box-shadow: 0 14px 34px rgba(35, 20, 28, 0.09);
     }
 
-    .stats-grid,
-    .grid-2,
-    .grid-3 {
-      display: grid;
-      gap: 16px;
-    }
-
-    .stats-grid {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      margin-bottom: 18px;
-    }
-
-    .grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-
-    .stat {
-      padding: 18px;
-      border-radius: 22px;
-      background: linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.56));
-      border: 1px solid var(--line);
-    }
-
-    body.dark-theme .stat {
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-    }
-
-    .stat .label {
-      font-size: 13px;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-
-    .stat .value {
-      font-size: 28px;
-      font-weight: 800;
-    }
-
-    .section {
-      display: grid;
-      gap: 16px;
-      margin-top: 18px;
-    }
-
-    .section-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .cards-list {
-      display: grid;
-      gap: 14px;
-    }
-
-    .post-card {
-      display: grid;
-      gap: 12px;
-      padding: 18px;
-      border-radius: 22px;
-      background: var(--panel-strong);
-      border: 1px solid var(--line);
-      box-shadow: var(--shadow);
-      scroll-margin-top: 96px;
-    }
-
-    .post-card.highlight {
-      outline: 2px solid rgba(216,77,135,.35);
-      background: linear-gradient(180deg, rgba(255,141,182,.15), transparent), var(--panel-strong);
-    }
-
-    .post-top {
+    .card-top {
       display: flex;
       justify-content: space-between;
       gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
+      align-items: flex-start;
+      margin-bottom: 10px;
     }
 
-    .chips {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+    .to {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.2;
     }
 
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 7px 11px;
-      border-radius: var(--radius-pill);
-      background: rgba(216,77,135,.09);
-      border: 1px solid var(--line);
-      color: var(--text);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .post-message {
-      font-size: 16px;
-      line-height: 1.6;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-    }
-
-    .meta-line {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
+    .from {
+      margin: 6px 0 0;
       color: var(--muted);
       font-size: 14px;
     }
 
-    .empty,
-    .skeletons {
+    .date {
+      white-space: nowrap;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .message {
+      margin: 0;
+      font-size: 16px;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .empty, .loading {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
       padding: 24px;
-      border-radius: 20px;
-      border: 1px dashed var(--line);
       text-align: center;
       color: var(--muted);
-      background: rgba(255,255,255,.35);
     }
 
-    .skeleton {
-      height: 108px;
-      border-radius: 20px;
-      margin-bottom: 12px;
-      background: linear-gradient(90deg, rgba(255,255,255,.5), rgba(255,255,255,.85), rgba(255,255,255,.5));
-      background-size: 200% 100%;
-      animation: shimmer 1.1s linear infinite;
+    .load-more-wrap {
+      text-align: center;
+      margin-top: 18px;
     }
 
-    @keyframes shimmer {
-      from { background-position: 200% 0; }
-      to { background-position: -200% 0; }
-    }
-
-    form { display: grid; gap: 16px; }
-    .field { display: grid; gap: 8px; }
-    .field label { font-weight: 700; }
-
-    input, textarea, select {
-      width: 100%;
-      padding: 14px 16px;
-      border-radius: 16px;
+    .ghost {
+      background: transparent;
+      color: var(--accent);
       border: 1px solid var(--line);
-      background: var(--panel-strong);
-      color: var(--text);
-      font: inherit;
-      outline: none;
-      transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
     }
 
-    textarea { min-height: 144px; resize: vertical; }
-
-    input:focus, textarea:focus, select:focus {
-      border-color: rgba(216,77,135,.45);
-      box-shadow: 0 0 0 4px rgba(216,77,135,.12);
-    }
-
-    .hint, .small {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .helper-box {
-      padding: 14px 16px;
-      border-radius: 16px;
-      background: rgba(216,77,135,.08);
-      border: 1px solid var(--line);
-      color: var(--text);
-    }
-
-    .search-box {
-      display: grid;
-      gap: 14px;
-    }
-
-    .search-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.3fr) repeat(3, minmax(0, .55fr));
-      gap: 12px;
-      align-items: end;
-    }
-
-    .toast-wrap {
-      position: fixed;
-      right: 16px;
-      bottom: 16px;
-      display: grid;
-      gap: 10px;
-      z-index: 9999;
-    }
-
-    .toast {
-      min-width: 240px;
-      max-width: 360px;
-      padding: 14px 16px;
-      border-radius: 16px;
-      color: white;
-      box-shadow: 0 12px 30px rgba(0,0,0,.22);
-      animation: slideUp .2s ease;
-    }
-
-    .toast.success { background: linear-gradient(135deg, #1f8f59, #55c48c); }
-    .toast.error { background: linear-gradient(135deg, #c33f58, #ff8398); }
-    .toast.info { background: linear-gradient(135deg, #7a57d1, #d182ff); }
-
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .heart {
-      position: fixed;
-      pointer-events: none;
-      z-index: 9998;
-      font-size: 26px;
-      animation: floatHeart 1.8s ease forwards;
-      filter: drop-shadow(0 10px 10px rgba(216,77,135,.35));
-    }
-
-    @keyframes floatHeart {
-      from { opacity: 1; transform: translateY(0) scale(.8); }
-      to { opacity: 0; transform: translateY(-180px) scale(1.4) rotate(18deg); }
-    }
-
-    .easter-egg-img {
-      position: fixed;
-      inset: 50% auto auto 50%;
-      transform: translate(-50%, -50%);
-      max-width: min(80vw, 720px);
-      max-height: 72vh;
-      z-index: 9000;
-      display: none;
-      border-radius: 24px;
-      box-shadow: 0 20px 80px rgba(0,0,0,.45);
-    }
-
-    .easter-egg-img.show { display: block; }
-
-    .auth-box, .moderation-grid {
-      display: grid;
-      gap: 16px;
-    }
-
-    .moderation-item {
-      display: grid;
-      gap: 12px;
-      border: 1px solid var(--line);
-      border-radius: 20px;
-      padding: 16px;
-      background: var(--panel-strong);
-    }
-
-    .moderation-tabs {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .moderation-tabs button.active-tab {
-      background: linear-gradient(135deg, var(--accent), var(--accent-2));
-      color: white;
-    }
-
-    .inline-edit {
-      display: grid;
-      gap: 10px;
-      margin-top: 6px;
-    }
-
-    .pin-link {
-      color: inherit;
-      text-decoration: none;
-      border-bottom: 1px dashed currentColor;
-    }
-
-    .footer-note {
-      margin-top: 16px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    @media (max-width: 980px) {
-      .page { grid-template-columns: 1fr; }
-      .sidebar { position: static; }
-      .hero, .search-grid, .stats-grid, .grid-2, .grid-3 { grid-template-columns: 1fr; }
-      .topbar { padding: 18px; }
-      #content { padding: 18px; }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
-        animation: none !important;
-        transition: none !important;
-        scroll-behavior: auto !important;
+    @media (max-width: 760px) {
+      .wrap { padding-top: 18px; }
+      .hero { padding: 22px; border-radius: 22px; }
+      .toolbar {
+        grid-template-columns: 1fr;
+        position: static;
       }
+      .button { width: 100%; }
+      .card-top { flex-direction: column; }
+      .date { white-space: normal; }
     }
   </style>
 </head>
 <body>
-  <div class="page">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="brand-mark">🌸</div>
-        <div>
-          <h1>8 Марта</h1>
-          <p>Поздравления колледжа</p>
-        </div>
-      </div>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Поздравления с 8 марта</h1>
+      <p>Только просмотр поздравлений — без лишних блоков, лишней информации и лишних действий.</p>
+    </section>
 
-      <nav class="nav">
-        <button id="btnHome" class="active">🏠 Главная</button>
-        <button id="btnSend">✍️ Отправить</button>
-        <button id="btnSearch">🔎 Поиск</button>
-      </nav>
+    <section class="toolbar">
+      <input id="searchInput" class="field" type="text" placeholder="Поиск по имени, отправителю или тексту" />
+      <select id="sortSelect" class="field">
+        <option value="date_desc">Сначала новые</option>
+        <option value="date_asc">Сначала старые</option>
+        <option value="to_asc">По получателю А–Я</option>
+        <option value="from_asc">По отправителю А–Я</option>
+      </select>
+      <button id="refreshBtn" class="button">Обновить</button>
+    </section>
 
-      <div class="sidebar-footer">
-        <button id="themeToggle" class="theme-toggle">🌙 Тема</button>
-        <button id="btnModeration" class="mod-button">🛡️ Модерация</button>
-      </div>
-    </aside>
+    <div class="meta">
+      <div id="countLabel">Загрузка...</div>
+      <div id="updatedLabel"></div>
+    </div>
 
-    <main class="content-shell">
-      <div class="topbar">
-        <div>
-          <strong>Сайт поздравлений</strong>
-          <div class="meta">
-            <span id="topStatus">Готов к работе</span>
-            <span id="clockBadge" class="badge">⏱️ --:--</span>
-          </div>
-        </div>
-        <div class="cta-row">
-          <span class="badge" id="authBadge">👤 Гость</span>
-        </div>
-      </div>
-      <div id="content"></div>
+    <main id="list" class="list">
+      <div class="loading">Загрузка поздравлений...</div>
     </main>
+
+    <div class="load-more-wrap">
+      <button id="loadMoreBtn" class="button ghost" style="display:none;">Показать ещё</button>
+    </div>
   </div>
-
-  <div id="toastWrap" class="toast-wrap"></div>
-
-  <img src="19.jpg" id="egg1" class="easter-egg-img" alt="Easter egg 1">
-  <img src="20.jpg" id="egg2" class="easter-egg-img" alt="Easter egg 2">
-  <audio id="easterAudio" src="machomen.mp3" preload="auto"></audio>
 
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.13.0/firebase-auth-compat.js"></script>
 
   <script>
     const firebaseConfig = {
@@ -642,1102 +250,163 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    const auth = firebase.auth();
-    db.enablePersistence({ synchronizeTabs: true }).catch(err => console.log('Persistence:', err.message));
 
-    (function () {
-      const contentDiv = document.getElementById('content');
-      const btnHome = document.getElementById('btnHome');
-      const btnSend = document.getElementById('btnSend');
-      const btnSearch = document.getElementById('btnSearch');
-      const btnModeration = document.getElementById('btnModeration');
-      const themeToggle = document.getElementById('themeToggle');
-      const topStatus = document.getElementById('topStatus');
-      const authBadge = document.getElementById('authBadge');
-      const clockBadge = document.getElementById('clockBadge');
-      const audio = document.getElementById('easterAudio');
-      const egg1 = document.getElementById('egg1');
-      const egg2 = document.getElementById('egg2');
-      const toastWrap = document.getElementById('toastWrap');
+    const listEl = document.getElementById('list');
+    const searchInput = document.getElementById('searchInput');
+    const sortSelect = document.getElementById('sortSelect');
+    const refreshBtn = document.getElementById('refreshBtn');
+    const loadMoreBtn = document.getElementById('loadMoreBtn');
+    const countLabel = document.getElementById('countLabel');
+    const updatedLabel = document.getElementById('updatedLabel');
 
-      const MODERATOR_EMAILS = [
-        'yurapon11972020@gmail.com',
-        'yraslavskibididobi@mail.ru',
-        'iluhamoder@mail.ru',
-        'danilsupervpn@mail.ru',
-        'skvizzymedium@mail.ru',
-        'dlaprepodov@mail.ru'
-      ].map(email => email.toLowerCase());
+    let allItems = [];
+    let filteredItems = [];
+    let visibleCount = 12;
 
-      const POST_COOLDOWN = 5 * 60 * 1000;
-      const DRAFT_KEY = 'greeting_draft_v2';
-      const LAST_TAB_KEY = 'last_tab_v2';
-      const STATS_CACHE_KEY = 'stats_cache_v2';
-      const STATS_CACHE_TTL = 5 * 60 * 1000;
-      const LAST_UPDATE_KEY = 'last_update_v2';
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
 
-      let clickCount = 0;
-      let firstClickTime = 0;
-      let easterEggActive = false;
-      let currentEggIndex = 1;
+    function normalizeText(v) {
+      return String(v ?? '').toLowerCase().trim();
+    }
 
-      function escapeHtml(value) {
-        if (!value) return '';
-        return String(value)
-          .replace(/&/g, '&amp;')
-          .replace(/</g, '&lt;')
-          .replace(/>/g, '&gt;')
-          .replace(/"/g, '&quot;')
-          .replace(/'/g, '&#039;');
+    function formatDate(dateField) {
+      if (!dateField) return '';
+      try {
+        const date = dateField.seconds ? new Date(dateField.seconds * 1000) : new Date(dateField);
+        if (Number.isNaN(date.getTime())) return '';
+        return date.toLocaleString('ru-RU');
+      } catch {
+        return '';
+      }
+    }
+
+    function sortItems(items, mode) {
+      const arr = [...items];
+      if (mode === 'date_asc') {
+        arr.sort((a, b) => (a._time || 0) - (b._time || 0));
+      } else if (mode === 'to_asc') {
+        arr.sort((a, b) => (a.to || '').localeCompare(b.to || '', 'ru'));
+      } else if (mode === 'from_asc') {
+        arr.sort((a, b) => (a.from || '').localeCompare(b.from || '', 'ru'));
+      } else {
+        arr.sort((a, b) => (b._time || 0) - (a._time || 0));
+      }
+      return arr;
+    }
+
+    function render() {
+      const query = normalizeText(searchInput.value);
+      const sorted = sortItems(allItems.filter(item => {
+        if (!query) return true;
+        const hay = [item.to, item.from, item.message].map(normalizeText).join(' ');
+        return hay.includes(query);
+      }), sortSelect.value);
+
+      filteredItems = sorted;
+      countLabel.textContent = query
+        ? `Найдено: ${filteredItems.length}`
+        : `Всего поздравлений: ${filteredItems.length}`;
+
+      if (!filteredItems.length) {
+        listEl.innerHTML = '<div class="empty">Ничего не найдено.</div>';
+        loadMoreBtn.style.display = 'none';
+        return;
       }
 
-      function setTopStatus(text) {
-        topStatus.textContent = text;
-      }
-
-      function toast(message, type = 'info', timeout = 2600) {
-        const el = document.createElement('div');
-        el.className = `toast ${type}`;
-        el.textContent = message;
-        toastWrap.appendChild(el);
-        setTimeout(() => {
-          el.remove();
-        }, timeout);
-      }
-
-      function pulseHearts() {
-        for (let i = 0; i < 8; i++) {
-          setTimeout(() => {
-            const heart = document.createElement('div');
-            heart.className = 'heart';
-            heart.textContent = '💖';
-            heart.style.left = Math.round(Math.random() * 80 + 10) + 'vw';
-            heart.style.top = Math.round(Math.random() * 40 + 40) + 'vh';
-            document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 1800);
-          }, i * 80);
-        }
-      }
-
-      function updateClock() {
-        const now = new Date();
-        clockBadge.textContent = '⏱️ ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      }
-      updateClock();
-      setInterval(updateClock, 1000 * 30);
-
-      function applyTheme(theme) {
-        const dark = theme === 'dark';
-        document.body.classList.toggle('dark-theme', dark);
-        localStorage.setItem('theme', dark ? 'dark' : 'light');
-        themeToggle.textContent = dark ? '☀️ Светлая тема' : '🌙 Тёмная тема';
-      }
-
-      applyTheme(localStorage.getItem('theme') === 'dark' ? 'dark' : 'light');
-
-      themeToggle.addEventListener('click', () => {
-        const next = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
-        applyTheme(next);
-
-        const now = Date.now();
-        if (!firstClickTime || now - firstClickTime > 2000) {
-          firstClickTime = now;
-          clickCount = 1;
-        } else {
-          clickCount += 1;
-        }
-
-        if (clickCount >= 5 && !easterEggActive) {
-          showEasterEgg();
-          clickCount = 0;
-          firstClickTime = 0;
-        }
-      });
-
-      function showEasterEgg() {
-        if (easterEggActive) return;
-        easterEggActive = true;
-        const currentEgg = currentEggIndex === 1 ? egg1 : egg2;
-        currentEgg.style.display = 'block';
-        currentEgg.classList.add('show');
-        audio.currentTime = 0;
-        audio.play().catch(() => {});
-        setTimeout(() => {
-          currentEgg.classList.remove('show');
-          currentEgg.style.display = 'none';
-          easterEggActive = false;
-          currentEggIndex = currentEggIndex === 1 ? 2 : 1;
-        }, 4200);
-      }
-
-      function setActiveButton(activeId) {
-        [btnHome, btnSend, btnSearch].forEach(btn => btn.classList.remove('active'));
-        if (activeId === 'btnHome') btnHome.classList.add('active');
-        if (activeId === 'btnSend') btnSend.classList.add('active');
-        if (activeId === 'btnSearch') btnSearch.classList.add('active');
-        localStorage.setItem(LAST_TAB_KEY, activeId);
-      }
-
-      function isAdmin() {
-        const user = auth.currentUser;
-        return !!(user && user.email && MODERATOR_EMAILS.includes(user.email.toLowerCase()));
-      }
-
-      function getLastPostTime() {
-        return parseInt(localStorage.getItem('lastPostTime') || '0', 10);
-      }
-
-      function setLastPostTime() {
-        localStorage.setItem('lastPostTime', Date.now().toString());
-      }
-
-      function canPost() {
-        if (isAdmin()) return true;
-        return (Date.now() - getLastPostTime()) >= POST_COOLDOWN;
-      }
-
-      function getRemainingSeconds() {
-        if (isAdmin()) return 0;
-        return Math.max(0, Math.ceil((POST_COOLDOWN - (Date.now() - getLastPostTime())) / 1000));
-      }
-
-      function getUserId() {
-        if (auth.currentUser) return 'user_' + auth.currentUser.uid;
-        let sessionId = localStorage.getItem('session_id');
-        if (!sessionId) {
-          sessionId = 'session_' + Math.random().toString(36).slice(2) + Date.now();
-          localStorage.setItem('session_id', sessionId);
-        }
-        return sessionId;
-      }
-
-      async function logModeratorAction(action, details, docId = null) {
-        if (!isAdmin()) return;
-        try {
-          await db.collection('logs').add({
-            moderator: auth.currentUser.email,
-            action,
-            details,
-            documentId: docId,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          });
-        } catch (error) {
-          console.error('log error', error);
-        }
-      }
-
-      function invalidateStatsCache() {
-        localStorage.removeItem(STATS_CACHE_KEY);
-      }
-
-      async function getStats() {
-        const cached = localStorage.getItem(STATS_CACHE_KEY);
-        if (cached) {
-          try {
-            const parsed = JSON.parse(cached);
-            if (Date.now() - parsed.timestamp < STATS_CACHE_TTL) return parsed.data;
-          } catch {}
-        }
-
-        const [totalSnap, approvedSnap, pendingSnap, topSnap] = await Promise.all([
-          db.collection('congratulations').get(),
-          db.collection('congratulations').where('approved', '==', true).get(),
-          db.collection('congratulations').where('approved', '==', false).get(),
-          db.collection('congratulations').where('approved', '==', true).orderBy('likes', 'desc').limit(1).get().catch(() => ({ docs: [] }))
-        ]);
-
-        const data = {
-          total: totalSnap.size,
-          approved: approvedSnap.size,
-          pending: pendingSnap.size,
-          bestLikes: topSnap.docs?.[0]?.data()?.likes || 0
-        };
-
-        localStorage.setItem(STATS_CACHE_KEY, JSON.stringify({ timestamp: Date.now(), data }));
-        return data;
-      }
-
-      async function addCongratulation(from, to, category, message) {
-        const docRef = await db.collection('congratulations').add({
-          from,
-          to,
-          category,
-          message,
-          date: firebase.firestore.FieldValue.serverTimestamp(),
-          approved: false,
-          likes: 0
-        });
-        invalidateStatsCache();
-        return docRef.id;
-      }
-
-      async function updateCongratulation(id, data) {
-        await db.collection('congratulations').doc(id).update(data);
-        invalidateStatsCache();
-      }
-
-      async function deleteCongratulation(id) {
-        await db.collection('congratulations').doc(id).delete();
-        invalidateStatsCache();
-      }
-
-      async function likeCongratulation(postId) {
-        const userId = getUserId();
-        const likeId = `${postId}_${userId}`;
-
-        await db.runTransaction(async transaction => {
-          const likeRef = db.collection('likes').doc(likeId);
-          const existing = await transaction.get(likeRef);
-          if (existing.exists) {
-            throw new Error('already liked');
-          }
-          transaction.set(likeRef, {
-            postId,
-            userId,
-            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-          });
-          transaction.update(db.collection('congratulations').doc(postId), {
-            likes: firebase.firestore.FieldValue.increment(1)
-          });
-        });
-
-        localStorage.setItem(`liked_${postId}_${userId}`, 'true');
-      }
-
-      async function getUserLikesForPosts(postIds) {
-        if (!postIds.length) return {};
-        const userId = getUserId();
-        const result = {};
-        const uncached = [];
-        for (const id of postIds) {
-          if (localStorage.getItem(`liked_${id}_${userId}`) === 'true') result[id] = true;
-          else uncached.push(id);
-        }
-        for (let i = 0; i < uncached.length; i += 10) {
-          const chunk = uncached.slice(i, i + 10);
-          const snap = await db.collection('likes')
-            .where('userId', '==', userId)
-            .where('postId', 'in', chunk)
-            .get();
-          snap.forEach(doc => {
-            const data = doc.data();
-            result[data.postId] = true;
-            localStorage.setItem(`liked_${data.postId}_${userId}`, 'true');
-          });
-        }
-        return result;
-      }
-
-      function normalizePost(doc) {
-        return { id: doc.id, ...doc.data() };
-      }
-
-      function isApprovedValue(value) {
-        return value === true || value === 'true' || value === 1;
-      }
-
-      function isPendingValue(value) {
-        return value === false || value === 'false' || value === 0 || typeof value === 'undefined' || value === null;
-      }
-
-      function compareByDateDesc(a, b) {
-        return (b?.date?.seconds || 0) - (a?.date?.seconds || 0);
-      }
-
-      function compareByLikesDesc(a, b) {
-        const likesDiff = (b?.likes || 0) - (a?.likes || 0);
-        if (likesDiff !== 0) return likesDiff;
-        return compareByDateDesc(a, b);
-      }
-
-      async function loadLegacySafeCongrats(forceServer = false) {
-        const query = db.collection('congratulations');
-        const snap = forceServer ? await query.get({ source: 'server' }) : await query.get();
-        return snap.docs.map(normalizePost);
-      }
-
-      async function loadRecentApproved(limit = 4, startAfterDoc = null) {
-        const items = (await loadLegacySafeCongrats(false))
-          .filter(item => isApprovedValue(item.approved))
-          .sort(compareByDateDesc);
-
-        let startIndex = 0;
-        if (startAfterDoc?.id) {
-          const index = items.findIndex(item => item.id === startAfterDoc.id);
-          startIndex = index >= 0 ? index + 1 : 0;
-        }
-
-        const sliced = items.slice(startIndex, startIndex + limit);
-        return {
-          items: sliced,
-          lastDoc: sliced.length ? { id: sliced[sliced.length - 1].id } : null
-        };
-      }
-
-      async function loadAllApproved(forceServer = false) {
-        const items = await loadLegacySafeCongrats(forceServer);
-        localStorage.setItem(LAST_UPDATE_KEY, Date.now().toString());
-        return items.filter(item => isApprovedValue(item.approved)).sort(compareByDateDesc);
-      }
-
-      async function loadTopApproved(limit = 3) {
-        const items = await loadLegacySafeCongrats(false);
-        return items
-          .filter(item => isApprovedValue(item.approved))
-          .sort(compareByLikesDesc)
-          .slice(0, limit);
-      }
-
-      async function getUnapprovedCongrats(forceServer = false) {
-        const items = await loadLegacySafeCongrats(forceServer);
-        return items.filter(item => isPendingValue(item.approved)).sort(compareByDateDesc);
-      }
-
-      async function getAllCongrats(forceServer = false) {
-        const items = await loadLegacySafeCongrats(forceServer);
-        return items.sort(compareByDateDesc).slice(0, 100);
-      }
-
-      function formatDate(timestamp) {
-        if (!timestamp?.seconds) return 'Дата скоро появится';
-        return new Date(timestamp.seconds * 1000).toLocaleString();
-      }
-
-      function categoryLabel(value) {
-        return value === 'teacher' ? '👩‍🏫 Преподаватель' : '👥 Одногруппник';
-      }
-
-      function getFriendlyAuthError(error) {
-        const code = error?.code || '';
-        const msg = error?.message || '';
-        if (code.includes('wrong-password') || code.includes('invalid-login-credentials')) return 'Неверный email или пароль модератора.';
-        if (code.includes('user-not-found')) return 'Такой аккаунт модератора не найден в Firebase Authentication.';
-        if (code.includes('invalid-email')) return 'Email введён в неверном формате.';
-        if (code.includes('too-many-requests')) return 'Слишком много попыток входа. Подожди немного и попробуй снова.';
-        if (code.includes('operation-not-allowed')) return 'В Firebase отключён вход по email/password. Его нужно включить в Authentication.';
-        if (code.includes('network-request-failed')) return 'Ошибка сети или домен не разрешён в Firebase Authentication.';
-        return 'Ошибка входа: ' + (code || msg || 'неизвестная ошибка');
-      }
-
-      function saveDraft(draft) {
-        localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
-      }
-
-      function getDraft() {
-        try {
-          return JSON.parse(localStorage.getItem(DRAFT_KEY) || '{}');
-        } catch {
-          return {};
-        }
-      }
-
-      function clearDraft() {
-        localStorage.removeItem(DRAFT_KEY);
-      }
-
-      function getShareUrl(id) {
-        const url = new URL(window.location.href);
-        url.hash = 'congratulation=' + id;
-        return url.toString();
-      }
-
-      async function copyText(value) {
-        try {
-          await navigator.clipboard.writeText(value);
-          return true;
-        } catch {
-          const area = document.createElement('textarea');
-          area.value = value;
-          document.body.appendChild(area);
-          area.select();
-          const ok = document.execCommand('copy');
-          area.remove();
-          return ok;
-        }
-      }
-
-      function debounce(fn, delay = 260) {
-        let timer = null;
-        return (...args) => {
-          clearTimeout(timer);
-          timer = setTimeout(() => fn(...args), delay);
-        };
-      }
-
-      function sortCongrats(items, sortBy) {
-        const sorted = [...items];
-        switch (sortBy) {
-          case 'date_asc': sorted.sort((a,b) => (a.date?.seconds || 0) - (b.date?.seconds || 0)); break;
-          case 'likes_desc': sorted.sort((a,b) => (b.likes || 0) - (a.likes || 0)); break;
-          case 'likes_asc': sorted.sort((a,b) => (a.likes || 0) - (b.likes || 0)); break;
-          case 'from_asc': sorted.sort((a,b) => (a.from || '').localeCompare(b.from || '', 'ru')); break;
-          case 'to_asc': sorted.sort((a,b) => (a.to || '').localeCompare(b.to || '', 'ru')); break;
-          default: sorted.sort((a,b) => (b.date?.seconds || 0) - (a.date?.seconds || 0));
-        }
-        return sorted;
-      }
-
-      async function renderPostCards(container, items) {
-        if (!items.length) {
-          container.innerHTML = '<div class="empty">Пока здесь пусто.</div>';
-          return;
-        }
-
-        const likesMap = await getUserLikesForPosts(items.map(item => item.id));
-        container.innerHTML = items.map(item => {
-          const liked = !!likesMap[item.id];
-          return `
-            <article class="post-card" id="post-${item.id}" data-post-id="${item.id}">
-              <div class="post-top">
-                <div class="chips">
-                  <span class="chip">📨 От: ${escapeHtml(item.from)}</span>
-                  <span class="chip">🎯 Кому: ${escapeHtml(item.to)}</span>
-                  <span class="chip">${categoryLabel(item.category)}</span>
-                </div>
-                <a class="pin-link" href="#congratulation=${item.id}">#ссылка</a>
-              </div>
-              <div class="post-message">${escapeHtml(item.message)}</div>
-              <div class="meta-line">
-                <span>🕒 ${escapeHtml(formatDate(item.date))}</span>
-                <span>❤️ <span class="like-count">${item.likes || 0}</span></span>
-              </div>
-              <div class="inline-actions">
-                <button class="btn secondary like-btn" data-id="${item.id}" ${liked ? 'disabled' : ''}>${liked ? '❤️ Уже лайкнуто' : '❤️ Нравится'}</button>
-                <button class="btn secondary share-btn" data-id="${item.id}" data-to="${escapeHtml(item.to)}">🔗 Поделиться</button>
-              </div>
-            </article>
-          `;
-        }).join('');
-
-        container.querySelectorAll('.like-btn').forEach(btn => {
-          btn.addEventListener('click', async () => {
-            const id = btn.dataset.id;
-            const card = btn.closest('.post-card');
-            const countEl = card.querySelector('.like-count');
-            const original = btn.textContent;
-            btn.disabled = true;
-            btn.textContent = '⏳ Обработка...';
-            try {
-              await likeCongratulation(id);
-              const current = parseInt(countEl.textContent || '0', 10) || 0;
-              countEl.textContent = current + 1;
-              btn.textContent = '❤️ Уже лайкнуто';
-              toast('Лайк поставлен 💖', 'success');
-            } catch (error) {
-              if (error.message === 'already liked') {
-                btn.textContent = '❤️ Уже лайкнуто';
-                toast('Ты уже лайкал это поздравление', 'info');
-              } else {
-                btn.disabled = false;
-                btn.textContent = original;
-                toast('Не удалось поставить лайк', 'error');
-              }
-            }
-          });
-        });
-
-        container.querySelectorAll('.share-btn').forEach(btn => {
-          btn.addEventListener('click', async () => {
-            const id = btn.dataset.id;
-            const to = btn.dataset.to;
-            const text = `Напиши ${to}, чтобы посмотреть поздравление: ${getShareUrl(id)}`;
-            const ok = await copyText(text);
-            toast(ok ? 'Ссылка скопирована' : 'Не удалось скопировать ссылку', ok ? 'success' : 'error');
-          });
-        });
-      }
-
-      async function renderHome() {
-        setActiveButton('btnHome');
-        setTopStatus('Загружаю главную…');
-        contentDiv.innerHTML = `
-          <section class="hero">
-            <div class="card">
-              <h2>🌸 Поздравления с 8 марта</h2>
-              <p class="subtle">Обновлённая версия сайта: быстрее, чище и удобнее. Все существующие записи, лайки и модерация остаются в тех же коллекциях Firebase.</p>
-              <div class="cta-row" style="margin-top:16px;">
-                <button class="btn" id="heroSendBtn">Отправить поздравление</button>
-                <button class="btn secondary" id="heroSearchBtn">Посмотреть все</button>
-              </div>
-              <div class="footer-note">Подсказка: 5 быстрых кликов по кнопке темы всё ещё запускают мемную пасхалку 😎</div>
-            </div>
-            <div class="card">
-              <h3>📌 Что улучшено</h3>
-              <div class="chips">
-                <span class="chip">⚡ меньше тяжёлых эффектов</span>
-                <span class="chip">🔎 поиск по имени и тексту</span>
-                <span class="chip">💾 автосохранение черновика</span>
-                <span class="chip">🔗 удобные ссылки на посты</span>
-                <span class="chip">🛡️ аккуратная модерация</span>
-              </div>
-            </div>
-          </section>
-
-          <section class="stats-grid" id="statsGrid">
-            <div class="stat"><div class="label">Всего отправлено</div><div class="value">…</div></div>
-            <div class="stat"><div class="label">Опубликовано</div><div class="value">…</div></div>
-            <div class="stat"><div class="label">Ожидает модерации</div><div class="value">…</div></div>
-            <div class="stat"><div class="label">Рекорд лайков</div><div class="value">…</div></div>
-          </section>
-
-          <section class="grid-2">
-            <div class="card section">
-              <div class="section-header">
-                <div>
-                  <div class="section-title">📬 Последние поздравления</div>
-                  <div class="subtle">Самые свежие одобренные записи</div>
-                </div>
-                <button class="btn secondary" id="loadMoreHomeBtn" style="display:none;">Показать ещё</button>
-              </div>
-              <div id="recentList" class="cards-list"><div class="skeletons"><div class="skeleton"></div><div class="skeleton"></div></div></div>
-            </div>
-
-            <div class="card section">
-              <div class="section-header">
-                <div>
-                  <div class="section-title">🏆 Топ по лайкам</div>
-                  <div class="subtle">Самые популярные поздравления</div>
-                </div>
-              </div>
-              <div id="topList" class="cards-list"><div class="skeletons"><div class="skeleton"></div></div></div>
-            </div>
-          </section>
-        `;
-
-        document.getElementById('heroSendBtn').addEventListener('click', renderSend);
-        document.getElementById('heroSearchBtn').addEventListener('click', renderSearch);
-
-        let lastDoc = null;
-        let allLoaded = false;
-        let recentPosts = [];
-
-        const statsGrid = document.getElementById('statsGrid');
-        const recentList = document.getElementById('recentList');
-        const topList = document.getElementById('topList');
-        const loadMoreHomeBtn = document.getElementById('loadMoreHomeBtn');
-
-        async function loadHomePage(initial = false) {
-          const data = await loadRecentApproved(4, initial ? null : lastDoc);
-          if (initial) recentPosts = data.items;
-          else recentPosts = recentPosts.concat(data.items);
-          lastDoc = data.lastDoc;
-          allLoaded = data.items.length < 4;
-          await renderPostCards(recentList, recentPosts);
-          loadMoreHomeBtn.style.display = allLoaded || !recentPosts.length ? 'none' : 'inline-flex';
-        }
-
-        loadMoreHomeBtn.addEventListener('click', () => loadHomePage(false));
-
-        try {
-          const [stats, topItems] = await Promise.all([getStats(), loadTopApproved(3)]);
-          statsGrid.innerHTML = `
-            <div class="stat"><div class="label">Всего отправлено</div><div class="value">${stats.total}</div></div>
-            <div class="stat"><div class="label">Опубликовано</div><div class="value">${stats.approved}</div></div>
-            <div class="stat"><div class="label">Ожидает модерации</div><div class="value">${stats.pending}</div></div>
-            <div class="stat"><div class="label">Рекорд лайков</div><div class="value">${stats.bestLikes}</div></div>
-          `;
-          await renderPostCards(topList, topItems);
-          await loadHomePage(true);
-          highlightFromHash();
-          setTopStatus('Главная загружена');
-        } catch (error) {
-          console.error(error);
-          recentList.innerHTML = '<div class="empty">Не удалось загрузить главную страницу.</div>';
-          topList.innerHTML = '<div class="empty">Не удалось загрузить топ поздравлений.</div>';
-          setTopStatus('Ошибка загрузки');
-          toast('Ошибка загрузки главной страницы', 'error');
-        }
-      }
-
-      function renderSend() {
-        setActiveButton('btnSend');
-        setTopStatus('Открыта форма отправки');
-        const draft = getDraft();
-
-        contentDiv.innerHTML = `
-          <section class="grid-2">
-            <div class="card">
-              <div class="section-header">
-                <div>
-                  <div class="section-title">✍️ Отправить поздравление</div>
-                  <div class="subtle">Записи по-прежнему уходят в коллекцию <strong>congratulations</strong> и проходят модерацию перед публикацией.</div>
-                </div>
-              </div>
-              <form id="greetingForm">
-                <div class="field">
-                  <label for="from">От кого</label>
-                  <input id="from" type="text" maxlength="80" placeholder="Иван Иванов" value="${escapeHtml(draft.from || '')}" required>
-                </div>
-                <div class="field">
-                  <label for="to">Кому</label>
-                  <input id="to" type="text" maxlength="80" placeholder="Мария Петрова" value="${escapeHtml(draft.to || '')}" required>
-                </div>
-                <div class="field">
-                  <label for="category">Категория получателя</label>
-                  <select id="category">
-                    <option value="teacher" ${(draft.category || 'teacher') === 'teacher' ? 'selected' : ''}>👩‍🏫 Преподаватель</option>
-                    <option value="classmate" ${(draft.category || 'teacher') === 'classmate' ? 'selected' : ''}>👥 Одногруппник</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label for="message">Текст поздравления</label>
-                  <textarea id="message" maxlength="1000" placeholder="С 8 марта! Желаю счастья, здоровья и весеннего настроения..." required>${escapeHtml(draft.message || '')}</textarea>
-                  <div class="small"><span id="messageCounter">0</span>/1000 символов</div>
-                </div>
-                <div class="split-actions">
-                  <button type="submit" id="submitBtn">Отправить на модерацию 💐</button>
-                  <button type="button" class="btn secondary" id="clearDraftBtn">Очистить черновик</button>
-                </div>
-                <div class="helper-box" id="cooldownBox">Проверяю лимит отправки…</div>
-              </form>
-            </div>
-            <div class="card section">
-              <div class="section-title">💡 Полезно знать</div>
-              <div class="helper-box">Черновик сохраняется автоматически. Даже если случайно закрыть вкладку, текст останется.</div>
-              <div class="helper-box">Отправка ограничена одним поздравлением раз в 5 минут для обычных пользователей.</div>
-              <div class="helper-box">После отправки все текущие данные сохраняются в уже существующем Firebase-проекте, без потери старых записей.</div>
-            </div>
-          </section>
-        `;
-
-        const form = document.getElementById('greetingForm');
-        const fromEl = document.getElementById('from');
-        const toEl = document.getElementById('to');
-        const categoryEl = document.getElementById('category');
-        const messageEl = document.getElementById('message');
-        const counter = document.getElementById('messageCounter');
-        const submitBtn = document.getElementById('submitBtn');
-        const cooldownBox = document.getElementById('cooldownBox');
-        const clearDraftBtn = document.getElementById('clearDraftBtn');
-
-        function syncDraft() {
-          saveDraft({
-            from: fromEl.value.trim(),
-            to: toEl.value.trim(),
-            category: categoryEl.value,
-            message: messageEl.value
-          });
-        }
-
-        function updateCounter() {
-          counter.textContent = String(messageEl.value.length);
-        }
-
-        function updateCooldown() {
-          if (canPost()) {
-            submitBtn.disabled = false;
-            cooldownBox.textContent = 'Можно отправлять прямо сейчас.';
-          } else {
-            submitBtn.disabled = true;
-            cooldownBox.textContent = `Новая отправка будет доступна через ${getRemainingSeconds()} сек.`;
-          }
-        }
-
-        [fromEl, toEl, categoryEl, messageEl].forEach(el => {
-          el.addEventListener('input', () => {
-            syncDraft();
-            updateCounter();
-          });
-          el.addEventListener('change', syncDraft);
-        });
-
-        clearDraftBtn.addEventListener('click', () => {
-          clearDraft();
-          fromEl.value = '';
-          toEl.value = '';
-          categoryEl.value = 'teacher';
-          messageEl.value = '';
-          updateCounter();
-          toast('Черновик очищен', 'info');
-        });
-
-        const cooldownTimer = setInterval(() => {
-          if (!document.body.contains(form)) return clearInterval(cooldownTimer);
-          updateCooldown();
-        }, 1000);
-
-        updateCounter();
-        updateCooldown();
-
-        form.addEventListener('submit', async event => {
-          event.preventDefault();
-          const from = fromEl.value.trim();
-          const to = toEl.value.trim();
-          const message = messageEl.value.trim();
-          const category = categoryEl.value;
-
-          if (!from || !to || !message) {
-            toast('Заполни все поля', 'error');
-            return;
-          }
-
-          if (message.length < 8) {
-            toast('Сделай поздравление чуть длиннее', 'error');
-            return;
-          }
-
-          if (!canPost()) {
-            toast('Нужно немного подождать перед следующей отправкой', 'error');
-            return;
-          }
-
-          submitBtn.disabled = true;
-          submitBtn.textContent = '⏳ Отправляю...';
-          try {
-            await addCongratulation(from, to, category, message);
-            setLastPostTime();
-            clearDraft();
-            form.reset();
-            categoryEl.value = 'teacher';
-            updateCounter();
-            updateCooldown();
-            pulseHearts();
-            toast('Поздравление отправлено на модерацию 💖', 'success');
-            submitBtn.textContent = 'Отправить на модерацию 💐';
-          } catch (error) {
-            console.error(error);
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Отправить на модерацию 💐';
-            toast('Ошибка отправки. Попробуй позже.', 'error');
-          }
-        });
-      }
-
-      async function renderSearch() {
-        setActiveButton('btnSearch');
-        setTopStatus('Открыт поиск');
-
-        contentDiv.innerHTML = `
-          <section class="card search-box">
-            <div class="section-header">
+      const visible = filteredItems.slice(0, visibleCount);
+      listEl.innerHTML = visible.map(item => {
+        const date = formatDate(item.date);
+        return `
+          <article class="card">
+            <div class="card-top">
               <div>
-                <div class="section-title">🔎 Все поздравления</div>
-                <div class="subtle">Поиск теперь ищет по получателю, отправителю и тексту.</div>
+                <h2 class="to">${escapeHtml(item.to || 'Без имени')}</h2>
+                <p class="from">От: ${escapeHtml(item.from || 'Аноним')}</p>
               </div>
-              <div class="toolbar">
-                <span class="badge" id="lastUpdateBadge">📅 Обновление: —</span>
-                <button class="btn secondary" id="refreshBtn">Обновить</button>
-              </div>
+              <div class="date">${escapeHtml(date)}</div>
             </div>
-
-            <div class="search-grid">
-              <div class="field">
-                <label for="searchInput">Поисковый запрос</label>
-                <input id="searchInput" type="text" placeholder="Например: Мария, Иван, счастья, преподаватель...">
-              </div>
-              <div class="field">
-                <label for="searchCategory">Категория</label>
-                <select id="searchCategory">
-                  <option value="all">Все</option>
-                  <option value="teacher">Только преподаватели</option>
-                  <option value="classmate">Только одногруппники</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="searchSort">Сортировка</label>
-                <select id="searchSort">
-                  <option value="date_desc">Сначала новые</option>
-                  <option value="date_asc">Сначала старые</option>
-                  <option value="likes_desc">По лайкам ↓</option>
-                  <option value="likes_asc">По лайкам ↑</option>
-                  <option value="from_asc">По отправителю</option>
-                  <option value="to_asc">По получателю</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="searchLimit">Показывать</label>
-                <select id="searchLimit">
-                  <option value="10">10</option>
-                  <option value="20">20</option>
-                  <option value="50">50</option>
-                  <option value="100">100</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="helper-box">Поддерживаются прямые ссылки вида <strong>#congratulation=ID</strong>. Если открыть такую ссылку, карточка подсветится.</div>
-            <div id="searchResults" class="cards-list"><div class="skeletons"><div class="skeleton"></div><div class="skeleton"></div></div></div>
-          </section>
+            <p class="message">${escapeHtml(item.message || '')}</p>
+          </article>
         `;
+      }).join('');
 
-        const input = document.getElementById('searchInput');
-        const category = document.getElementById('searchCategory');
-        const sort = document.getElementById('searchSort');
-        const limit = document.getElementById('searchLimit');
-        const results = document.getElementById('searchResults');
-        const refreshBtn = document.getElementById('refreshBtn');
-        const lastUpdateBadge = document.getElementById('lastUpdateBadge');
+      loadMoreBtn.style.display = visibleCount < filteredItems.length ? 'inline-flex' : 'none';
+    }
 
-        let allItems = [];
+    async function loadApproved() {
+      listEl.innerHTML = '<div class="loading">Загрузка поздравлений...</div>';
+      countLabel.textContent = 'Загрузка...';
 
-        function updateLastUpdateLabel() {
-          const raw = localStorage.getItem(LAST_UPDATE_KEY);
-          if (!raw) {
-            lastUpdateBadge.textContent = '📅 Обновление: —';
-            return;
-          }
-          lastUpdateBadge.textContent = '📅 Обновление: ' + new Date(parseInt(raw, 10)).toLocaleString();
-        }
-
-        async function display() {
-          const q = input.value.trim().toLowerCase();
-          const selectedCategory = category.value;
-          const selectedSort = sort.value;
-          const selectedLimit = parseInt(limit.value, 10);
-
-          let filtered = allItems.filter(item => {
-            const haystack = `${item.from || ''} ${item.to || ''} ${item.message || ''}`.toLowerCase();
-            const categoryOk = selectedCategory === 'all' || item.category === selectedCategory;
-            const queryOk = !q || haystack.includes(q);
-            return categoryOk && queryOk;
-          });
-
-          filtered = sortCongrats(filtered, selectedSort).slice(0, selectedLimit);
-          await renderPostCards(results, filtered);
-          highlightFromHash();
-        }
-
-        const debouncedDisplay = debounce(display, 180);
-        [input, category, sort, limit].forEach(el => {
-          el.addEventListener('input', debouncedDisplay);
-          el.addEventListener('change', display);
-        });
-
-        refreshBtn.addEventListener('click', async () => {
-          try {
-            allItems = await loadAllApproved(true);
-            updateLastUpdateLabel();
-            await display();
-            toast('Данные обновлены с сервера', 'success');
-          } catch (error) {
-            toast('Не удалось обновить данные', 'error');
-          }
-        });
+      try {
+        let docs = [];
 
         try {
-          allItems = await loadAllApproved(false);
-          updateLastUpdateLabel();
-          await display();
-          setTopStatus('Поиск готов');
-        } catch (error) {
-          console.error(error);
-          results.innerHTML = '<div class="empty">Не удалось загрузить поздравления.</div>';
-          setTopStatus('Ошибка загрузки поиска');
+          const snapshot = await db.collection('congratulations').where('approved', '==', true).get();
+          docs = snapshot.docs;
+        } catch (e) {
+          console.warn('Approved query failed, using fallback:', e);
         }
-      }
 
-      async function renderModeration() {
-        setTopStatus('Открыта панель модерации');
-
-        if (!isAdmin()) {
-          contentDiv.innerHTML = `
-            <section class="grid-2">
-              <div class="card">
-                <div class="section-title">🛡️ Вход для модератора</div>
-                <div class="subtle">Используй email модератора из Firebase Authentication.</div>
-                <div class="auth-box">
-                  <input id="adminEmail" type="email" placeholder="Email модератора">
-                  <input id="adminPass" type="password" placeholder="Пароль">
-                  <button class="btn" id="loginAdminBtn">Войти</button>
-                </div>
-              </div>
-              <div class="card">
-                <div class="section-title">🌷 Модераторы</div>
-                <div class="helper-box">Усатов Тимофей, Илья Говтва, Ярослав Носков, Вадим Муллаголиев, Данила Сарычев.</div>
-                <div class="helper-box">После входа здесь можно одобрять, редактировать и удалять записи без изменения старой базы данных.</div>
-              </div>
-            </section>
-          `;
-
-          document.getElementById('loginAdminBtn').addEventListener('click', async () => {
-            const email = document.getElementById('adminEmail').value.trim();
-            const pass = document.getElementById('adminPass').value;
-            if (!email || !pass) {
-              toast('Заполни email и пароль', 'error');
-              return;
-            }
-            try {
-              await auth.signInWithEmailAndPassword(email, pass);
-              toast('Вход выполнен', 'success');
-              renderModeration();
-            } catch (error) {
-              toast(getFriendlyAuthError(error), 'error', 4200); console.error('login error', error);
-            }
+        if (!docs.length) {
+          const fallback = await db.collection('congratulations').get();
+          docs = fallback.docs.filter(doc => {
+            const data = doc.data() || {};
+            return data.approved === true || data.status === 'approved';
           });
-          return;
         }
 
-        contentDiv.innerHTML = `
-          <section class="card section">
-            <div class="section-header">
-              <div>
-                <div class="section-title">🛡️ Панель модератора</div>
-                <div class="subtle">Редактирование, публикация и удаление записей в существующих коллекциях.</div>
-              </div>
-              <div class="toolbar">
-                <span class="badge">✅ ${escapeHtml(auth.currentUser.email || '')}</span>
-                <button class="btn secondary" id="logoutBtn">Выйти</button>
-              </div>
-            </div>
-            <div class="moderation-tabs">
-              <button class="btn secondary active-tab" id="tabNew">Новые</button>
-              <button class="btn secondary" id="tabAll">Все записи</button>
-            </div>
-            <div id="moderationContent" class="moderation-grid"></div>
-          </section>
-        `;
-
-        document.getElementById('logoutBtn').addEventListener('click', async () => {
-          await auth.signOut();
-          toast('Выход выполнен', 'info');
-          renderModeration();
+        allItems = docs.map(doc => {
+          const data = doc.data() || {};
+          const seconds = data.date && data.date.seconds ? data.date.seconds : 0;
+          return {
+            id: doc.id,
+            from: data.from || '',
+            to: data.to || '',
+            message: data.message || '',
+            date: data.date || null,
+            approved: data.approved,
+            _time: seconds
+          };
         });
 
-        const tabNew = document.getElementById('tabNew');
-        const tabAll = document.getElementById('tabAll');
-        const moderationContent = document.getElementById('moderationContent');
-
-        async function renderModerationItems(items, mode) {
-          if (!items.length) {
-            moderationContent.innerHTML = '<div class="empty">Здесь пока пусто.</div>';
-            return;
-          }
-
-          moderationContent.innerHTML = items.map(item => `
-            <div class="moderation-item" data-id="${item.id}">
-              <div class="meta-line">
-                <span>${escapeHtml(formatDate(item.date))}</span>
-                <span>${item.approved ? '✅ Одобрено' : '⏳ На модерации'}</span>
-                <span>❤️ ${item.likes || 0}</span>
-              </div>
-              <div class="inline-edit">
-                <input class="edit-from" value="${escapeHtml(item.from)}" placeholder="От кого">
-                <input class="edit-to" value="${escapeHtml(item.to)}" placeholder="Кому">
-                <select class="edit-category">
-                  <option value="teacher" ${item.category === 'teacher' ? 'selected' : ''}>👩‍🏫 Преподаватель</option>
-                  <option value="classmate" ${item.category === 'classmate' ? 'selected' : ''}>👥 Одногруппник</option>
-                </select>
-                <textarea class="edit-message" placeholder="Текст">${escapeHtml(item.message)}</textarea>
-              </div>
-              <div class="split-actions">
-                <button class="btn success save-btn">💾 Сохранить</button>
-                ${!item.approved ? '<button class="btn" data-role="approve">✅ Одобрить</button>' : ''}
-                <button class="btn danger delete-btn">🗑️ Удалить</button>
-              </div>
-            </div>
-          `).join('');
-
-          moderationContent.querySelectorAll('.save-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
-              const root = btn.closest('.moderation-item');
-              const id = root.dataset.id;
-              const from = root.querySelector('.edit-from').value.trim();
-              const to = root.querySelector('.edit-to').value.trim();
-              const category = root.querySelector('.edit-category').value;
-              const message = root.querySelector('.edit-message').value.trim();
-              if (!from || !to || !message) {
-                toast('Заполни все поля перед сохранением', 'error');
-                return;
-              }
-              try {
-                await updateCongratulation(id, { from, to, category, message });
-                await logModeratorAction('edit', 'Изменил запись', id);
-                toast('Запись сохранена', 'success');
-              } catch (error) {
-                toast('Ошибка сохранения', 'error');
-              }
-            });
-          });
-
-          moderationContent.querySelectorAll('[data-role="approve"]').forEach(btn => {
-            btn.addEventListener('click', async () => {
-              const id = btn.closest('.moderation-item').dataset.id;
-              try {
-                await updateCongratulation(id, { approved: true });
-                await logModeratorAction('approve', 'Одобрил запись', id);
-                toast('Запись одобрена', 'success');
-                if (mode === 'new') loadNew();
-                else loadAll();
-              } catch (error) {
-                toast('Ошибка одобрения', 'error');
-              }
-            });
-          });
-
-          moderationContent.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
-              const id = btn.closest('.moderation-item').dataset.id;
-              if (!confirm('Точно удалить это поздравление?')) return;
-              try {
-                await deleteCongratulation(id);
-                await logModeratorAction('delete', 'Удалил запись', id);
-                toast('Запись удалена', 'success');
-                if (mode === 'new') loadNew();
-                else loadAll();
-              } catch (error) {
-                toast('Ошибка удаления', 'error');
-              }
-            });
-          });
-        }
-
-        async function loadNew() {
-          tabNew.classList.add('active-tab');
-          tabAll.classList.remove('active-tab');
-          moderationContent.innerHTML = '<div class="skeletons"><div class="skeleton"></div></div>';
-          try {
-            const items = await getUnapprovedCongrats();
-            await renderModerationItems(items, 'new');
-          } catch (error) {
-            moderationContent.innerHTML = '<div class="empty">Не удалось загрузить новые записи.</div>';
-          }
-        }
-
-        async function loadAll() {
-          tabAll.classList.add('active-tab');
-          tabNew.classList.remove('active-tab');
-          moderationContent.innerHTML = '<div class="skeletons"><div class="skeleton"></div></div>';
-          try {
-            const items = await getAllCongrats();
-            await renderModerationItems(items, 'all');
-          } catch (error) {
-            moderationContent.innerHTML = '<div class="empty">Не удалось загрузить список записей.</div>';
-          }
-        }
-
-        tabNew.addEventListener('click', loadNew);
-        tabAll.addEventListener('click', loadAll);
-        loadNew();
+        visibleCount = 12;
+        updatedLabel.textContent = 'Обновлено: ' + new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
+        render();
+      } catch (error) {
+        console.error(error);
+        listEl.innerHTML = '<div class="empty">Не удалось загрузить поздравления. Проверь Firebase и подключение.</div>';
+        countLabel.textContent = 'Ошибка загрузки';
       }
+    }
 
-      function highlightFromHash() {
-        const match = (window.location.hash || '').match(/congratulation=([^&]+)/);
-        if (!match) return;
-        const id = match[1];
-        document.querySelectorAll('.post-card.highlight').forEach(el => el.classList.remove('highlight'));
-        const target = document.getElementById('post-' + id);
-        if (target) {
-          target.classList.add('highlight');
-          target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }
+    let debounceId = null;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(debounceId);
+      debounceId = setTimeout(() => {
+        visibleCount = 12;
+        render();
+      }, 150);
+    });
 
-      auth.onAuthStateChanged(user => {
-        authBadge.textContent = user ? `👤 ${user.email}` : '👤 Гость';
-        btnModeration.textContent = user && isAdmin() ? '🛡️ Модерация (admin)' : '🛡️ Модерация';
-      });
+    sortSelect.addEventListener('change', () => {
+      visibleCount = 12;
+      render();
+    });
 
-      btnHome.addEventListener('click', renderHome);
-      btnSend.addEventListener('click', renderSend);
-      btnSearch.addEventListener('click', renderSearch);
-      btnModeration.addEventListener('click', renderModeration);
-      window.addEventListener('hashchange', highlightFromHash);
+    refreshBtn.addEventListener('click', loadApproved);
+    loadMoreBtn.addEventListener('click', () => {
+      visibleCount += 12;
+      render();
+    });
 
-      const initialTab = localStorage.getItem(LAST_TAB_KEY) || 'btnHome';
-      if (initialTab === 'btnSend') renderSend();
-      else if (initialTab === 'btnSearch') renderSearch();
-      else renderHome();
-    })();
+    loadApproved();
   </script>
 </body>
 </html>
