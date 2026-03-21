@@ -643,7 +643,7 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const auth = firebase.auth();
-    db.enablePersistence().catch(err => console.log('Persistence:', err.message));
+    db.enablePersistence({ synchronizeTabs: true }).catch(err => console.log('Persistence:', err.message));
 
     (function () {
       const contentDiv = document.getElementById('content');
@@ -932,54 +932,70 @@
         return { id: doc.id, ...doc.data() };
       }
 
+      function isApprovedValue(value) {
+        return value === true || value === 'true' || value === 1;
+      }
+
+      function isPendingValue(value) {
+        return value === false || value === 'false' || value === 0 || typeof value === 'undefined' || value === null;
+      }
+
+      function compareByDateDesc(a, b) {
+        return (b?.date?.seconds || 0) - (a?.date?.seconds || 0);
+      }
+
+      function compareByLikesDesc(a, b) {
+        const likesDiff = (b?.likes || 0) - (a?.likes || 0);
+        if (likesDiff !== 0) return likesDiff;
+        return compareByDateDesc(a, b);
+      }
+
+      async function loadLegacySafeCongrats(forceServer = false) {
+        const query = db.collection('congratulations');
+        const snap = forceServer ? await query.get({ source: 'server' }) : await query.get();
+        return snap.docs.map(normalizePost);
+      }
+
       async function loadRecentApproved(limit = 4, startAfterDoc = null) {
-        let query = db.collection('congratulations')
-          .where('approved', '==', true)
-          .orderBy('date', 'desc')
-          .limit(limit);
-        if (startAfterDoc) query = query.startAfter(startAfterDoc);
-        const snap = await query.get();
+        const items = (await loadLegacySafeCongrats(false))
+          .filter(item => isApprovedValue(item.approved))
+          .sort(compareByDateDesc);
+
+        let startIndex = 0;
+        if (startAfterDoc?.id) {
+          const index = items.findIndex(item => item.id === startAfterDoc.id);
+          startIndex = index >= 0 ? index + 1 : 0;
+        }
+
+        const sliced = items.slice(startIndex, startIndex + limit);
         return {
-          items: snap.docs.map(normalizePost),
-          lastDoc: snap.docs[snap.docs.length - 1] || null
+          items: sliced,
+          lastDoc: sliced.length ? { id: sliced[sliced.length - 1].id } : null
         };
       }
 
       async function loadAllApproved(forceServer = false) {
-        const query = db.collection('congratulations')
-          .where('approved', '==', true)
-          .orderBy('date', 'desc');
-        const snap = forceServer ? await query.get({ source: 'server' }) : await query.get();
+        const items = await loadLegacySafeCongrats(forceServer);
         localStorage.setItem(LAST_UPDATE_KEY, Date.now().toString());
-        return snap.docs.map(normalizePost);
+        return items.filter(item => isApprovedValue(item.approved)).sort(compareByDateDesc);
       }
 
       async function loadTopApproved(limit = 3) {
-        const snap = await db.collection('congratulations')
-          .where('approved', '==', true)
-          .orderBy('likes', 'desc')
-          .orderBy('date', 'desc')
-          .limit(limit)
-          .get()
-          .catch(() => ({ docs: [] }));
-        return snap.docs.map(normalizePost);
+        const items = await loadLegacySafeCongrats(false);
+        return items
+          .filter(item => isApprovedValue(item.approved))
+          .sort(compareByLikesDesc)
+          .slice(0, limit);
       }
 
-      async function getUnapprovedCongrats() {
-        const snap = await db.collection('congratulations')
-          .where('approved', '==', false)
-          .orderBy('date', 'desc')
-          .get()
-          .catch(() => db.collection('congratulations').where('approved', '==', false).get());
-        return snap.docs.map(normalizePost);
+      async function getUnapprovedCongrats(forceServer = false) {
+        const items = await loadLegacySafeCongrats(forceServer);
+        return items.filter(item => isPendingValue(item.approved)).sort(compareByDateDesc);
       }
 
-      async function getAllCongrats() {
-        const snap = await db.collection('congratulations')
-          .orderBy('date', 'desc')
-          .limit(100)
-          .get();
-        return snap.docs.map(normalizePost);
+      async function getAllCongrats(forceServer = false) {
+        const items = await loadLegacySafeCongrats(forceServer);
+        return items.sort(compareByDateDesc).slice(0, 100);
       }
 
       function formatDate(timestamp) {
@@ -989,6 +1005,18 @@
 
       function categoryLabel(value) {
         return value === 'teacher' ? '👩‍🏫 Преподаватель' : '👥 Одногруппник';
+      }
+
+      function getFriendlyAuthError(error) {
+        const code = error?.code || '';
+        const msg = error?.message || '';
+        if (code.includes('wrong-password') || code.includes('invalid-login-credentials')) return 'Неверный email или пароль модератора.';
+        if (code.includes('user-not-found')) return 'Такой аккаунт модератора не найден в Firebase Authentication.';
+        if (code.includes('invalid-email')) return 'Email введён в неверном формате.';
+        if (code.includes('too-many-requests')) return 'Слишком много попыток входа. Подожди немного и попробуй снова.';
+        if (code.includes('operation-not-allowed')) return 'В Firebase отключён вход по email/password. Его нужно включить в Authentication.';
+        if (code.includes('network-request-failed')) return 'Ошибка сети или домен не разрешён в Firebase Authentication.';
+        return 'Ошибка входа: ' + (code || msg || 'неизвестная ошибка');
       }
 
       function saveDraft(draft) {
@@ -1533,7 +1561,7 @@
               toast('Вход выполнен', 'success');
               renderModeration();
             } catch (error) {
-              toast('Ошибка входа: ' + error.message, 'error', 3600);
+              toast(getFriendlyAuthError(error), 'error', 4200); console.error('login error', error);
             }
           });
           return;
